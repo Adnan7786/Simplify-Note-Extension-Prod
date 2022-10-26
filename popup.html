@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="popup.css" />
+    <title>Simplify Notes Extension</title>
+    <script defer src="./popup.js"></script>
+  </head>
+
+  <body>
+    <div id="popupHeader" class="popupHeader">
+      <!-- <p>Header</p> -->
+      <div class="popupHeader-child brandLogo">
+        <!-- <p>logo</p> -->
+        <a href="https://www.s_n.com/" id="brandHyperlink"
+          ><img src="images/icon_clipped.png" id="brandImage" target="_blank"
+        /></a>
+      </div>
+      <div class="popupHeader-child brandName">
+        <p>Simplify Notes</p>
+      </div>
+      <!-- <div id="logOutButton" class="popupHeader-child logOutButton">
+        <p>Logout</p>
+      </div> -->
+      <div class="popupHeader-child avatarPanel">
+        <!-- <p>Avatar</p> -->
+        <div class="avatarPanelInner">
+          <span id="greetUser"></span>
+          <!-- <img src="" id="avatar" /> -->
+          <div class="profile">
+            <img src="" id="avatar" />
+          </div>
+          <div class="drop">
+            <h3 id="dropdownUserName">
+              User Name<br />
+              <!-- <span id="dropdownUserSpan">User Plan</span> -->
+            </h3>
+            <ul>
+              <li>
+                <img src="images/user.png" id="gImg" /><a href="#"
+                  >My Profile</a
+                >
+              </li>
+              <li>
+                <img src="images/dashboard.png" id="gImg" /><a href="#"
+                  >My Dashboard</a
+                >
+              </li>
+              <li>
+                <img src="images/option.png" id="gImg" /><a href="#"
+                  >Option 3</a
+                >
+              </li>
+              <li>
+                <img src="images/settings.png" id="gImg" /><a href="#"
+                  >Settings</a
+                >
+              </li>
+              <li>
+                <img src="images/help.png" id="gImg" /><a href="#">Help</a>
+              </li>
+              <li id="logOutButton" class="logOutButton">
+                <img src="images/logout.png" id="gImg" /><a href="#">Logout</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="headerNote">
+      <p>Your personal Note taking Assistant</p>
+    </div>
+    <div id="logIn">
+      <!-- <div id="popupHeader" class="popupHeader">
+        <p>Header</p>
+        <div class="popupHeader-child brandLogo">
+          <p>logo</p>
+        </div>
+        <div class="popupHeader-child brandName">
+          <p>Simplify Notes</p>
+        </div>
+        <div class="popupHeader-child avatarPanel">
+          <p>Avatar</p>
+        </div>
+      </div> -->
+      <div id="popupBody" class="popupBody">
+        <div id="companyLogo">
+          <img src="images/icon.png" width="70px" heigth="70px" />
+        </div>
+        <div>
+          <p>Please Sign-In to continue</p>
+        </div>
+        <div id="userSignInButton">
+          <img src="images/Google__G__Logo.svg" id="gFaviconLogo" />
+          <a id="logInLink" href="" target="_blank">Sign In with Google</a>
+          <!-- <p>Md Fraz Uddin</p> -->
+        </div>
+        <div id="preSignInFooter">
+          <p>feedback@simplifynotes.com</p>
+          <div class="footer-wrapper_branding-social">
+            <a
+              href="https://facebook.com/"
+              rel="noopener noreferrer"
+              aria-label="GeeksforGeeks Facebook"
+              target="_blank"
+              ><div class="facebook"></div></a
+            ><a
+              href="https://instagram.com/"
+              rel="noopener noreferrer"
+              aria-label="GeeksforGeeks Instagram"
+              target="_blank"
+              ><div class="instagram"></div></a
+            ><a
+              href="https://linkedin.com/"
+              rel="noopener noreferrer"
+              aria-label="GeeksforGeeks LinkedIn"
+              target="_blank"
+              ><div class="linkedin"></div></a
+            ><a
+              href="https://twitter.com/"
+              rel="noopener noreferrer"
+              aria-label="GeeksforGeeks Twitter"
+              target="_blank"
+              ><div class="twitter"></div></a
+            ><a
+              href="https://youtube.com/"
+              rel="noopener noreferrer"
+              aria-label="GeeksforGeeks YouTube"
+              target="_blank"
+              ><div class="youtube"></div></a
+            >
+            ></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="loggedInComponent">
+      <!-- <span id="greetUser"></span>
+      <img src="" id="avatar" /> -->
+
+      <div class="popupbutton newdocadder" id="newdocadder">Add Document</div>
+      <!-- <div class="menu adder">
+        <form class="forminput">
+          <label for="documentName">File Name</label>
+          <input
+            type="text"
+            id="documentName"
+            name="File Name"
+            placeholder="Enter file name..."
+          />
+          <input type="submit" id="createDocument" value="Create Document" />
+        </form>
+      </div> -->
+      <div class="popupbutton docappender" id="docappender">
+        Update Document
+      </div>
+      <!-- <div class="menu appender">
+        <form class="forminput" autocomplete="off" action="/action_page.php">
+          <div class="autocomplete" style="width: 300px">
+            <label for="fname">File ID<sup>*</sup></label>
+            <input
+              type="text"
+              id="documentID"
+              name="File ID"
+              placeholder="Enter file ID..."
+            />
+          </div>
+          <input
+            type="submit"
+            id="updateDocumentId"
+            value="Update Document Id"
+          />
+        </form>
+      </div> -->
+      <div id="createFolder">
+        <img
+          alt="Create Folder"
+          height="30px"
+          width="30px"
+          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABmJLR0QA/wD/AP+gvaeTAAAFfElEQVR4nO2d72scRRjHP0manJgULWgwjdgWUSn4oiY1ipgq9ccb32j/A1+obdN3+k60FfuiiBT1fxC1oIIxvhCpiFADmoo/Un9Akyhir7YiJqcxIokv5kL3np29m72b25vbfT4wJHc3M8/OfHdn9pmdnQFFURRFURRFUZRwGACOALNABdjwFH4HTgG3ZFeU7mc7cBZ/ItjCn8BkVgXqZgZovxjRq2VnNsXqXo6QjRibYRboy6RkXcostRX2HqYJ88VR4qI87TH/3LFCbWWNes6/B/hI2PgbuM2zndwgz952MIrpP6J25oD+NtnrarIQBOBxi62X22iva8lKkB7gQ4u9vIYK8BkwhbmTdSYrQQBuAC5YbOY9zAEjrpWUpSAAE8AfFrt5D1/g2GdmLQjAzcCbwGWL/TyHQy6V0wlBisAoME1t3Z5xSaiCtI8bqa3bZRmhx5JIimCLozRP3frtzfBAFAdUkMBQQQJji0OcT4E7gME2H0ve+Qv4slEkl05daS/aqYeMCtIFSMfQ9xPDomLz1J26B5nA9xPDIiM99Zgg6qlnj3rq3YQKEhgqSGCoIIGhggSGChIYKkhgqCCBoYIEhgoSGCpIYKgggaGCBIYKEhgqSGCoIIGhggSGChIYKkhgqCCBoYIEhgoSGCpIYKgggaGCBIYKEhgqSGC4vEGlmBN3L7C/+vdWzMTpQeA/zIIHZeAn4BPgY+CcL+P6nvoVRoDjwM+kX6VhEXgGuFbk2fLrCEVkG/AqsErry2esACeAq6t5qyApOQBcxP+6JueBBy3fN6SogvRhroqkCl0G3gCeAO4Erses5tNf/X8CeBKziI5cJnEzrFu+a0gRBbkKeAd7JV4ADpPutfBBzEJl5YQ8VZA69AHvEi/3P5gVVIdayHsIeAFYs+SvgiRga6bKwD0ebdxLcr/UkCIJcoB4eb8FbnJIOw7MAO8DYw7xdwDzFnsPNUpYFEG2ET9ry7iJAfB9JN13jml2AL8Jm+e5cktspSiCvEa8z0jTTEXvmNZTpJsk3qecqJegCIKMEHf6jqbMo5V6elakXSHu0Xsx1C0cJ35rm/ZuqpV6KgELIn3i+vd5F6QXMwgYLePhJvJptZ6eEukXSFikIe+CTFBbvmWaWwus1XoaIu7R7y7i85D94vMMZnGxrKkAH4jv7i+iIHvF59MdOQq77fuKKIjcp+SrjhyF3fYuW6S89yFyOfPrxO/jGEcvaeyp2XCOuEc/LOIs2g4474JIp0xuHTGDfzE2w7SwVRK/V4rYZDU6yTp5ElrnOOT9CrlE/SZrDNO8+L465jHL7UaRTdYl2wHnXZBvqC3fRJP5+Kinu0UeXxexyZIjs3s6chR22z8UUZA58Vk6ilnygPj8uS1S3puscWrLt0Lnhk7kps/SaQXM2E40Ut6Wie0Flqgt41QT+bQqyCGRfomEqb1y69Vp8ifKMWrLWAa2psyjFUFKxE+KF5MiT1mMFSEcc65OQyuCPC/SrlJnG70BTMfX6QrKOqxhZoe40uwj3H3Av8L2K40Sbcfss9fpSso6XMRMRHAhOt7lOtN9J3HHtEydx7dR+jFP0s6QPDUyj2EeN1HGMP3rNHEP3MYu4iMA68CjDmkLhXy+voGZqjPp0cY+4lfGBnDSo43c0IOZIC0raw0zOyTVRsKCEvAc9qmkb2OmsSoWtgCvY2/CFjATEtLMShnC+Bny1jYqRsnTseeWXsyENdsrAxsYr/ot4CBwF2akdqAahqvfHQROEffAo33GSfTKSMUjwK/4v1koA49lWI5csRV4CT+vtK1i/AynW1ulPsMYr3qR9EIsYYZDnDeyB93OKA17gIerf2/HiHUNpu+pAL8AP2KG0E8DZ0nnwQPwPxnIGll697cCAAAAAElFTkSuQmCC"
+        />
+      </div>
+      <div id="popupFooter">
+        <!-- <p id="footerNote">Your Note taking Assistant</p> -->
+        <!-- <div id="createDocumentDiv"> -->
+        <!-- <img src="images/page.png" id="footerImage" />
+          <p>Create Document</p> -->
+        <!-- </div> -->
+        <div id="createDocumentDiv">
+          <form>
+            <input
+              id="documentName"
+              type="text"
+              name="search"
+              placeholder="Enter File name..."
+            />
+            <button id="createDocument"></button>
+          </form>
+        </div>
+        <div id="FAQDiv">
+          <!-- <p>Help?</p> -->
+          <label class="switch">
+            <input type="checkbox" checked />
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Everything below spacer is deprecated  !!!DELETE AT WILL -->
+      <!--  -->
+      <!--  -->
+      <div id="spacer"></div>
+      <div>
+        <input type="button" id="showMe" value="Show Me" />
+      </div>
+      <div id="logOut">
+        <input type="button" id="logOutButtonva" value="Log Out" />
+      </div>
+      <div>
+        <a
+          href="https://simpli-notes.herokuapp.com/api/v1/google-auth/"
+          target="_blank"
+          class="button"
+          >Authorize Google API</a
+        >
+      </div>
+
+      <!-- <div>
+        <label for="documentName">Title</label>
+        <input type="text" id="documentName" />
+        <input type="button" id="createDocument" value="Create Document" />
+      </div> -->
+      <div>
+        <label for="documentID">Document ID</label>
+        <input type="text" id="documentID" />
+        <input type="button" id="updateDocumentId" value="Update Document Id" />
+      </div>
+      <div>
+        <input type="text" id="heading" value="Heading" />
+        <input type="button" id="insertHeading" value="Add Heading" />
+      </div>
+      <div>
+        <input type="text" id="subheading" value="Subheading" />
+        <input type="button" id="insertSubheading" value="Add Subheading" />
+      </div>
+      <div>
+        <input type="text" id="paragraph" value="Paragraph" />
+        <input type="button" id="insertParagraph" value="Add Paragraph" />
+      </div>
+      <div>
+        <input type="text" id="bullet" value="Bullet Points" />
+        <input type="button" id="insertBullet" value="Add Bullet Points" />
+      </div>
+      <div>
+        <input type="text" placeholder="url or base64 string" id="image" />
+        <input
+          type="number"
+          placeholder="height"
+          id="height"
+          min="1"
+          max="500"
+        />
+        <input type="number" placeholder="width" id="width" min="1" max="500" />
+        <input type="button" id="insertImage" value="Insert image" />
+      </div>
+      <button id="but">Button</button>
+
+      <!-- Footer -->
+      <div>
+        <div>Response:</div>
+        <pre id="response"></pre>
+      </div>
+      <div>
+        <div>Error:</div>
+        <pre id="error"></pre>
+      </div>
+    </div>
+    <!-- <script>
+      function toggleDropdownMenu() {
+        const dropDownMenu = document.querySelector(".menu");
+        dropDownMenu.classList.toggle("active");
+      }
+    </script> -->
+  </body>
+</html>

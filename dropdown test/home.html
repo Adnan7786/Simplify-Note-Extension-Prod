@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="home.css" />
+    <title>Dropdown Test</title>
+    <script defer src="./home.js"></script>
+  </head>
+  <body>
+    <div class="popupHeader-child avatarPanel action">
+      <div class="profile" onclick="toggleDropdownMenu()">
+        <img src="Google__G__Logo.svg" id="gImg" />
+      </div>
+      <div class="menu">
+        <h3>User Name<br /><span>User Plan</span></h3>
+        <ul>
+          <li>
+            <img src="Google__G__Logo.svg" id="gImg" /><a href="#"
+              >My Profile</a
+            >
+          </li>
+          <li>
+            <img src="Google__G__Logo.svg" id="gImg" /><a href="#">Edit</a>
+          </li>
+          <li>
+            <img src="Google__G__Logo.svg" id="gImg" /><a href="#">Inbox</a>
+          </li>
+          <li>
+            <img src="Google__G__Logo.svg" id="gImg" /><a href="#">Settings</a>
+          </li>
+          <li>
+            <img src="Google__G__Logo.svg" id="gImg" /><a href="#">Help</a>
+          </li>
+          <li>
+            <img src="Google__G__Logo.svg" id="gImg" /><a href="#">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!-- <div id="createNewDocument">
+
+    </div> -->
+    <!-- <input
+      id="createNewDocument"
+      type="text"
+      id="search"
+      name="search"
+      placeholder="Enter File name..."
+    /> -->
+    <!-- <div id="createDocumentDiv" class="createDocumentDiv">
+      <div id="createDocument"></div>
+      <div id="inputBox">
+        <input
+          id="documentName"
+          type="text"
+          name="search"
+          placeholder="Enter File name..."
+        />
+      </div>
+    </div> -->
+
+    <div id="createDocumentDiv">
+      <form>
+        <input
+          id="documentName"
+          type="text"
+          name="search"
+          placeholder="Enter File name..."
+        />
+        <button id="createDocument"></button>
+      </form>
+    </div>
+
+    <script>
+      function toggleDropdownMenu() {
+        const dropDownMenu = document.querySelector(".menu");
+        dropDownMenu.classList.toggle("active");
+      }
+    </script>
+  </body>
+</html>

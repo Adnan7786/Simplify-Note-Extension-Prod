@@ -1,0 +1,52 @@
+{
+  "name": "Simplify Notes",
+  "description": "Create notes on the go",
+  "version": "1.3",
+  "manifest_version": 3,
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "/images/icon.png",
+      "32": "/images/icon.png",
+      "48": "/images/icon.png",
+      "128": "/images/icon.png"
+    },
+    "default_title": "Click here to start creating notes"
+  },
+  "oauth2": {
+    "client_id": "156135009791-p28gu01qf2n5gj4p9ntnhmfi22f4v67j.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/documents",
+      "https://www.googleapis.com/auth/drive"
+    ]
+  },
+  "permissions": [
+    "identity",
+    "identity.email",
+    "storage",
+    "scripting",
+    "activeTab",
+    "tabs",
+    "cookies"
+  ],
+  "host_permissions": [
+    "https://simpli-notes.herokuapp.com/*",
+    "http://localhost:3000/*"
+  ],
+  "icons": {
+    "16": "/images/icon.png",
+    "32": "/images/icon.png",
+    "48": "/images/icon.png",
+    "128": "/images/icon.png"
+  }
+}
