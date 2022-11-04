@@ -41,7 +41,7 @@ const signedInContainer = document.querySelector('#signed-in');
 function sendNotification(status, message) {
   console.log(message);
   //update this later
-  alert(status + '  ' + message);
+  // alert(status + '  ' + message);
 }
 
 function getCSSVariableValue(variable) {
@@ -167,9 +167,9 @@ function logoutUser() {
 }
 
 //update avatar
-function updateAvatar(userIsSignedIn, imageSrc) {
+function updateAvatar(userIsSignedIn, user) {
   if (userIsSignedIn) {
-    userAvatar.src = imageSrc;
+    userAvatar.src = user.image;
     toggleDisplay(noAvatar, userAvatar, "inline");
     return;
   }
@@ -189,15 +189,15 @@ async function render() {
   try {
     setTheme();
     const userIsSignedIn = await isSignedIn();
-    let user;
+    let user = none;
     if (userIsSignedIn) {
       user = await fetchUser();
       console.log(user);
     }
     else {
-      await logoutUser();
+      // await logoutUser();
     }
-    updateAvatar(userIsSignedIn, user.image);
+    updateAvatar(userIsSignedIn, user);
     updateContentBox(userIsSignedIn, user);
   } catch (error) {
     sendNotification('failure', error);
@@ -240,15 +240,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 document.querySelector('#icon-no-avatar').addEventListener('click', redirectToSignInPage);
-// document.querySelector('#user-avatar').addEventListener('click', async () => {
-//   try {
-//     await logoutUser();
-//     updateAvatar(false, undefined);
-//     updateContentBox(false, undefined);
-//   } catch (error) {
-//     sendNotification('failure', error);
-//   }
-// });
+document.querySelector('#user-avatar').addEventListener('click', async () => {
+  try {
+    await logoutUser();
+    updateAvatar(userIsSignedIn, user);
+    updateContentBox(userIsSignedIn, user);
+  } catch (error) {
+    sendNotification('failure', error);
+  }
+
+});
 
 document.querySelector('#sign-in-button').addEventListener('click', redirectToSignInPage);
 
