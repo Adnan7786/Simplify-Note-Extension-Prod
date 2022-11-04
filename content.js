@@ -14,6 +14,19 @@ const userLoggedIn = true;
 //   return true;
 // });
 
+chrome.runtime.onMessage.addListener(
+  function (request, sender, sendResponse) {
+    if (request.message === "toggleTooltip") {
+      console.log(request.status);
+      alert(request.status)
+
+      sendResponse({
+        message: 'successful'
+      })
+    }
+  }
+);
+
 //function to handle response
 function handleResponse(res) {
   if (res.successful) {
@@ -186,129 +199,33 @@ document
       { message: "insertHeading", key: "heading", value: payload.textData },
       handleResponse
     );
-    responseArea.innerHTML = "";
-    errorArea.innerHTML = "";
-    // fetch(`${domain}/api/v1/insert/heading`, {
-    //   method: "POST",
-    //   headers: {
-    //     Accept: "application/json",
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     // text: document.querySelector("#heading").value,
-    //     text: payload.textData,
-    //   }),
-    // })
-    //   .then((res) => {
-    //     res
-    //       .json()
-    //       .then((res) => {
-    //         responseArea.innerHTML = JSON.stringify(res, undefined, 2);
-    //       })
-    //       .catch(
-    //         (error) =>
-    //           (errorArea.innerHTML = JSON.stringify(error, undefined, 2))
-    //       );
-    //   })
-    //   .catch(
-    //     (error) => (errorArea.innerHTML = JSON.stringify(error, undefined, 2))
-    //   );
   });
 
 document
   .querySelector("#insertSubheading")
   .addEventListener("click", async function () {
-    responseArea.innerHTML = "";
-    errorArea.innerHTML = "";
-    fetch(`${domain}/api/v1/insert/subheading`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        // text: document.querySelector("#subheading").value,
-        text: payload.textData,
-      }),
-    })
-      .then((res) => {
-        res
-          .json()
-          .then((res) => {
-            responseArea.innerHTML = JSON.stringify(res, undefined, 2);
-          })
-          .catch(
-            (error) =>
-              (errorArea.innerHTML = JSON.stringify(error, undefined, 2))
-          );
-      })
-      .catch(
-        (error) => (errorArea.innerHTML = JSON.stringify(error, undefined, 2))
-      );
+    chrome.runtime.sendMessage(
+      { message: "insertSubheading", key: "subheading", value: payload.textData },
+      handleResponse
+    );
   });
 
 document
   .querySelector("#insertParagraph")
   .addEventListener("click", async function () {
-    responseArea.innerHTML = "";
-    errorArea.innerHTML = "";
-    fetch(`${domain}/api/v1/insert/paragraph`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        // text: document.querySelector("#paragraph").value,
-        text: payload.textData,
-      }),
-    })
-      .then((res) => {
-        res
-          .json()
-          .then((res) => {
-            responseArea.innerHTML = JSON.stringify(res, undefined, 2);
-          })
-          .catch(
-            (error) =>
-              (errorArea.innerHTML = JSON.stringify(error, undefined, 2))
-          );
-      })
-      .catch(
-        (error) => (errorArea.innerHTML = JSON.stringify(error, undefined, 2))
-      );
+    chrome.runtime.sendMessage(
+      { message: "insertParagraph", key: "paragraph", value: payload.textData },
+      handleResponse
+    );
   });
 
 document
   .querySelector("#insertBullet")
   .addEventListener("click", async function () {
-    responseArea.innerHTML = "";
-    errorArea.innerHTML = "";
-    fetch(`${domain}/api/v1/insert/bullet`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        // text: document.querySelector("#bullet").value,
-        text: payload.textData,
-      }),
-    })
-      .then((res) => {
-        res
-          .json()
-          .then((res) => {
-            responseArea.innerHTML = JSON.stringify(res, undefined, 2);
-          })
-          .catch(
-            (error) =>
-              (errorArea.innerHTML = JSON.stringify(error, undefined, 2))
-          );
-      })
-      .catch(
-        (error) => (errorArea.innerHTML = JSON.stringify(error, undefined, 2))
-      );
+    chrome.runtime.sendMessage(
+      { message: "insertBullet", key: "bullet", value: payload.textData },
+      handleResponse
+    );
   });
 
 var imageData = {
@@ -317,73 +234,15 @@ var imageData = {
   height: 0,
 };
 
+
 document
   .querySelector("#insertImage")
   .addEventListener("click", async function () {
     imageTooltip.style.display = "none";
-    responseArea.innerHTML = "";
-    errorArea.innerHTML = "";
-    if (imageData.url.substring(0, 4) !== "data") {
-      fetch(`${domain}/api/v1/insert/image`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          // image: document.querySelector("#image").value,
-          // height: document.querySelector("#height").value,
-          // width: document.querySelector("#width").value,
-          image: imageData.url,
-          height: imageData.height,
-          width: imageData.width,
-        }),
-      })
-        .then((res) => {
-          res
-            .json()
-            .then((res) => {
-              responseArea.innerHTML = JSON.stringify(res, undefined, 2);
-            })
-            .catch(
-              (error) =>
-                (errorArea.innerHTML = JSON.stringify(error, undefined, 2))
-            );
-        })
-        .catch(
-          (error) => (errorArea.innerHTML = JSON.stringify(error, undefined, 2))
-        );
-    } else {
-      fetch(`${domain}/api/v1/insert/image`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          // image: document.querySelector("#image").value,
-          // height: document.querySelector("#height").value,
-          // width: document.querySelector("#width").value,
-          image: imageData.url,
-          height: imageData.height,
-          width: imageData.width,
-        }),
-      })
-        .then((res) => {
-          res
-            .json()
-            .then((res) => {
-              responseArea.innerHTML = JSON.stringify(res, undefined, 2);
-            })
-            .catch(
-              (error) =>
-                (errorArea.innerHTML = JSON.stringify(error, undefined, 2))
-            );
-        })
-        .catch(
-          (error) => (errorArea.innerHTML = JSON.stringify(error, undefined, 2))
-        );
-    }
+    chrome.runtime.sendMessage(
+      { message: "insertImage", key: "image", value: imageData },
+      handleResponse
+    );
   });
 
 document

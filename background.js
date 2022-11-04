@@ -33,6 +33,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // }
   // console.log("yes");
   //   });
+
+  if (request.message === "toggleTooltip") {
+    console.log(request.status)
+    sendResponse({
+      message: 'successful'
+    })
+  }
   if (request.message === "insertHeading") {
     fetch(`${domain}/api/v1/insert/heading`, {
       method: "POST",
@@ -50,20 +57,134 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           .json()
           .then((res) => {
             sendResponse(setResponse(true, "Successfully inserted Heading"));
-
-            // responseArea.innerHTML = JSON.stringify(res, undefined, 2);
           })
           .catch(
             (error) =>
               sendResponse(
-                setResponse(false, "not Successfully inserted Headingt")
+                setResponse(false, "not Successfully inserted Heading")
               )
-
-            //   (errorArea.innerHTML = JSON.stringify(error, undefined, 2))
           );
       })
       .catch((error) =>
         sendResponse(setResponse(false, "not Successfully inserted Heading"))
+      );
+  }
+  else if (request.message === "insertSubheading") {
+    fetch(`${domain}/api/v1/insert/subheading`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // text: document.querySelector("#heading").value,
+        text: request.value,
+      }),
+    })
+      .then((res) => {
+        res
+          .json()
+          .then((res) => {
+            sendResponse(setResponse(true, "Successfully inserted subheading"));
+          })
+          .catch(
+            (error) =>
+              sendResponse(
+                setResponse(false, "not Successfully inserted subheading")
+              )
+          );
+      })
+      .catch((error) =>
+        sendResponse(setResponse(false, "not Successfully inserted subheading"))
+      );
+  }
+  else if (request.message === "insertParagraph") {
+    fetch(`${domain}/api/v1/insert/paragraph`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // text: document.querySelector("#heading").value,
+        text: request.value,
+      }),
+    })
+      .then((res) => {
+        res
+          .json()
+          .then((res) => {
+            sendResponse(setResponse(true, "Successfully inserted paragraph"));
+          })
+          .catch(
+            (error) =>
+              sendResponse(
+                setResponse(false, "not Successfully inserted paragraph")
+              )
+          );
+      })
+      .catch((error) =>
+        sendResponse(setResponse(false, "not Successfully inserted paragraph"))
+      );
+  }
+  else if (request.message === "insertBullet") {
+    fetch(`${domain}/api/v1/insert/bullet`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // text: document.querySelector("#heading").value,
+        text: request.value,
+      }),
+    })
+      .then((res) => {
+        res
+          .json()
+          .then((res) => {
+            sendResponse(setResponse(true, "Successfully inserted bullet"));
+          })
+          .catch(
+            (error) =>
+              sendResponse(
+                setResponse(false, "not Successfully inserted bullet")
+              )
+          );
+      })
+      .catch((error) =>
+        sendResponse(setResponse(false, "not Successfully inserted bullet"))
+      );
+  }
+  else if (request.message === "insertImage") {
+    fetch(`${domain}/api/v1/insert/image`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        // text: document.querySelector("#heading").value,
+        image: request.value.url,
+        height: request.value.height,
+        width: request.value.width
+      }),
+    })
+      .then((res) => {
+        res
+          .json()
+          .then((res) => {
+            sendResponse(setResponse(true, "Successfully inserted Image"));
+          })
+          .catch(
+            (error) =>
+              sendResponse(
+                setResponse(false, "not Successfully inserted Image")
+              )
+          );
+      })
+      .catch((error) =>
+        sendResponse(setResponse(false, "not Successfully inserted Image"))
       );
   }
 });

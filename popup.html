@@ -1,19 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="popup.css" />
-    <title>Simplify Notes Extension</title>
-    <script defer src="./popup.js"></script>
-  </head>
 
-  <body>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css"
+    integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous">
+  <link rel="stylesheet" href="popup.css" />
+  <title>Simplify Notes Extension</title>
+  <script defer src="./popup.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="header-left">
+      <img class="app-logo" src="/images/logo.png" alt="App Logo" title="Simplify Note" />
+      <span class="app-name">Simplify Note</span>
+    </div>
+    <div class="header-right">
+      <span id="theme" class="theme">
+        <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" class="bi bi-sun icon-sun" viewBox="0 0 16 16">
+          <path
+            d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z" />
+        </svg>
+        <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" class="bi bi-moon-fill icon-moon" viewBox="0 0 16 16">
+          <path
+            d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z" />
+        </svg>
+        <span id="wiper" class="wiper left"></span>
+      </span>
+      <span class="tooltip-switch">
+        <label id="icon-switch" title="Toggle Tooltip" class="icon-switch switch-green">
+          <input type="checkbox" name='toggle-switch-input' class="switch-input">
+          <span class="switch-label" data-on="On" data-off="Off"></span>
+          <span class="switch-handle"></span>
+        </label>
+      </span>
+      <span class="avatar">
+        <svg id="icon-no-avatar" title="Sign In" xmlns="http://www.w3.org/2000/svg"
+          class="bi bi-person-circle icon-no-avatar" viewBox="0 0 16 16">
+          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+          <path fill-rule="evenodd"
+            d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
+        </svg>
+        <img id="user-avatar" class="user-avatar" alt="User Avatar" />
+
+      </span>
+    </div>
+
+  </header>
+
+  <div class="content">
+    <div id="signed-out" class="signed-out">
+      <div class="app-logo-container">
+        <img class="app-full-logo" src="images/full-logo.png" alt="Simplify Note" title="Simplify Note" />
+        <span class="app-tagline">Your personal note-taking assistant</span>
+      </div>
+      <div id="sign-in-button" class="sign-in-button">
+        <span class="google-logo">
+          <img class="icon-google" alt="G" src="images/google-logo.png" />
+        </span>
+        <span class="sign-in-text">Sign in with Google</span>
+      </div>
+    </div>
+    <div id="signed-in" class="signed-in">
+      <span><strong>Hurray!</strong> You have signed in to simplify notes.</span>
+    </div>
+  </div>
+
+  <footer>
+    <div class="website">
+      <a href="https://www.simplifynote.com" target="_blank" rel="noopener noreferrer">www.simplifynote.com</a>
+    </div>
+    <div class="social-media">
+      <ul class="wrapper">
+        <li id="icon-facebook" class="icon facebook">
+          <span class="tooltip">Facebook</span>
+          <span><i class="fab fa-facebook-f"></i></span>
+        </li>
+        <li id="icon-youtube" class="icon youtube">
+          <span class="tooltip">Youtube</span>
+          <span><i class="fab fa-youtube"></i></span>
+        </li>
+        <li id="icon-mail" class="icon mail">
+          <span class="tooltip">Mail</span>
+          <i class="fas fa-envelope"></i></span>
+        </li>
+        <li id="icon-instagram" class="icon instagram">
+          <span class="tooltip">Instagram</span>
+          <span><i class="fab fa-instagram"></i></span>
+        </li>
+        <li id="icon-twitter" class="icon twitter">
+          <span class="tooltip">Twitter</span>
+          <span><i class="fab fa-twitter"></i></span>
+        </li>
+      </ul>
+    </div>
+  </footer>
+
+
+
+  <!--
     <div id="popupHeader" class="popupHeader">
-      <!-- <p>Header</p> -->
       <div class="popupHeader-child brandLogo">
-        <!-- <p>logo</p> -->
         <a href="https://www.s_n.com/" id="brandHyperlink"
           ><img src="images/icon_clipped.png" id="brandImage" target="_blank"
         /></a>
@@ -21,21 +111,15 @@
       <div class="popupHeader-child brandName">
         <p>Simplify Notes</p>
       </div>
-      <!-- <div id="logOutButton" class="popupHeader-child logOutButton">
-        <p>Logout</p>
-      </div> -->
       <div class="popupHeader-child avatarPanel">
-        <!-- <p>Avatar</p> -->
         <div class="avatarPanelInner">
           <span id="greetUser"></span>
-          <!-- <img src="" id="avatar" /> -->
           <div class="profile">
             <img src="" id="avatar" />
           </div>
           <div class="drop">
             <h3 id="dropdownUserName">
               User Name<br />
-              <!-- <span id="dropdownUserSpan">User Plan</span> -->
             </h3>
             <ul>
               <li>
@@ -73,18 +157,6 @@
       <p>Your personal Note taking Assistant</p>
     </div>
     <div id="logIn">
-      <!-- <div id="popupHeader" class="popupHeader">
-        <p>Header</p>
-        <div class="popupHeader-child brandLogo">
-          <p>logo</p>
-        </div>
-        <div class="popupHeader-child brandName">
-          <p>Simplify Notes</p>
-        </div>
-        <div class="popupHeader-child avatarPanel">
-          <p>Avatar</p>
-        </div>
-      </div> -->
       <div id="popupBody" class="popupBody">
         <div id="companyLogo">
           <img src="images/icon.png" width="70px" heigth="70px" />
@@ -95,7 +167,6 @@
         <div id="userSignInButton">
           <img src="images/Google__G__Logo.svg" id="gFaviconLogo" />
           <a id="logInLink" href="" target="_blank">Sign In with Google</a>
-          <!-- <p>Md Fraz Uddin</p> -->
         </div>
         <div id="preSignInFooter">
           <p>feedback@simplifynotes.com</p>
@@ -137,43 +208,11 @@
       </div>
     </div>
     <div id="loggedInComponent">
-      <!-- <span id="greetUser"></span>
-      <img src="" id="avatar" /> -->
 
       <div class="popupbutton newdocadder" id="newdocadder">Add Document</div>
-      <!-- <div class="menu adder">
-        <form class="forminput">
-          <label for="documentName">File Name</label>
-          <input
-            type="text"
-            id="documentName"
-            name="File Name"
-            placeholder="Enter file name..."
-          />
-          <input type="submit" id="createDocument" value="Create Document" />
-        </form>
-      </div> -->
       <div class="popupbutton docappender" id="docappender">
         Update Document
       </div>
-      <!-- <div class="menu appender">
-        <form class="forminput" autocomplete="off" action="/action_page.php">
-          <div class="autocomplete" style="width: 300px">
-            <label for="fname">File ID<sup>*</sup></label>
-            <input
-              type="text"
-              id="documentID"
-              name="File ID"
-              placeholder="Enter file ID..."
-            />
-          </div>
-          <input
-            type="submit"
-            id="updateDocumentId"
-            value="Update Document Id"
-          />
-        </form>
-      </div> -->
       <div id="createFolder">
         <img
           alt="Create Folder"
@@ -183,11 +222,6 @@
         />
       </div>
       <div id="popupFooter">
-        <!-- <p id="footerNote">Your Note taking Assistant</p> -->
-        <!-- <div id="createDocumentDiv"> -->
-        <!-- <img src="images/page.png" id="footerImage" />
-          <p>Create Document</p> -->
-        <!-- </div> -->
         <div id="createDocumentDiv">
           <form>
             <input
@@ -200,7 +234,6 @@
           </form>
         </div>
         <div id="FAQDiv">
-          <!-- <p>Help?</p> -->
           <label class="switch">
             <input type="checkbox" checked />
             <span class="slider round"></span>
@@ -208,9 +241,7 @@
         </div>
       </div>
 
-      <!-- Everything below spacer is deprecated  !!!DELETE AT WILL -->
-      <!--  -->
-      <!--  -->
+
       <div id="spacer"></div>
       <div>
         <input type="button" id="showMe" value="Show Me" />
@@ -227,11 +258,6 @@
         >
       </div>
 
-      <!-- <div>
-        <label for="documentName">Title</label>
-        <input type="text" id="documentName" />
-        <input type="button" id="createDocument" value="Create Document" />
-      </div> -->
       <div>
         <label for="documentID">Document ID</label>
         <input type="text" id="documentID" />
@@ -266,8 +292,6 @@
         <input type="button" id="insertImage" value="Insert image" />
       </div>
       <button id="but">Button</button>
-
-      <!-- Footer -->
       <div>
         <div>Response:</div>
         <pre id="response"></pre>
@@ -276,12 +300,7 @@
         <div>Error:</div>
         <pre id="error"></pre>
       </div>
-    </div>
-    <!-- <script>
-      function toggleDropdownMenu() {
-        const dropDownMenu = document.querySelector(".menu");
-        dropDownMenu.classList.toggle("active");
-      }
-    </script> -->
-  </body>
+    </div>-->
+</body>
+
 </html>
