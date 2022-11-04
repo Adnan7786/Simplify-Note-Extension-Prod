@@ -39,7 +39,7 @@ const signedOutContainer = document.querySelector('#signed-out');
 const signedInContainer = document.querySelector('#signed-in');
 
 function sendNotification(status, message) {
-  console.log(message);
+  //console.log(message);
   //update this later
   // alert(status + '  ' + message);
 }
@@ -189,7 +189,7 @@ async function render() {
   try {
     setTheme();
     const userIsSignedIn = await isSignedIn();
-    let user = none;
+    let user;
     if (userIsSignedIn) {
       user = await fetchUser();
       console.log(user);
