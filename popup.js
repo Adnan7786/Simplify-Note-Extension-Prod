@@ -240,15 +240,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 document.querySelector('#icon-no-avatar').addEventListener('click', redirectToSignInPage);
-document.querySelector('#user-avatar').addEventListener('click', async () => {
-  try {
-    await logoutUser();
-    updateAvatar(false, undefined);
-    updateContentBox(false, undefined);
-  } catch (error) {
-    sendNotification('failure', error);
-  }
-});
+// document.querySelector('#user-avatar').addEventListener('click', async () => {
+//   try {
+//     await logoutUser();
+//     updateAvatar(false, undefined);
+//     updateContentBox(false, undefined);
+//   } catch (error) {
+//     sendNotification('failure', error);
+//   }
+// });
 
 document.querySelector('#sign-in-button').addEventListener('click', redirectToSignInPage);
 
