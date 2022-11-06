@@ -1,18 +1,18 @@
-const domain = "https://simpli-notes.herokuapp.com"; //prod
-// const domain = "http://localhost:3000" //dev
-const userLoggedIn = true;
+function getTooltipUnchecked() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get(['tooltipUnchecked'], function (result) {
+      (result.tooltipUnchecked) ? resolve(result.tooltipUnchecked) : resolve(false);
+    });
+  });
+}
 
-//Verify & Update User signin status from popup.js
-// chrome.runtime.onMessage.addListener(function (request, sender) {
-//   if (request.userSignedIn === true) {
-//     userLoggedIn = true;
-//     sendResponse({ status: "status_received_by_content_script" });
-//   } else {
-//     userLoggedIn = false;
-//     sendResponse({ status: "status_received_by_content_script" });
-//   }
-//   return true;
-// });
+function getTooltipDisabled() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get(['tooltipDisabled'], function (result) {
+      (result.tooltipDisabled) ? resolve(result.tooltipDisabled) : resolve(false);
+    });
+  });
+}
 
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
@@ -289,35 +289,50 @@ document
     event.target.style.backgroundColor = "white";
   });
 
+function sendNotification(status, error) {
+  console.log(status + error);
+}
 //Trigger for tooltip
-window.addEventListener("mouseup", function (event) {
+window.addEventListener("mouseup", async function (event) {
   //  let [tab] = getCurrentTab();
-  let mouseX = event.pageX;
-  let mouseY = event.pageY;
-  let selectedData = getSelectionText();
-  let selectedText = selectedData.text;
-  let boundingRect = selectedData.boundingRect;
+  try {
+    const tooltipUnchecked = await getTooltipUnchecked();
+    const tooltipDisabled = await getTooltipDisabled();
 
-  if (selectedText.length > 0) {
-    //display tooltip, get formatting
-    //send formatting with selected text
+    if (tooltipUnchecked || tooltipDisabled) {
+      return;
+    }
 
-    //Logging the selected text
-    // console.log(window);
-    // console.log(selectedText);
-    // console.log(boundingRect);
-    // console.log(mouseX);
-    // console.log(mouseY);
+    let mouseX = event.pageX;
+    let mouseY = event.pageY;
+    let selectedData = getSelectionText();
+    let selectedText = selectedData.text;
+    let boundingRect = selectedData.boundingRect;
 
-    payload.textData = selectedText;
+    if (selectedText.length > 0) {
+      //display tooltip, get formatting
+      //send formatting with selected text
 
-    div.style.left = mouseX + tooltipXoffset + "px";
-    div.style.top = mouseY + tooltipYoffset + "px";
-    if (userLoggedIn) div.style.display = "flex";
-  } else {
-    // console.log("Nothing selected.");
-    div.style.display = "none";
+      //Logging the selected text
+      // console.log(window);
+      // console.log(selectedText);
+      // console.log(boundingRect);
+      // console.log(mouseX);
+      // console.log(mouseY);
+
+      payload.textData = selectedText;
+
+      div.style.left = mouseX + tooltipXoffset + "px";
+      div.style.top = mouseY + tooltipYoffset + "px";
+      div.style.display = "flex";
+    } else {
+      // console.log("Nothing selected.");
+      div.style.display = "none";
+    }
+  } catch (error) {
+    sendNotification('failure', error);
   }
+
 });
 
 // this.document
@@ -366,7 +381,13 @@ let imageCollection = document.getElementsByTagName("img");
 // console.log(imageCollection);
 for (elem in imageCollection) {
   try {
-    imageCollection[elem].addEventListener("mouseenter", function (event) {
+    imageCollection[elem].addEventListener("mouseenter", async function (event) {
+      const tooltipUnchecked = await getTooltipUnchecked();
+      const tooltipDisabled = await getTooltipDisabled();
+
+      if (tooltipUnchecked || tooltipDisabled) {
+        return;
+      }
       //add code to show button over image
       // imageCollection[elem].appendChild(imageTooltip);
       isMouseIn = true;
@@ -425,3 +446,17 @@ function getSelectionText() {
   }
   return { text, boundingRect };
 }
+
+
+chrome.storage.onChanged.addListener(function (changes, namespace) {
+  for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+    // console.log(
+    //   `Storage key "${key}" in namespace "${namespace}" changed.`,
+    //   `Old value was "${oldValue}", new value is "${newValue}".`
+    // );
+    if ((key === 'tooltipUnchecked' || key === 'tooltipDisabled') && newValue === true) {
+      div.style.display = "none";
+      imageTooltip.style.display = "none";
+    }
+  }
+});

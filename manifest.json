@@ -44,8 +44,7 @@
     "cookies"
   ],
   "host_permissions": [
-    "https://simpli-notes.herokuapp.com/*",
-    "http://localhost:3000/*"
+    "<all_urls>"
   ],
   "icons": {
     "16": "/images/logo.png",

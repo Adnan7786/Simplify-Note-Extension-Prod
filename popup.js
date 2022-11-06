@@ -38,10 +38,60 @@ const userAvatar = document.querySelector('#user-avatar');
 const signedOutContainer = document.querySelector('#signed-out');
 const signedInContainer = document.querySelector('#signed-in');
 
-function sendNotification(status, message) {
-  //console.log(message);
-  //update this later
-  // alert(status + '  ' + message);
+
+function storeCurrentTheme(value) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.set({ 'currentTheme': value }, function () {
+      resolve();
+    });
+  })
+}
+
+function getCurrentTheme() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get(['currentTheme'], function (result) {
+      if (result.currentTheme) {
+        resolve(result.currentTheme);
+      }
+      reject('error in getCurrentTheme');
+    });
+  })
+}
+
+function storeTooltipUnchecked(value) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.set({ 'tooltipUnchecked': value }, function () {
+      resolve();
+    });
+  })
+}
+
+function getTooltipUnchecked() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get(['tooltipUnchecked'], function (result) {
+      (result.tooltipUnchecked) ? resolve(result.tooltipUnchecked) : resolve(false);
+    });
+  });
+}
+
+function storeTooltipDisabled(value) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.set({ 'tooltipDisabled': value }, function () {
+      resolve();
+    });
+  })
+}
+
+function getTooltipDisabled() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get(['tooltipDisabled'], function (result) {
+      (result.tooltipDisabled) ? resolve(result.tooltipDisabled) : resolve(false);
+    });
+  });
+}
+
+function sendNotification(status, error) {
+  console.log(status + error);
 }
 
 function getCSSVariableValue(variable) {
@@ -62,15 +112,27 @@ function toggleDisplay(hideElem, showElem, displayValue) {
   showElem.style.display = displayValue;
 }
 
-function toggleTheme(theme) {
-  localStorage.setItem('theme', theme);
+async function toggleTheme(theme) {
+  await storeCurrentTheme(theme);
   for (const variable in cssThemeVariables) {
-    setCSSVariableValue(variable, cssThemeVariables[variable][theme])
+    setCSSVariableValue(variable, cssThemeVariables[variable][theme]);
   }
 }
 
-function themeClickEvent(theme) {
-  toggleTheme(theme);
+function uncheckTooltipSwitch(value) {
+  const checked = !value;
+  console.log(checked);
+  document.querySelector('input[name=toggle-switch-input]').checked = checked;
+
+}
+
+// Enable/Disable tooltip-switch
+function disableTooltipSwitch(disable) {
+  document.querySelector('input[name=toggle-switch-input]').disabled = disable;
+}
+
+async function themeClickEvent(theme) {
+  await toggleTheme(theme);
   wiperElem.style.width = "30px";
   setTimeout(function () {
     toggleWiperLeftRight();
@@ -86,28 +148,12 @@ function redirectToSignInPage() {
   window.open(domain + '/auth/login.html', '_blank');
 }
 
-function toggleTooltip(status) {
-  // alert(status);
-  chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-    var activeTab = tabs[0];
-    chrome.tabs.sendMessage(activeTab.id, { message: "toggleTooltip", status: status }, function (res) {
-      console.log(res.message)
-    });
-  });
-  // chrome.runtime.sendMessage(
-  //   { message: "toggleTooltip", status: status },
-  //   function (res) {
-  //     console.log(res.message)
-  //   }
-  // );
-}
-
-function setTheme() {
-  const theme = localStorage.getItem('theme');
+async function setTheme() {
+  const theme = await getCurrentTheme();
   if (!theme || (theme !== 'light' && theme !== 'dark')) {
     return;
   }
-  toggleTheme(theme);
+  await toggleTheme(theme);
   (theme === 'dark') ? toggleDisplay(iconMoon, iconSun, "inline") : toggleDisplay(iconSun, iconMoon, "inline");
   return;
 }
@@ -119,10 +165,7 @@ function isSignedIn() {
       url: domain,
     };
     chrome.cookies.get(CookieDetails, (cookie) => {
-      if (!cookie) {
-        reject(false);
-      }
-      resolve(true);
+      (cookie) ? resolve(true) : resolve(false);
     });
   });
 }
@@ -138,11 +181,11 @@ function fetchUser() {
             resolve(res.user);
           })
           .catch((error) => {
-            reject(error);
+            reject('From fetchUser ' + error);
           });
       })
       .catch((error) => {
-        reject(error);
+        reject('From fetchUser ' + error);
       });
   });
 }
@@ -161,15 +204,31 @@ function logoutUser() {
           });
       })
       .catch((error) => {
-        reject(error);
+        reject('From logout user ' + error);
       });
   });
 }
 
+async function signInAndRefreshPopup() {
+  const user = await fetchUser();
+  console.log(user);
+  updateAvatar(true, user.image);
+  updateContentBox(true, user);
+  return user;
+}
+
+async function logoutAndRefreshPopup() {
+  await logoutUser();
+  updateAvatar();
+  updateContentBox();
+  disableTooltipSwitch(true);
+  await storeTooltipDisabled(true);
+}
+
 //update avatar
-function updateAvatar(userIsSignedIn, user) {
+function updateAvatar(userIsSignedIn = false, imageSrc = null) {
   if (userIsSignedIn) {
-    userAvatar.src = user.image;
+    userAvatar.src = imageSrc;
     toggleDisplay(noAvatar, userAvatar, "inline");
     return;
   }
@@ -177,7 +236,7 @@ function updateAvatar(userIsSignedIn, user) {
 }
 
 //update content box
-function updateContentBox(userIsSignedIn, user) {
+function updateContentBox(userIsSignedIn = false, user = null) {
   if (userIsSignedIn) {
     toggleDisplay(signedOutContainer, signedInContainer, "flex");
     return;
@@ -187,33 +246,54 @@ function updateContentBox(userIsSignedIn, user) {
 
 async function render() {
   try {
-    setTheme();
+    await setTheme();
     const userIsSignedIn = await isSignedIn();
-    let user;
+    let user = {};
+
     if (userIsSignedIn) {
-      user = await fetchUser();
-      console.log(user);
+      user = await signInAndRefreshPopup();
+    }
+
+    if (!userIsSignedIn || !user.currentDocID || user.currentDocID === "") {
+      disableTooltipSwitch(true);
+      await storeTooltipDisabled(true);
     }
     else {
-      // await logoutUser();
+      await storeTooltipDisabled(false);
     }
-    updateAvatar(userIsSignedIn, user);
-    updateContentBox(userIsSignedIn, user);
+
+    const tooltipUnchecked = await getTooltipUnchecked();
+    console.log(tooltipUnchecked);
+    if (tooltipUnchecked) {
+      uncheckTooltipSwitch(true);
+    }
+
+
   } catch (error) {
     sendNotification('failure', error);
   }
 }
 
-iconSun.addEventListener("click", function () {
-  themeClickEvent('light');
+iconSun.addEventListener("click", async function () {
+  try {
+    await themeClickEvent('light');
+  } catch (error) {
+    sendNotification('failure', error);
+  }
 });
 
-iconMoon.addEventListener("click", function () {
-  themeClickEvent('dark');
+iconMoon.addEventListener("click", async function () {
+  try {
+    await themeClickEvent('dark');
+  } catch (error) {
+    sendNotification('failure', error);
+  }
+
 });
 
 document.querySelector('#icon-facebook').addEventListener('click', function () {
-  window.open('https://www.facebook.com', '_blank');
+  window.open('https://www.facebook.com', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes')
+  // window.open('https://www.facebook.com', '_blank');
 });
 document.querySelector('#icon-youtube').addEventListener('click', function () {
   window.open('https://www.youtube.com', '_blank');
@@ -228,25 +308,28 @@ document.querySelector('#icon-twitter').addEventListener('click', function () {
   window.open('https://www.twitter.com', '_blank');
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-  document.querySelector('input[name=toggle-switch-input]').addEventListener('change', function () {
-    if (this.checked) {
-      toggleTooltip('on')
-    } else {
-      toggleTooltip('off')
+document.querySelector('input[name=toggle-switch-input]').addEventListener('click', async function () {
+  try {
+    if (this.checked === true) {
+      console.log('checked');
+      return await storeTooltipUnchecked(false);
     }
-  });
+    else if (this.checked === false) {
+      console.log('unchecked');
+      return await storeTooltipUnchecked(true);
+    }
+  } catch (error) {
+    return sendNotification('failure', error);
+  }
 });
 
 
 document.querySelector('#icon-no-avatar').addEventListener('click', redirectToSignInPage);
 document.querySelector('#user-avatar').addEventListener('click', async () => {
   try {
-    await logoutUser();
-    updateAvatar(userIsSignedIn, user);
-    updateContentBox(userIsSignedIn, user);
+    return await logoutAndRefreshPopup();
   } catch (error) {
-    sendNotification('failure', error);
+    return sendNotification('failure', error);
   }
 
 });
