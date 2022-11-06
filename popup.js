@@ -53,7 +53,6 @@ function getCurrentTheme() {
       if (result.currentTheme) {
         resolve(result.currentTheme);
       }
-      reject('error in getCurrentTheme');
     });
   })
 }
