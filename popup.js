@@ -247,6 +247,10 @@ function updateContentBox(userIsSignedIn = false, user = null) {
 async function render() {
   try {
     await setTheme();
+
+    const tooltipUnchecked = await getTooltipUnchecked();
+    if (tooltipUnchecked) uncheckTooltipSwitch(true);
+
     const userIsSignedIn = await isSignedIn();
     let user = {};
 
@@ -260,12 +264,6 @@ async function render() {
     }
     else {
       await storeTooltipDisabled(false);
-    }
-
-    const tooltipUnchecked = await getTooltipUnchecked();
-    console.log(tooltipUnchecked);
-    if (tooltipUnchecked) {
-      uncheckTooltipSwitch(true);
     }
 
 
