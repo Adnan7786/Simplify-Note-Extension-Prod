@@ -80,16 +80,42 @@
         </span>
       </div>
       <div class="tabs-content-container">
-        <div class="tab-content active">
-          Workspace
+        <div class="tab-content workspace active">
+          <div class="no-current-doc">No active document. Please create a new document from Notes tab.</div>
+          <div class="current-doc">
+            <div class="currently-editing">
+              <div class="currently-editing-title">Currently Editing:</div>
+              <div class="currently-editing-content">
+                <span class="icon-document"></span>
+                <div class="doc-details">
+                  <div class="doc-name">
+                    <span class="doc-name-label">Name:</span>
+                    <span class="doc-name-value"></span>
+                  </div>
+                  <div class="doc-created">
+                    <span class="doc-created-label">Created at:</span>
+                    <span class="doc-created-value"></span>
+                  </div>
+                  <div class="doc-modified">
+                    <span class="doc-modified-label">Last modified:</span>
+                    <span class="doc-modified-value"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="add-note">
+              <input type="text" name="addNote" id="addNote">
+              <div class="text-tooltip">H1 H2 P B</div>
+            </div>
+          </div>
         </div>
-        <div class="tab-content">
+        <div class="tab-content notes">
           Notes
         </div>
-        <div class="tab-content">
+        <div class="tab-content styles">
           Styles
         </div>
-        <div class="tab-content">
+        <div class="tab-content profile">
           Profile
         </div>
       </div>

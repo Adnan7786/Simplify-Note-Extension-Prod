@@ -37,6 +37,10 @@ const noAvatar = document.querySelector('#icon-no-avatar');
 const userAvatar = document.querySelector('#user-avatar');
 const signedOutContainer = document.querySelector('#signed-out');
 const signedInContainer = document.querySelector('#signed-in');
+const navbarTabs = document.querySelectorAll('.navbar-tab');
+const tabContents = document.querySelectorAll('.tab-content');
+
+let activeTab = 0;
 
 
 function storeCurrentTheme(value) {
@@ -50,9 +54,7 @@ function storeCurrentTheme(value) {
 function getCurrentTheme() {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get(['currentTheme'], function (result) {
-      if (result.currentTheme) {
-        resolve(result.currentTheme);
-      }
+      (result.currentTheme) ? resolve(result.currentTheme) : resolve(null);
     });
   })
 }
@@ -149,7 +151,10 @@ function redirectToSignInPage() {
 
 async function setTheme() {
   const theme = await getCurrentTheme();
+  console.log(!theme);
+  console.log('theme ' + theme);
   if (!theme || (theme !== 'light' && theme !== 'dark')) {
+    console.log('aha');
     return;
   }
   await toggleTheme(theme);
@@ -287,6 +292,16 @@ iconMoon.addEventListener("click", async function () {
   }
 
 });
+
+for (let i = 0; i < navbarTabs.length; i++) {
+  navbarTabs[i].addEventListener("click", function () {
+    navbarTabs[activeTab].classList.remove('active');
+    tabContents[activeTab].classList.remove('active');
+    navbarTabs[i].classList.add('active');
+    tabContents[i].classList.add('active');
+    activeTab = i;
+  });
+};
 
 document.querySelector('#icon-facebook').addEventListener('click', function () {
   window.open('https://www.facebook.com', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes')

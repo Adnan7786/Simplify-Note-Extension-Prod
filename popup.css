@@ -32,7 +32,7 @@
   --font-small: 1.5em;
   --font-very-small: 0.75em;
   --border-width-small: 1px;
-  --border-radius: 20px;
+  --border-radius: 15px;
   --body-width: 400px;
   --content-width: 370px;
   --margin-width: 15px;
@@ -530,11 +530,14 @@ div.social-media {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  /* border: 1px solid red; */
+  color: var(--color-secondary);
+  cursor: pointer;
+  transition: color ease-out 200ms, border-color ease-out 200ms;
 }
 
 .navbar-tab.active {
   color: var(--color-primary);
+  cursor: default;
   border-bottom: 1px solid var(--color-primary);
 }
 
@@ -548,12 +551,36 @@ div.social-media {
 }
 
 .tab-content {
+  height: 100%;
+  width: 100%;
   display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* transition: all ease-out 100ms; */
 }
 
 .tab-content.active {
   display: flex;
 }
+
+.workspace .no-current-doc {
+  height: 100%;
+  width: 100%;
+  color: var(--color-grey-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.workspace .current-doc {
+  height: 100%;
+  width: 100%;
+  display: none;
+}
+
+
 
 @media (prefers-color-scheme: dark) {
   :root {
