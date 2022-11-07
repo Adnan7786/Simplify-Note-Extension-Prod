@@ -86,26 +86,47 @@
             <div class="currently-editing">
               <div class="currently-editing-title">Currently Editing:</div>
               <div class="currently-editing-content">
-                <span class="icon-document"></span>
+                <span class="document-icon-container">
+                  <!-- <svg id="icon-document" xmlns="http://www.w3.org/2000/svg"
+                    class="bi bi-file-earmark-richtext-fill icon-document" viewBox="0 0 16 16">
+                    <path
+                      d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM7 6.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-.861 1.542 1.33.886 1.854-1.855a.25.25 0 0 1 .289-.047l1.888.974V9.5a.5.5 0 0 1-.5.5H5a.5.5 0 0 1-.5-.5V9s1.54-1.274 1.639-1.208zM5 11h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1zm0 2h3a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1z" />
+                  </svg> -->
+                  <svg id="icon-document" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-file-earmark-text-fill  icon-document" viewBox="0 0 16 16">
+                    <path
+                      d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
+                  </svg>
+                </span>
                 <div class="doc-details">
                   <div class="doc-name">
-                    <span class="doc-name-label">Name:</span>
-                    <span class="doc-name-value"></span>
+                    <span class="label">Name :</span>
+                    <span class="value">Tsunami</span>
                   </div>
                   <div class="doc-created">
-                    <span class="doc-created-label">Created at:</span>
-                    <span class="doc-created-value"></span>
+                    <span class="label">Created At :</span>
+                    <span class="value">12th March, 2021</span>
                   </div>
                   <div class="doc-modified">
-                    <span class="doc-modified-label">Last modified:</span>
-                    <span class="doc-modified-value"></span>
+                    <span class="label">Last Modified :</span>
+                    <span class="value">4th November, 2022</span>
+                  </div>
+                  <div class="doc-folder">
+                    <span class="label">Folder Name :</span>
+                    <span class="value">Natural Disasters</span>
                   </div>
                 </div>
               </div>
             </div>
             <div class="add-note">
-              <input type="text" name="addNote" id="addNote">
-              <div class="text-tooltip">H1 H2 P B</div>
+              <input type="text" name="addNoteInput" id="addNoteInput" class="add-note-input"
+                placeholder="Add a note to the document">
+              <div class="text-tooltip">
+                <div class="tooltip-button">Heading</div>
+                <div class="tooltip-button">Subheading</div>
+                <div class="tooltip-button">Bullet</div>
+                <div class="tooltip-button">Paragraph</div>
+              </div>
             </div>
           </div>
         </div>

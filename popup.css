@@ -26,7 +26,7 @@
   --color-hover: #f3f6fd;
   --color-white: #ffffff;
   --color-white-hover: #def9e5;
-  --color-grey-light: #b5b5b5;
+  --color-grey-light: #686868;
   --font-large: 5em;
   --font-medium: 4em;
   --font-small: 1.5em;
@@ -568,24 +568,151 @@ div.social-media {
   height: 100%;
   width: 100%;
   color: var(--color-grey-light);
-  display: flex;
+  /* display: flex; */
+  display: none;
   align-items: center;
   justify-content: center;
   text-align: center;
 }
 
 .workspace .current-doc {
-  height: 100%;
   width: 100%;
-  display: none;
+  height: 100%;
+  color: var(--color-secondary);
+  /* display: none; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
 }
 
+.workspace .currently-editing {
+  height: 65%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.workspace .currently-editing .currently-editing-title {
+  height: 25%;
+  width: 100%;
+  display: flex;
+  justify-content: left;
+  align-items: flex-end;
+  padding-left: 15px;
+  font-size: 1.1em;
+  /* color: var(--color-secondary); */
+  /* border: 1px solid var(--color-primary); */
+}
+
+.workspace .currently-editing .currently-editing-content {
+  height: 75%;
+  width: 100%;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+}
+
+.currently-editing-content .document-icon-container {
+  width: 35%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* border: 1px solid var(--color-primary); */
+}
+
+.document-icon-container .icon-document {
+  width: 80px;
+  height: 100px;
+  fill: var(--color-primary);
+}
+
+.currently-editing-content .doc-details {
+  width: 65%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  /* border: 1px solid var(--color-primary); */
+}
+
+.currently-editing-content .doc-details .label {
+  color: var(--color-primary);
+}
+
+/* .currently-editing-content .doc-details .value {
+  color: var(--color-secondary);
+} */
+
+
+.workspace .add-note {
+  height: 35%;
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* border: 1px solid var(--color-primary); */
+}
+
+.workspace .add-note .add-note-input {
+  width: 90%;
+  height: 25px;
+  border-radius: 2px;
+  text-align: center;
+  color: var(--color-secondary);
+  border-bottom: 1px solid var(--color-secondary);
+  background-color: var(--color-bgr-main);
+}
+
+.workspace .add-note .add-note-input:focus::placeholder {
+  color: transparent;
+}
+
+.workspace .add-note .text-tooltip {
+  width: 90%;
+  height: 25px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid var(--color-secondary);
+  border-radius: 1px;
+}
+
+.text-tooltip .tooltip-button {
+  width: 25%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: var(--font-very-small);
+  cursor: pointer;
+  background-color: var(--color-bgr-main);
+}
+
+.text-tooltip .tooltip-button:hover {
+  color: var(--color-white);
+  background-color: var(--color-primary);
+}
+
+.text-tooltip .tooltip-button:not(:last-child) {
+  border-right: 1px solid var(--color-secondary);
+}
 
 
 @media (prefers-color-scheme: dark) {
   :root {
     /* --current-theme: dark; */
-    --color-secondary: #a5a0a0;
+    --color-secondary: #b4b4b4;
     --color-hover: #f2efef;
     --color-bgr-main: #1e1e1e;
     --color-bgr-secondary: #000;

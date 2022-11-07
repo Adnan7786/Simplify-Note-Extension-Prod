@@ -4,7 +4,7 @@ const domain = "https://simpli-notes.herokuapp.com"; //prod
 const cssThemeVariables = {
   '--color-secondary': {
     'light': '#4a4a4a',
-    'dark': '#a5a0a0'
+    'dark': '#b4b4b4'
   },
   '--color-hover': {
     'light': '#f3f6fd',
