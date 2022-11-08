@@ -84,19 +84,27 @@
           <div class="no-current-doc">No active document. Please create a new document from Notes tab.</div>
           <div class="current-doc">
             <div class="currently-editing">
-              <div class="currently-editing-title">Currently Editing:</div>
+              <div class="currently-editing-title">
+                <span class="icon-online-container">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon-online" viewBox="0 0 16 16">
+                    <circle cx="8" cy="8" r="8" />
+                  </svg>
+                </span>
+                <span>Currently Editing</span>
+              </div>
               <div class="currently-editing-content">
                 <span class="document-icon-container">
-                  <!-- <svg id="icon-document" xmlns="http://www.w3.org/2000/svg"
-                    class="bi bi-file-earmark-richtext-fill icon-document" viewBox="0 0 16 16">
+                  <svg id="icon-document" data-documentid="10wID9hUIbI1XjY8Me19zuCJ2DLPAdLc6wI0jgkeBxmI"
+                    xmlns="http://www.w3.org/2000/svg" class="bi bi-file-earmark-richtext-fill icon-document"
+                    viewBox="0 0 16 16">
                     <path
                       d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM7 6.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-.861 1.542 1.33.886 1.854-1.855a.25.25 0 0 1 .289-.047l1.888.974V9.5a.5.5 0 0 1-.5.5H5a.5.5 0 0 1-.5-.5V9s1.54-1.274 1.639-1.208zM5 11h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1zm0 2h3a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1z" />
-                  </svg> -->
-                  <svg id="icon-document" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                  </svg>
+                  <!-- <svg id="icon-document" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                     class="bi bi-file-earmark-text-fill  icon-document" viewBox="0 0 16 16">
                     <path
                       d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
-                  </svg>
+                  </svg> -->
                 </span>
                 <div class="doc-details">
                   <div class="doc-name">
@@ -118,29 +126,29 @@
                 </div>
               </div>
             </div>
-            <div class="add-note">
+            <form class="add-note">
               <input type="text" name="addNoteInput" id="addNoteInput" class="add-note-input"
-                placeholder="Add a note to the document">
+                placeholder="Add a note to the document" autocomplete="off" required="">
               <div class="text-tooltip">
-                <div class="tooltip-button">Heading</div>
-                <div class="tooltip-button">Subheading</div>
-                <div class="tooltip-button">Bullet</div>
-                <div class="tooltip-button">Paragraph</div>
+                <button class="tooltip-button">Heading</button>
+                <button class="tooltip-button">Subheading</button>
+                <button class="tooltip-button">Bullet</button>
+                <button class="tooltip-button">Paragraph</button>
               </div>
-            </div>
           </div>
         </div>
-        <div class="tab-content notes">
-          Notes
-        </div>
-        <div class="tab-content styles">
-          Styles
-        </div>
-        <div class="tab-content profile">
-          Profile
-        </div>
+      </div>
+      <div class="tab-content notes">
+        Notes
+      </div>
+      <div class="tab-content styles">
+        Styles
+      </div>
+      <div class="tab-content profile">
+        Profile
       </div>
     </div>
+  </div>
   </div>
 
   <footer>

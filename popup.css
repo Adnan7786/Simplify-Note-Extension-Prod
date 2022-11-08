@@ -23,7 +23,7 @@
   --color-secondary: #4a4a4a;
   --color-icon-background: #171717;
   --color-icon-text: var(--color-white);
-  --color-hover: #f3f6fd;
+  --color-black-white: #000;
   --color-white: #ffffff;
   --color-white-hover: #def9e5;
   --color-grey-light: #686868;
@@ -557,6 +557,7 @@ div.social-media {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  color: var(--color-secondary);
   /* transition: all ease-out 100ms; */
 }
 
@@ -589,7 +590,7 @@ div.social-media {
 }
 
 .workspace .currently-editing {
-  height: 65%;
+  height: 60%;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -601,6 +602,7 @@ div.social-media {
   height: 25%;
   width: 100%;
   display: flex;
+  gap: 5px;
   justify-content: left;
   align-items: flex-end;
   padding-left: 15px;
@@ -608,6 +610,18 @@ div.social-media {
   /* color: var(--color-secondary); */
   /* border: 1px solid var(--color-primary); */
 }
+
+.currently-editing-title .icon-online-container {
+  display: inline-flex;
+  align-items: center;
+}
+
+.icon-online-container {
+  width: 6px;
+  height: 20px;
+  fill: var(--color-primary);
+}
+
 
 .workspace .currently-editing .currently-editing-content {
   height: 75%;
@@ -630,6 +644,12 @@ div.social-media {
   width: 80px;
   height: 100px;
   fill: var(--color-primary);
+  cursor: pointer;
+  transition: transform ease-out 100ms;
+}
+
+.document-icon-container .icon-document:hover {
+  transform: scale3d(1.1, 1.1, 1.1);
 }
 
 .currently-editing-content .doc-details {
@@ -643,16 +663,16 @@ div.social-media {
 }
 
 .currently-editing-content .doc-details .label {
-  color: var(--color-primary);
+  color: var(--color-secondary);
 }
 
-/* .currently-editing-content .doc-details .value {
-  color: var(--color-secondary);
-} */
+.currently-editing-content .doc-details .value {
+  color: var(--color-black-white);
+}
 
 
 .workspace .add-note {
-  height: 35%;
+  height: 40%;
   width: 100%;
   display: flex;
   gap: 10px;
@@ -667,14 +687,21 @@ div.social-media {
   height: 25px;
   border-radius: 2px;
   text-align: center;
-  color: var(--color-secondary);
-  border-bottom: 1px solid var(--color-secondary);
+  color: var(--color-black-white);
+  border-bottom: 0.5px solid var(--color-secondary);
   background-color: var(--color-bgr-main);
+  transition: border ease-out 350ms, color ease-out 350ms;
+}
+
+.workspace .add-note .add-note-input:focus {
+  border-color: var(--color-black-white);
 }
 
 .workspace .add-note .add-note-input:focus::placeholder {
   color: transparent;
 }
+
+
 
 .workspace .add-note .text-tooltip {
   width: 90%;
@@ -683,7 +710,7 @@ div.social-media {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  border-bottom: 1px solid var(--color-secondary);
+  /* border-bottom: 1px solid var(--color-secondary); */
   border-radius: 1px;
 }
 
@@ -696,16 +723,28 @@ div.social-media {
   align-items: center;
   font-size: var(--font-very-small);
   cursor: pointer;
+  color: var(--color-secondary);
   background-color: var(--color-bgr-main);
+  transition: background-color ease-out 350ms, color ease-out 350ms;
 }
 
-.text-tooltip .tooltip-button:hover {
-  color: var(--color-white);
+.add-note-input.active {
+  border-color: var(--color-primary);
+}
+
+.tooltip-button.active {
+  color: var(--color-black-white);
   background-color: var(--color-primary);
 }
 
+.text-tooltip .tooltip-button:hover {
+  transform: scaleY(1.1);
+}
+
+
+
 .text-tooltip .tooltip-button:not(:last-child) {
-  border-right: 1px solid var(--color-secondary);
+  border-right: 2px solid var(--color-bgr-secondary);
 }
 
 
@@ -713,11 +752,11 @@ div.social-media {
   :root {
     /* --current-theme: dark; */
     --color-secondary: #b4b4b4;
-    --color-hover: #f2efef;
     --color-bgr-main: #1e1e1e;
     --color-bgr-secondary: #000;
     --color-icon-background: #ffffff;
     --color-icon-text: #cecccc;
+    --color-black-white: #fff;
   }
 
   .icon-moon {

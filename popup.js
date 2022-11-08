@@ -6,9 +6,9 @@ const cssThemeVariables = {
     'light': '#4a4a4a',
     'dark': '#b4b4b4'
   },
-  '--color-hover': {
-    'light': '#f3f6fd',
-    'dark': '#f2efef'
+  '--color-black-white': {
+    'light': '#000',
+    'dark': '#fff'
   },
   '--color-bgr-main': {
     'light': '#f3f6fd',
@@ -39,6 +39,10 @@ const signedOutContainer = document.querySelector('#signed-out');
 const signedInContainer = document.querySelector('#signed-in');
 const navbarTabs = document.querySelectorAll('.navbar-tab');
 const tabContents = document.querySelectorAll('.tab-content');
+const currentlyEditingDocIcon = document.querySelector('.currently-editing-content #icon-document');
+const addNoteInput = document.querySelector('#addNoteInput');
+const tooltipButtons = document.querySelectorAll('.tooltip-button');
+
 
 let activeTab = 0;
 
@@ -302,6 +306,26 @@ for (let i = 0; i < navbarTabs.length; i++) {
     activeTab = i;
   });
 };
+
+currentlyEditingDocIcon.addEventListener('click', function () {
+  const documentId = this.dataset.documentid
+  console.log(documentId);
+  window.open('https://docs.google.com/document/d/' + documentId, '_blank', 'location=yes,height=720,width=1000,scrollbars=yes,status=yes');
+});
+
+addNoteInput.addEventListener('input', function () {
+  if (this.value.length == 0) {
+    this.classList.remove('active');
+    for (let i = 0; i < tooltipButtons.length; i++) {
+      tooltipButtons[i].classList.remove('active')
+    }
+    return;
+  }
+  this.classList.add('active');
+  for (let i = 0; i < tooltipButtons.length; i++) {
+    tooltipButtons[i].classList.add('active');
+  }
+})
 
 document.querySelector('#icon-facebook').addEventListener('click', function () {
   window.open('https://www.facebook.com', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes')
