@@ -126,14 +126,31 @@
                 </div>
               </div>
             </div>
-            <form class="add-note">
+            <form id="addNoteForm" class="add-note">
               <input type="text" name="addNoteInput" id="addNoteInput" class="add-note-input"
                 placeholder="Add a note to the document" autocomplete="off" required="">
               <div class="text-tooltip">
-                <button class="tooltip-button">Heading</button>
-                <button class="tooltip-button">Subheading</button>
-                <button class="tooltip-button">Bullet</button>
-                <button class="tooltip-button">Paragraph</button>
+                <div id="tooltipSubmitMessage" class="submitMessage">
+                  <div id="tooltipLoadingMessage" class="loadingMessage">
+                    <svg class='icon-loading' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 17">
+                      <circle class="loadingCircle" cx="2.2" cy="10" r="1.6" />
+                      <circle class="loadingCircle" cx="9.5" cy="10" r="1.6" />
+                      <circle class="loadingCircle" cx="16.8" cy="10" r="1.6" />
+                    </svg>
+                  </div>
+                  <div id="tooltipResponseMessage" class="responseMessage">
+                    <svg id='iconSuccess' class="icon-success" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 13 11">
+                      <polyline stroke="currentColor" points="1.4,5.8 5.1,9.5 11.6,2.1 " />
+                    </svg>
+                    <span class="response">Success</span>
+                  </div>
+                </div>
+                <div class="tooltip-button-container">
+                  <button type='submit' class="tooltip-button" data-style='heading'>Heading</button>
+                  <button type='submit' class="tooltip-button" data-style='subheading'>Subheading</button>
+                  <button type='submit' class="tooltip-button" data-style='bullet'>Bullet</button>
+                  <button type='submit' class="tooltip-button" data-style='paragraph'>Paragraph</button>
+                </div>
               </div>
           </div>
         </div>

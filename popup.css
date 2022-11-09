@@ -1,5 +1,19 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap");
 
+@keyframes loading {
+  0% {
+    cy: 10;
+  }
+
+  25% {
+    cy: 3;
+  }
+
+  50% {
+    cy: 10;
+  }
+}
+
 * {
   font-family: "Poppins", sans-serif;
   outline: none;
@@ -706,15 +720,105 @@ div.social-media {
 .workspace .add-note .text-tooltip {
   width: 90%;
   height: 25px;
+  position: relative;
+  border-radius: 1px;
+}
+
+.text-tooltip .submitMessage {
+  width: 100%;
+  height: 0%;
+  z-index: 2;
+  position: absolute;
+  background-color: var(--color-bgr-main);
+  transition: height 100ms ease-out 10ms;
+}
+
+.text-tooltip .submitMessage.extend {
+  height: 100%;
+}
+
+.submitMessage .loadingMessage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.loadingMessage.show {
+  opacity: 1;
+}
+
+.submitMessage .loadingMessage .icon-loading {
+  fill: #5c86ff;
+  margin: 0;
+  width: 22px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.icon-loading .loadingCircle {
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-name: loading;
+  cy: 10;
+}
+
+.icon-loading .loadingCircle:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.icon-loading .loadingCircle:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.submitMessage .responseMessage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.responseMessage.show {
+  opacity: 1;
+}
+
+.submitMessage .responseMessage .icon-success {
+  display: inline-block;
+  fill: none;
+  margin-right: 5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+  color: #5cffa1;
+  stroke-dasharray: 20;
+  stroke-dashoffset: 20;
+  transition: stroke-dashoffset .3s ease-in-out 100ms;
+  width: 14px;
+}
+
+.submitMessage .responseMessage.show .icon-success {
+  stroke-dashoffset: 0;
+}
+
+.text-tooltip .tooltip-button-container {
+  /* display: none; */
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  /* border-bottom: 1px solid var(--color-secondary); */
-  border-radius: 1px;
+  position: absolute;
 }
 
-.text-tooltip .tooltip-button {
+.tooltip-button-container .tooltip-button {
   width: 25%;
   height: 100%;
   display: flex;
@@ -737,13 +841,12 @@ div.social-media {
   background-color: var(--color-primary);
 }
 
-.text-tooltip .tooltip-button:hover {
+.tooltip-button-container .tooltip-button:not(.submit):hover,
+.tooltip-button-container .tooltip-button:not(.submit):focus {
   transform: scaleY(1.1);
 }
 
-
-
-.text-tooltip .tooltip-button:not(:last-child) {
+.tooltip-button-container .tooltip-button:not(:last-child) {
   border-right: 2px solid var(--color-bgr-secondary);
 }
 

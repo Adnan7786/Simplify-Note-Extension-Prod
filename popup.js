@@ -28,6 +28,9 @@ const cssThemeVariables = {
   }
 }
 
+let activeTab = 0;
+const textStyles = ['heading', 'subheading', 'bullet', 'paragraph'];
+
 const documentRoot = document.querySelector(':root');
 const computedStyle = getComputedStyle(documentRoot);
 const iconSun = document.querySelector('#icon-sun');
@@ -42,9 +45,40 @@ const tabContents = document.querySelectorAll('.tab-content');
 const currentlyEditingDocIcon = document.querySelector('.currently-editing-content #icon-document');
 const addNoteInput = document.querySelector('#addNoteInput');
 const tooltipButtons = document.querySelectorAll('.tooltip-button');
+const addNoteForm = document.querySelector('#addNoteForm');
+const tooltipSubmitMessage = document.querySelector('#tooltipSubmitMessage');
+const loadingMessage = document.querySelector('#tooltipLoadingMessage');
+const responseMessage = document.querySelector('#tooltipResponseMessage');
+// const iconSuccess = document.querySelector('#iconSuccess');
 
-
-let activeTab = 0;
+addNoteForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const style = document.activeElement.dataset.style;
+  document.activeElement?.blur();
+  if (!textStyles.includes(style)) return;
+  for (let i = 0; i < tooltipButtons.length; i++) {
+    tooltipButtons[i].classList.add('submit');
+  }
+  const inputValue = this.elements['addNoteInput'].value;
+  tooltipSubmitMessage.classList.add('extend');
+  loadingMessage.classList.add('show');
+  this.elements['addNoteInput'].value = "";
+  try {
+    const response = await apiInsertText(style, inputValue);
+    loadingMessage.classList.remove('show');
+    responseMessage.classList.add('show');
+    for (let i = 0; i < tooltipButtons.length; i++) {
+      tooltipButtons[i].classList.remove('submit');
+      tooltipButtons[i].classList.remove('active');
+    }
+    setTimeout(() => {
+      responseMessage.classList.remove('show');
+      tooltipSubmitMessage.classList.remove('extend');
+    }, 1500);
+  } catch (error) {
+    console.log('error' + error);
+  }
+});
 
 
 function storeCurrentTheme(value) {
@@ -112,9 +146,9 @@ function toggleWiperLeftRight() {
   wiperElem.classList.toggle("right");
 }
 
-function toggleDisplay(hideElem, showElem, displayValue) {
+function toggleDisplay(hideElem, showElem, displayType) {
   hideElem.style.display = "none";
-  showElem.style.display = displayValue;
+  showElem.style.display = displayType;
 }
 
 async function toggleTheme(theme) {
@@ -178,8 +212,8 @@ function isSignedIn() {
   });
 }
 
-//fetchUser
-function fetchUser() {
+
+function apiFetchUser() {
   return new Promise((resolve, reject) => {
     const user = {};
     fetch(`${domain}/api/v1/users/showMe`, {})
@@ -189,17 +223,17 @@ function fetchUser() {
             resolve(res.user);
           })
           .catch((error) => {
-            reject('From fetchUser ' + error);
+            reject('From apiFetchUser ' + error);
           });
       })
       .catch((error) => {
-        reject('From fetchUser ' + error);
+        reject('From apiFetchUser ' + error);
       });
   });
 }
 
-//logoutUser
-function logoutUser() {
+
+function apiLogoutUser() {
   return new Promise((resolve, reject) => {
     fetch(`${domain}/api/v1/auth/logout`, {})
       .then((res) => {
@@ -217,8 +251,32 @@ function logoutUser() {
   });
 }
 
+//insertText Api call
+function apiInsertText(style, textValue) {
+  return new Promise((resolve, reject) => {
+    fetch(`${domain}/api/v1/insert/${style}`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text: textValue,
+      }),
+    }).then((res) => {
+      res.json().then((res) => {
+        resolve(res);
+      }).catch((error) => {
+        reject(error);
+      });
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
 async function signInAndRefreshPopup() {
-  const user = await fetchUser();
+  const user = await apiFetchUser();
   console.log(user);
   updateAvatar(true, user.image);
   updateContentBox(true, user);
@@ -226,7 +284,7 @@ async function signInAndRefreshPopup() {
 }
 
 async function logoutAndRefreshPopup() {
-  await logoutUser();
+  await apiLogoutUser();
   updateAvatar();
   updateContentBox();
   disableTooltipSwitch(true);
@@ -317,7 +375,7 @@ addNoteInput.addEventListener('input', function () {
   if (this.value.length == 0) {
     this.classList.remove('active');
     for (let i = 0; i < tooltipButtons.length; i++) {
-      tooltipButtons[i].classList.remove('active')
+      tooltipButtons[i].classList.remove('active');
     }
     return;
   }
@@ -325,7 +383,17 @@ addNoteInput.addEventListener('input', function () {
   for (let i = 0; i < tooltipButtons.length; i++) {
     tooltipButtons[i].classList.add('active');
   }
-})
+});
+
+addNoteInput.addEventListener('keypress', function (event) {
+  if (event.key === 'Enter') event.preventDefault();
+});
+
+// for (let i = 0; i < tooltipButtons.length; i++) {
+//   tooltipButtons[i].addEventListener('submit', function(){
+
+//   })
+// };
 
 document.querySelector('#icon-facebook').addEventListener('click', function () {
   window.open('https://www.facebook.com', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes')
