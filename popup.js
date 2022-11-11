@@ -25,6 +25,10 @@ const cssThemeVariables = {
   '--color-icon-text': {
     'light': '#ffffff',
     'dark': '#cecccc'
+  },
+  '--color-box-shadow': {
+    'light': 'rgba(60, 64, 67, 0.3)',
+    'dark': 'rgba(195, 191, 188, 0.3)'
   }
 }
 
@@ -49,7 +53,44 @@ const addNoteForm = document.querySelector('#addNoteForm');
 const tooltipSubmitMessage = document.querySelector('#tooltipSubmitMessage');
 const loadingMessage = document.querySelector('#tooltipLoadingMessage');
 const responseMessage = document.querySelector('#tooltipResponseMessage');
-// const iconSuccess = document.querySelector('#iconSuccess');
+
+
+const createDocForm = document.querySelector('#createDoc');
+const createFolderForm = document.querySelector('#createFolder');
+const folderTree = document.querySelector('#folderTree');
+const fetchFolderTree = document.querySelector('#fetchFolderTree');
+const parentFolderId = '67f1942c-7d41-487a-8cf1-3acc7c19bc02';
+
+createDocForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const inputValue = this.elements['docNameInput'].value;
+  this.elements['docNameInput'].value = "";
+  try {
+    const response = await apiCreateDoc(inputValue, parentFolderId);
+  } catch (error) {
+    console.log('error' + error);
+  }
+});
+
+createFolderForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const inputValue = this.elements['folderNameInput'].value;
+  this.elements['folderNameInput'].value = "";
+  try {
+    const response = await apiCreateFolder(inputValue, parentFolderId);
+  } catch (error) {
+    console.log('error' + error);
+  }
+});
+
+fetchFolderTree.addEventListener("click", async function (event) {
+  try {
+    const response = await apiFetchFolderTree();
+    console.log(response);
+  } catch (error) {
+    console.log('error' + error);
+  }
+});
 
 addNoteForm.addEventListener("submit", async function (event) {
   event.preventDefault();
@@ -232,7 +273,6 @@ function apiFetchUser() {
   });
 }
 
-
 function apiLogoutUser() {
   return new Promise((resolve, reject) => {
     fetch(`${domain}/api/v1/auth/logout`, {})
@@ -251,17 +291,83 @@ function apiLogoutUser() {
   });
 }
 
-//insertText Api call
-function apiInsertText(style, textValue) {
+function apiFetchFolderTree() {
+  return new Promise((resolve, reject) => {
+    const user = {};
+    fetch(`${domain}/api/v1/dashboard/folder-tree`, {})
+      .then((res) => {
+        res.json()
+          .then((res) => {
+            resolve(res);
+          })
+          .catch((error) => {
+            reject('From apiFetchFolderTree ' + error);
+          });
+      })
+      .catch((error) => {
+        reject('From apiFetchFolderTree ' + error);
+      });
+  });
+}
+
+function apiCreateDoc(name, parentFolderId) {
+  return new Promise((resolve, reject) => {
+    fetch(`${domain}/api/v1/dashboard/document`, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        parentFolderId
+      }),
+    }).then((res) => {
+      res.json().then((res) => {
+        resolve(res);
+      }).catch((error) => {
+        reject(error);
+      });
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
+function apiCreateFolder(name, parentFolderId) {
+  return new Promise((resolve, reject) => {
+    fetch(`${domain}/api/v1/dashboard/folder`, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        parentFolderId
+      }),
+    }).then((res) => {
+      res.json().then((res) => {
+        resolve(res);
+      }).catch((error) => {
+        reject(error);
+      });
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
+function apiInsertText(style, text) {
   return new Promise((resolve, reject) => {
     fetch(`${domain}/api/v1/insert/${style}`, {
       method: "POST",
       headers: {
-        Accept: "application/json",
+        "Accept": "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        text: textValue,
+        text
       }),
     }).then((res) => {
       res.json().then((res) => {

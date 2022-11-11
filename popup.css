@@ -41,6 +41,7 @@
   --color-white: #ffffff;
   --color-white-hover: #def9e5;
   --color-grey-light: #686868;
+  --color-box-shadow: rgba(60, 64, 67, 0.3);
   --font-large: 5em;
   --font-medium: 4em;
   --font-small: 1.5em;
@@ -484,6 +485,7 @@ div.social-media {
   height: 31px;
   cursor: pointer;
   transition: transform ease-out 100ms;
+  box-shadow: var(--color-box-shadow) 0px 1px 2px 0px, var(--color-box-shadow) 0px 2px 6px 2px;
   background-color: var(--color-bgr-main);
   /* border: 1px solid black; */
 }
@@ -742,13 +744,15 @@ div.social-media {
   justify-content: center;
   align-items: center;
   position: absolute;
-  opacity: 0;
+  /* opacity: 0; */
+  visibility: hidden;
   width: 100%;
   height: 100%;
 }
 
 .loadingMessage.show {
-  opacity: 1;
+  /* opacity: 1; */
+  visibility: visible;
 }
 
 .submitMessage .loadingMessage .icon-loading {
@@ -780,13 +784,15 @@ div.social-media {
   justify-content: center;
   align-items: center;
   position: absolute;
-  opacity: 0;
+  /* opacity: 0; */
+  visibility: hidden;
   width: 100%;
   height: 100%;
 }
 
 .responseMessage.show {
-  opacity: 1;
+  /* opacity: 1; */
+  visibility: visible;
 }
 
 .submitMessage .responseMessage .icon-success {
@@ -832,6 +838,10 @@ div.social-media {
   transition: background-color ease-out 350ms, color ease-out 350ms;
 }
 
+.tooltip-button-container .tooltip-button.submit {
+  visibility: hidden;
+}
+
 .add-note-input.active {
   border-color: var(--color-primary);
 }
@@ -860,6 +870,7 @@ div.social-media {
     --color-icon-background: #ffffff;
     --color-icon-text: #cecccc;
     --color-black-white: #fff;
+    --color-box-shadow: rgba(195, 191, 188, 0.3);
   }
 
   .icon-moon {

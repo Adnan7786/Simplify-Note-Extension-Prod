@@ -95,16 +95,10 @@
               <div class="currently-editing-content">
                 <span class="document-icon-container">
                   <svg id="icon-document" data-documentid="10wID9hUIbI1XjY8Me19zuCJ2DLPAdLc6wI0jgkeBxmI"
-                    xmlns="http://www.w3.org/2000/svg" class="bi bi-file-earmark-richtext-fill icon-document"
-                    viewBox="0 0 16 16">
+                    xmlns="http://www.w3.org/2000/svg" class="icon-document" viewBox="0 0 16 16">
                     <path
                       d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM7 6.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-.861 1.542 1.33.886 1.854-1.855a.25.25 0 0 1 .289-.047l1.888.974V9.5a.5.5 0 0 1-.5.5H5a.5.5 0 0 1-.5-.5V9s1.54-1.274 1.639-1.208zM5 11h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1zm0 2h3a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1z" />
                   </svg>
-                  <!-- <svg id="icon-document" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                    class="bi bi-file-earmark-text-fill  icon-document" viewBox="0 0 16 16">
-                    <path
-                      d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM4.5 9a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1h-7zM4 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm.5 2.5a.5.5 0 0 1 0-1h4a.5.5 0 0 1 0 1h-4z" />
-                  </svg> -->
                 </span>
                 <div class="doc-details">
                   <div class="doc-name">
@@ -152,10 +146,35 @@
                   <button type='submit' class="tooltip-button" data-style='paragraph'>Paragraph</button>
                 </div>
               </div>
+            </form>
           </div>
         </div>
         <div class="tab-content notes">
-          Notes
+          <form id="createDoc" class="create-doc">
+            <input type="text" name="docNameInput" id="docNameInput" class="doc-name-input" placeholder="Untitled"
+              autocomplete="off" required>
+            <button type='submit' class="submit-button">Create Document</button>
+            <!-- <svg class='icon-loading' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 17">
+              <circle class="loadingCircle" cx="2.2" cy="10" r="1.6" />
+              <circle class="loadingCircle" cx="9.5" cy="10" r="1.6" />
+              <circle class="loadingCircle" cx="16.8" cy="10" r="1.6" />
+            </svg> -->
+          </form>
+
+          <form id="createFolder" class="create-folder">
+            <input type="text" name="folderNameInput" id="folderNameInput" class="folder-name-input"
+              placeholder="Untitled" autocomplete="off" required>
+            <button type='submit' class="submit-button">Create Folder</button>
+            <!-- <svg class='icon-loading' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 17">
+              <circle class="loadingCircle" cx="2.2" cy="10" r="1.6" />
+              <circle class="loadingCircle" cx="9.5" cy="10" r="1.6" />
+              <circle class="loadingCircle" cx="16.8" cy="10" r="1.6" />
+            </svg> -->
+          </form>
+          <div id="folderTree" class="folderTree">
+
+          </div>
+          <button id='fetchFolderTree' type='submit' class="submit-button">Fetch Folder Tree</button>
         </div>
         <div class="tab-content styles">
           Styles
