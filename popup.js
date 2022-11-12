@@ -60,6 +60,9 @@ const createFolderForm = document.querySelector('#createFolder');
 const folderTree = document.querySelector('#folderTree');
 const fetchFolderTree = document.querySelector('#fetchFolderTree');
 
+
+window.onload = render;
+
 createDocForm.addEventListener("submit", async function (event) {
   event.preventDefault();
   const inputValue = this.elements['docNameInput'].value;
@@ -123,6 +126,109 @@ addNoteForm.addEventListener("submit", async function (event) {
     console.log('error' + error);
   }
 });
+
+iconSun.addEventListener("click", async function () {
+  try {
+    await themeClickEvent('light');
+  } catch (error) {
+    sendNotification('failure', error);
+  }
+});
+
+iconMoon.addEventListener("click", async function () {
+  try {
+    await themeClickEvent('dark');
+  } catch (error) {
+    sendNotification('failure', error);
+  }
+
+});
+
+for (let i = 0; i < navbarTabs.length; i++) {
+  navbarTabs[i].addEventListener("click", function () {
+    navTabsClickAndEnter(i);
+  });
+  navbarTabs[i].addEventListener("keypress", function (event) {
+    if (event.key === 'Enter') navTabsClickAndEnter(i);
+  });
+};
+
+currentlyEditingDocIcon.addEventListener('click', function () {
+  docIconClickAndEnter(this);
+});
+currentlyEditingDocIcon.addEventListener('keypress', function (event) {
+  if (event.key === 'Enter') docIconClickAndEnter(this);
+});
+
+addNoteInput.addEventListener('input', function () {
+  if (this.value.length == 0) {
+    this.classList.remove('active');
+    for (let i = 0; i < tooltipButtons.length; i++) {
+      tooltipButtons[i].classList.remove('active');
+    }
+    return;
+  }
+  this.classList.add('active');
+  for (let i = 0; i < tooltipButtons.length; i++) {
+    tooltipButtons[i].classList.add('active');
+  }
+});
+
+addNoteInput.addEventListener('keypress', function (event) {
+  if (event.key === 'Enter') event.preventDefault();
+});
+
+// for (let i = 0; i < tooltipButtons.length; i++) {
+//   tooltipButtons[i].addEventListener('submit', function(){
+
+//   })
+// };
+
+document.querySelector('#icon-facebook').addEventListener('click', function () {
+  window.open('https://www.facebook.com', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes')
+  // window.open('https://www.facebook.com', '_blank');
+});
+document.querySelector('#icon-youtube').addEventListener('click', function () {
+  window.open('https://www.youtube.com', '_blank');
+});
+document.querySelector('#icon-mail').addEventListener('click', function () {
+  window.open('https://www.outlook.com', '_blank');
+});
+document.querySelector('#icon-instagram').addEventListener('click', function () {
+  window.open('https://www.instagram.com/simplifynote/', '_blank');
+});
+document.querySelector('#icon-twitter').addEventListener('click', function () {
+  window.open('https://www.twitter.com', '_blank');
+});
+
+document.querySelector('input[name=toggle-switch-input]').addEventListener('click', async function () {
+  try {
+    if (this.checked === true) {
+      console.log('checked');
+      return await storeTooltipUnchecked(false);
+    }
+    else if (this.checked === false) {
+      console.log('unchecked');
+      return await storeTooltipUnchecked(true);
+    }
+  } catch (error) {
+    return sendNotification('failure', error);
+  }
+});
+
+
+document.querySelector('#icon-no-avatar').addEventListener('click', redirectToSignInPage);
+document.querySelector('#user-avatar').addEventListener('click', async () => {
+  try {
+    return await logoutAndRefreshPopup();
+  } catch (error) {
+    return sendNotification('failure', error);
+  }
+
+});
+
+document.querySelector('#sign-in-button').addEventListener('click', redirectToSignInPage);
+
 
 
 function storeCurrentTheme(value) {
@@ -419,7 +525,6 @@ async function logoutAndRefreshPopup() {
   await storeTooltipDisabled(true);
 }
 
-//update avatar
 function updateAvatar(userIsSignedIn = false, imageSrc = null) {
   if (userIsSignedIn) {
     userAvatar.src = imageSrc;
@@ -429,13 +534,27 @@ function updateAvatar(userIsSignedIn = false, imageSrc = null) {
   return toggleDisplay(userAvatar, noAvatar, "inline");
 }
 
-//update content box
 function updateContentBox(userIsSignedIn = false, user = null) {
   if (userIsSignedIn) {
     toggleDisplay(signedOutContainer, signedInContainer, "flex");
     return;
   }
   return toggleDisplay(signedInContainer, signedOutContainer, "flex");
+}
+
+function navTabsClickAndEnter(index) {
+  navbarTabs[activeTab].classList.remove('active');
+  navbarTabs[activeTab].tabIndex = 0;
+  tabContents[activeTab].classList.remove('active');
+  navbarTabs[index].classList.add('active');
+  navbarTabs[index].tabIndex = -1;
+  tabContents[index].classList.add('active');
+  activeTab = index;
+}
+
+function docIconClickAndEnter(elem) {
+  const documentId = elem.dataset.documentid
+  window.open('https://docs.google.com/document/d/' + documentId, '_blank', 'location=yes,height=720,width=1000,scrollbars=yes,status=yes');
 }
 
 async function render() {
@@ -465,113 +584,6 @@ async function render() {
     sendNotification('failure', error);
   }
 }
-
-iconSun.addEventListener("click", async function () {
-  try {
-    await themeClickEvent('light');
-  } catch (error) {
-    sendNotification('failure', error);
-  }
-});
-
-iconMoon.addEventListener("click", async function () {
-  try {
-    await themeClickEvent('dark');
-  } catch (error) {
-    sendNotification('failure', error);
-  }
-
-});
-
-for (let i = 0; i < navbarTabs.length; i++) {
-  navbarTabs[i].addEventListener("click", function () {
-    navbarTabs[activeTab].classList.remove('active');
-    tabContents[activeTab].classList.remove('active');
-    navbarTabs[i].classList.add('active');
-    tabContents[i].classList.add('active');
-    activeTab = i;
-  });
-};
-
-currentlyEditingDocIcon.addEventListener('click', function () {
-  const documentId = this.dataset.documentid
-  console.log(documentId);
-  window.open('https://docs.google.com/document/d/' + documentId, '_blank', 'location=yes,height=720,width=1000,scrollbars=yes,status=yes');
-});
-
-addNoteInput.addEventListener('input', function () {
-  if (this.value.length == 0) {
-    this.classList.remove('active');
-    for (let i = 0; i < tooltipButtons.length; i++) {
-      tooltipButtons[i].classList.remove('active');
-    }
-    return;
-  }
-  this.classList.add('active');
-  for (let i = 0; i < tooltipButtons.length; i++) {
-    tooltipButtons[i].classList.add('active');
-  }
-});
-
-addNoteInput.addEventListener('keypress', function (event) {
-  if (event.key === 'Enter') event.preventDefault();
-});
-
-// for (let i = 0; i < tooltipButtons.length; i++) {
-//   tooltipButtons[i].addEventListener('submit', function(){
-
-//   })
-// };
-
-document.querySelector('#icon-facebook').addEventListener('click', function () {
-  window.open('https://www.facebook.com', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes')
-  // window.open('https://www.facebook.com', '_blank');
-});
-document.querySelector('#icon-youtube').addEventListener('click', function () {
-  window.open('https://www.youtube.com', '_blank');
-});
-document.querySelector('#icon-mail').addEventListener('click', function () {
-  window.open('https://www.outlook.com', '_blank');
-});
-document.querySelector('#icon-instagram').addEventListener('click', function () {
-  window.open('https://www.instagram.com/simplifynote/', '_blank');
-});
-document.querySelector('#icon-twitter').addEventListener('click', function () {
-  window.open('https://www.twitter.com', '_blank');
-});
-
-document.querySelector('input[name=toggle-switch-input]').addEventListener('click', async function () {
-  try {
-    if (this.checked === true) {
-      console.log('checked');
-      return await storeTooltipUnchecked(false);
-    }
-    else if (this.checked === false) {
-      console.log('unchecked');
-      return await storeTooltipUnchecked(true);
-    }
-  } catch (error) {
-    return sendNotification('failure', error);
-  }
-});
-
-
-document.querySelector('#icon-no-avatar').addEventListener('click', redirectToSignInPage);
-document.querySelector('#user-avatar').addEventListener('click', async () => {
-  try {
-    return await logoutAndRefreshPopup();
-  } catch (error) {
-    return sendNotification('failure', error);
-  }
-
-});
-
-document.querySelector('#sign-in-button').addEventListener('click', redirectToSignInPage);
-
-
-window.onload = render;
-
-
 
 // let parentId = "";
 

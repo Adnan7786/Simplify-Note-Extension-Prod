@@ -186,6 +186,11 @@ span.tooltip-switch {
   background-image: linear-gradient(to bottom, #eeeeee, white 25px);
 }
 
+.icon-switch:hover,
+.icon-switch:focus {
+  transform: scale(1.05);
+}
+
 .switch-input {
   position: absolute;
   top: 0;
@@ -577,6 +582,12 @@ div.social-media {
   color: var(--color-secondary);
   cursor: pointer;
   transition: color ease-out 200ms, border-color ease-out 200ms;
+}
+
+.navbar-tab:not(.active):hover,
+.navbar-tab:not(.active):focus {
+  color: var(--color-black-white);
+  transform: scale(1.1);
 }
 
 .navbar-tab.active {
