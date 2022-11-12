@@ -59,14 +59,14 @@ const createDocForm = document.querySelector('#createDoc');
 const createFolderForm = document.querySelector('#createFolder');
 const folderTree = document.querySelector('#folderTree');
 const fetchFolderTree = document.querySelector('#fetchFolderTree');
-const authorizeAPI = document.querySelector('#authorizeAPI');
-const parentFolderId = '67f1942c-7d41-487a-8cf1-3acc7c19bc02';
 
 createDocForm.addEventListener("submit", async function (event) {
   event.preventDefault();
   const inputValue = this.elements['docNameInput'].value;
   this.elements['docNameInput'].value = "";
   try {
+    const folderTree = await apiFetchFolderTree();
+    const parentFolderId = folderTree.root;
     const response = await apiCreateDoc(inputValue, parentFolderId);
   } catch (error) {
     console.log('error' + error);
@@ -78,6 +78,8 @@ createFolderForm.addEventListener("submit", async function (event) {
   const inputValue = this.elements['folderNameInput'].value;
   this.elements['folderNameInput'].value = "";
   try {
+    const folderTree = await apiFetchFolderTree();
+    const parentFolderId = folderTree.root;
     const response = await apiCreateFolder(inputValue, parentFolderId);
   } catch (error) {
     console.log('error' + error);
@@ -87,15 +89,6 @@ createFolderForm.addEventListener("submit", async function (event) {
 fetchFolderTree.addEventListener("click", async function (event) {
   try {
     const response = await apiFetchFolderTree();
-    console.log(response);
-  } catch (error) {
-    console.log('error' + error);
-  }
-});
-
-authorizeAPI.addEventListener("click", async function (event) {
-  try {
-    const response = await apiAuthorizeAPI();
     console.log(response);
   } catch (error) {
     console.log('error' + error);

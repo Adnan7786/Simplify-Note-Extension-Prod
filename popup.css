@@ -154,7 +154,9 @@ span.theme {
 }
 
 .icon-sun:hover,
-.icon-moon:hover {
+.icon-sun:focus,
+.icon-moon:hover,
+.icon-moon:focus {
   transform: scale(1.2);
 }
 
@@ -292,7 +294,8 @@ span.avatar {
   transition: transform ease-out 400ms;
 }
 
-.icon-no-avatar:hover {
+.icon-no-avatar:hover,
+.icon-no-avatar:focus {
   transform: scale(1.2);
 }
 
@@ -304,7 +307,8 @@ span.avatar {
   transition: transform ease-out 400ms;
 }
 
-.user-avatar:hover {
+.user-avatar:hover,
+.user-avatar:focus {
   transform: scale(1.2);
 }
 
@@ -325,7 +329,8 @@ div.website a {
   color: var(--color-grey-light);
 }
 
-div.website a:hover {
+div.website a:hover,
+div.website a:focus {
   color: var(--color-primary);
 }
 
@@ -359,7 +364,8 @@ div.social-media {
   transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-.wrapper .icon:hover {
+.wrapper .icon:hover,
+.wrapper .icon:focus {
   box-shadow: none;
 }
 
@@ -388,7 +394,8 @@ div.social-media {
   transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-.wrapper .icon:hover .tooltip {
+.wrapper .icon:hover .tooltip,
+.wrapper .icon:focus .tooltip {
   top: -45px;
   opacity: 1;
   visibility: visible;
@@ -396,48 +403,68 @@ div.social-media {
 }
 
 .wrapper .icon:hover span,
-.wrapper .icon:hover .tooltip {
+.wrapper .icon:focus span,
+.wrapper .icon:hover .tooltip,
+.wrapper .icon:focus .tooltip {
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
 }
 
 .wrapper .facebook:hover,
+.wrapper .facebook:focus,
 .wrapper .facebook:hover .tooltip,
-.wrapper .facebook:hover .tooltip::before {
+.wrapper .facebook:focus .tooltip,
+.wrapper .facebook:hover .tooltip::before,
+.wrapper .facebook:focus .tooltip::before {
   background: #1877F2;
   color: var(--color-white);
 }
 
 .wrapper .twitter:hover,
+.wrapper .twitter:focus,
 .wrapper .twitter:hover .tooltip,
-.wrapper .twitter:hover .tooltip::before {
+.wrapper .twitter:focus .tooltip,
+.wrapper .twitter:hover .tooltip::before,
+.wrapper .twitter:focus .tooltip::before {
   background: #1DA1F2;
   color: var(--color-white);
 }
 
 .wrapper .mail:hover,
+.wrapper .mail:focus,
 .wrapper .mail:hover .tooltip,
-.wrapper .mail:hover .tooltip::before {
+.wrapper .mail:focus .tooltip,
+.wrapper .mail:hover .tooltip::before,
+.wrapper .mail:focus .tooltip::before {
   background: #006EBF;
   color: var(--color-white);
 }
 
 .wrapper .instagram:hover,
+.wrapper .instagram:focus,
 .wrapper .instagram:hover .tooltip,
-.wrapper .instagram:hover .tooltip::before {
+.wrapper .instagram:focus .tooltip,
+.wrapper .instagram:hover .tooltip::before,
+.wrapper .instagram:focus .tooltip::before {
   background: #E4405F;
   color: var(--color-white);
 }
 
 .wrapper .github:hover,
+.wrapper .github:focus,
 .wrapper .github:hover .tooltip,
-.wrapper .github:hover .tooltip::before {
+.wrapper .github:focus .tooltip,
+.wrapper .github:hover .tooltip::before,
+.wrapper .github:focus .tooltip::before {
   background: #333333;
   color: var(--color-white);
 }
 
 .wrapper .youtube:hover,
+.wrapper .youtube:focus,
 .wrapper .youtube:hover .tooltip,
-.wrapper .youtube:hover .tooltip::before {
+.wrapper .youtube:focus .tooltip,
+.wrapper .youtube:hover .tooltip::before,
+.wrapper .youtube:focus .tooltip::before {
   background: #CD201F;
   color: var(--color-white);
 }
@@ -490,7 +517,8 @@ div.social-media {
   /* border: 1px solid black; */
 }
 
-.sign-in-button:hover {
+.sign-in-button:hover,
+.sign-in-button:focus {
   transform: scale(1.05);
 }
 
@@ -664,7 +692,8 @@ div.social-media {
   transition: transform ease-out 100ms;
 }
 
-.document-icon-container .icon-document:hover {
+.document-icon-container .icon-document:hover,
+.document-icon-container .icon-document:focus {
   transform: scale3d(1.1, 1.1, 1.1);
 }
 
@@ -835,7 +864,8 @@ div.social-media {
   cursor: pointer;
   color: var(--color-secondary);
   background-color: var(--color-bgr-main);
-  transition: background-color ease-out 350ms, color ease-out 350ms;
+  transition: background-color ease-out 350ms, color ease-out 350ms, transform ease-out 100ms;
+  ;
 }
 
 .tooltip-button-container .tooltip-button.submit {
@@ -853,7 +883,7 @@ div.social-media {
 
 .tooltip-button-container .tooltip-button:not(.submit):hover,
 .tooltip-button-container .tooltip-button:not(.submit):focus {
-  transform: scaleY(1.1);
+  transform: scaleY(1.15);
 }
 
 .tooltip-button-container .tooltip-button:not(:last-child) {
