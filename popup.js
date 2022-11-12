@@ -185,8 +185,7 @@ addNoteInput.addEventListener('keypress', function (event) {
 // };
 
 document.querySelector('#icon-facebook').addEventListener('click', function () {
-  window.open('https://www.facebook.com', '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes')
-  // window.open('https://www.facebook.com', '_blank');
+  window.open('https://www.facebook.com', '_blank');
 });
 document.querySelector('#icon-youtube').addEventListener('click', function () {
   window.open('https://www.youtube.com', '_blank');

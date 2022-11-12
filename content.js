@@ -69,6 +69,125 @@ let payload = {
 // );
 
 //Creating the tooltip and event Listeners
+const shadowRootContainer = document.createElement('div');
+shadowRootContainer.id = 'shadowRootContainer';
+shadowRootContainer.style.position = 'absolute';
+shadowRootContainer.style.left = '50px';
+shadowRootContainer.style.top = '50px';
+shadowRootContainer.style.zIndex = '500';
+
+document.body.appendChild(shadowRootContainer);
+
+var host = document.getElementById('shadowRootContainer');
+var root = host.attachShadow({ mode: 'open' });
+const textTooltipContainer = document.createElement('div');
+textTooltipContainer.id = 'textTooltipContainer';
+textTooltipContainer.className = 'textTooltipContainer';
+textTooltipContainer.innerHTML = `<style>
+
+.textTooltip {
+  display: inline-block;
+  border-radius: 17.5px;
+  width: 35px;
+  height: 35px;
+  position: relative;
+  overflow: hidden;
+  background-color: black;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 18px 50px -10px;
+  transition: width cubic-bezier(0, 0.89, 1, 1) 350ms;
+}
+
+.textTooltip.expand {
+  width: 170px;
+}
+
+.appLogo {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 35px;
+  height: 100%;
+  border-radius: 50%;
+  background-color: lightgrey;
+
+}
+
+.appLogo .iconLogo {
+  width: 70%;
+  height: 70%;
+}
+
+.tooltipButton {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  position: absolute;
+  top: 0px;
+  left: 42px;
+  height: 100%;
+  width: calc(100%-35px);
+}
+
+.tooltipButton span {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tooltipButton .button {
+  width: 20px;
+  height: 30px;
+  cursor: pointer;
+  fill: darkgrey;
+  transition: transform ease-out 100ms;
+}
+
+.button:hover {
+  fill: #0ed095;
+  transform: scale(1.1);
+}
+</style>
+<div id="textTooltip" class="textTooltip">
+  <div class="appLogo"><img id="iconLogo" class="iconLogo" src="" alt="Logo" title="Simplify Notes"></div>
+  <div class="tooltipButton">
+      <span title="Heading">
+          <svg id="iconHeading" class="button" viewBox="0 0 16 16">
+              <path d="M8.637 13V3.669H7.379V7.62H2.758V3.67H1.5V13h1.258V8.728h4.62V13h1.259zm5.329 0V3.669h-1.244L10.5 5.316v1.265l2.16-1.565h.062V13h1.244z" />
+          </svg>
+      </span>
+      <span title="Subheading">
+          <svg id="iconSubheading" class="button" viewBox="0 0 16 16">
+              <path d="M7.638 13V3.669H6.38V7.62H1.759V3.67H.5V13h1.258V8.728h4.62V13h1.259zm3.022-6.733v-.048c0-.889.63-1.668 1.716-1.668.957 0 1.675.608 1.675 1.572 0 .855-.554 1.504-1.067 2.085l-3.513 3.999V13H15.5v-1.094h-4.245v-.075l2.481-2.844c.875-.998 1.586-1.784 1.586-2.953 0-1.463-1.155-2.556-2.919-2.556-1.941 0-2.966 1.326-2.966 2.74v.049h1.223z" />
+          </svg>
+      </span>
+      <span title="Bullet">
+          <svg id="iconBullet" class="button" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" />
+          </svg>
+      </span>
+      <span title="Paragraph">
+          <svg id="iconParagraph" class="button" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm4-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5z" />
+          </svg>
+      </span>
+  </div>
+</div>`;
+root.appendChild(textTooltipContainer);
+
+var shadowElem = document.querySelector('#shadowRootContainer').shadowRoot;
+window.onload = function () {
+  shadowElem.querySelector('#textTooltip').classList.add('expand');
+}
+
+shadowElem.querySelector('#iconLogo').src = chrome.runtime.getURL("images/logo.png");
+
+
+
+
 
 var tooltipXoffset = 10; //Tooltip X offset in px
 var tooltipYoffset = 10; //Tooltip Y offset in px
