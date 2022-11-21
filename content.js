@@ -406,7 +406,7 @@ window.addEventListener("mouseup", async function (event) {
 
 let imageArrayLength = 0;
 //Display Tootip for image
-
+let insideImage = false;
 setInterval(() => {
   const imageCollection = document.getElementsByTagName("img");
   if (imageCollection.length === imageArrayLength) {
@@ -416,13 +416,12 @@ setInterval(() => {
   imageArrayLength = imageCollection.length;
 
   // console.log(imageCollection);
-  // let insideImage = false;
   for (elem in imageCollection) {
     try {
       imageCollection[elem].addEventListener("mouseenter", async function (event) {
-        // if (insideImage) return; // return if already inside image - to avoid flickering issue
+        if (insideImage) return; // return if already inside image - to avoid flickering issue
         console.log('enter');
-        // insideImage = true;
+        insideImage = true;
         const tooltipUnchecked = await getTooltipUnchecked();
         const tooltipDisabled = await getTooltipDisabled();
 
@@ -465,7 +464,7 @@ setInterval(() => {
           return;
         }
         console.log('leave')
-        // insideImage = false;
+        insideImage = false;
         imageTooltip.style.visibility = "hidden";
         shadowRootContainer.style.zIndex = '-1';
       });
