@@ -192,6 +192,10 @@ tooltipContainer.innerHTML = `<style>
   visibility: hidden;
 }
 
+.imageTooltip:hover .appLogo{
+  opacity: 0.7;
+}
+
 .imageTooltip:hover span {
   visibility: visible;
   opacity: 1;
@@ -400,67 +404,77 @@ window.addEventListener("mouseup", async function (event) {
 
 });
 
+let imageArrayLength = 0;
 //Display Tootip for image
-const imageCollection = document.getElementsByTagName("img");
-// console.log(imageCollection);
-// let insideImage = false;
-for (elem in imageCollection) {
-  try {
-    imageCollection[elem].addEventListener("mouseenter", async function (event) {
-      // if (insideImage) return; // return if already inside image - to avoid flickering issue
-      console.log('enter');
-      // insideImage = true;
-      const tooltipUnchecked = await getTooltipUnchecked();
-      const tooltipDisabled = await getTooltipDisabled();
 
-      // return if tooltip is disabled or turned off
-      if (tooltipUnchecked || tooltipDisabled) {
-        return;
-      }
-
-      const imgRect = this.getBoundingClientRect();
-
-      // return if image smaller that 80*80
-      if (imgRect.height < 80 || imgRect.width < 80) {
-        return;
-      }
-
-      // hide textTooltip
-      shadowElem.querySelector('#tooltipButton').classList.remove('expand');
-      setTimeout(() => {
-        textTooltip.style.visibility = "hidden";
-      }, 350)
-
-
-      payloadImage.url = this.src;
-      payloadImage.width = this.width;
-      payloadImage.height = this.height;
-      const mouseX = window.scrollX + imgRect.left + (imgRect.right - imgRect.left) / 2 - 25;
-      const mouseY = window.scrollY + imgRect.top + (imgRect.bottom - imgRect.top) / 2 - 15;
-      imageTooltip.style.left = mouseX + "px";
-      imageTooltip.style.top = mouseY + "px";
-      shadowRootContainer.style.zIndex = '500';
-      imageTooltip.style.visibility = "visible";
-    });
-
-    imageCollection[elem].addEventListener("mouseleave", function (event) {
-      let imgRect = this.getBoundingClientRect();
-      // console.log(imgRect);
-      // console.log(event.clientX);
-      // console.log(event.clientY);
-      if ((imgRect.left <= event.clientX && event.clientX <= imgRect.right) && (imgRect.top <= event.clientY && event.clientY <= imgRect.bottom)) {
-        return;
-      }
-      console.log('leave')
-      // insideImage = false;
-      imageTooltip.style.visibility = "hidden";
-      shadowRootContainer.style.zIndex = '-1';
-    });
-
-  } catch (error) {
-    sendNotification('failure', error);
+setInterval(() => {
+  const imageCollection = document.getElementsByTagName("img");
+  if (imageCollection.length === imageArrayLength) {
+    return;
   }
-}
+
+  imageArrayLength = imageCollection.length;
+
+  // console.log(imageCollection);
+  // let insideImage = false;
+  for (elem in imageCollection) {
+    try {
+      imageCollection[elem].addEventListener("mouseenter", async function (event) {
+        // if (insideImage) return; // return if already inside image - to avoid flickering issue
+        console.log('enter');
+        // insideImage = true;
+        const tooltipUnchecked = await getTooltipUnchecked();
+        const tooltipDisabled = await getTooltipDisabled();
+
+        // return if tooltip is disabled or turned off
+        if (tooltipUnchecked || tooltipDisabled) {
+          return;
+        }
+
+        const imgRect = this.getBoundingClientRect();
+
+        // return if image smaller that 80*80
+        if (imgRect.height < 80 || imgRect.width < 80) {
+          return;
+        }
+
+        // hide textTooltip
+        shadowElem.querySelector('#tooltipButton').classList.remove('expand');
+        setTimeout(() => {
+          textTooltip.style.visibility = "hidden";
+        }, 350)
+
+
+        payloadImage.url = this.src;
+        payloadImage.width = this.width;
+        payloadImage.height = this.height;
+        const mouseX = window.scrollX + imgRect.left + (imgRect.right - imgRect.left) / 2 - 25;
+        const mouseY = window.scrollY + imgRect.top + (imgRect.bottom - imgRect.top) / 2 - 15;
+        imageTooltip.style.left = mouseX + "px";
+        imageTooltip.style.top = mouseY + "px";
+        shadowRootContainer.style.zIndex = '500';
+        imageTooltip.style.visibility = "visible";
+      });
+
+      imageCollection[elem].addEventListener("mouseleave", function (event) {
+        let imgRect = this.getBoundingClientRect();
+        // console.log(imgRect);
+        // console.log(event.clientX);
+        // console.log(event.clientY);
+        if ((imgRect.left <= event.clientX && event.clientX <= imgRect.right) && (imgRect.top <= event.clientY && event.clientY <= imgRect.bottom)) {
+          return;
+        }
+        console.log('leave')
+        // insideImage = false;
+        imageTooltip.style.visibility = "hidden";
+        shadowRootContainer.style.zIndex = '-1';
+      });
+
+    } catch (error) {
+      sendNotification('failure', error);
+    }
+  }
+}, 1000);
 
 
 
@@ -554,3 +568,9 @@ function getHeight() {
 
 console.log('Width:  ' + getWidth());
 console.log('Height: ' + getHeight());
+
+
+// setInterval(() => {
+//   const imageCollection = document.getElementsByTagName("img");
+//   console.log(imageCollection.length);
+// }, 1000)
