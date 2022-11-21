@@ -283,6 +283,9 @@ const iconBullet = shadowElem.querySelector('#iconBullet');
 const iconParagraph = shadowElem.querySelector('#iconParagraph');
 const iconPlus = shadowElem.querySelector('#iconPlus');
 
+window.onloadstart = render();
+
+
 for (const logo of iconLogos) {
   logo.src = chrome.runtime.getURL("images/tooltip-logo.png");
 }
@@ -381,10 +384,13 @@ window.addEventListener("mouseup", async function (event) {
 //Display Tootip for image
 const imageCollection = document.getElementsByTagName("img");
 // console.log(imageCollection);
+let insideImage = false;
 for (elem in imageCollection) {
   try {
     imageCollection[elem].addEventListener("mouseenter", async function (event) {
+      if (insideImage) return;
       console.log('enter');
+      insideImage = true;
       const tooltipUnchecked = await getTooltipUnchecked();
       const tooltipDisabled = await getTooltipDisabled();
 
@@ -427,12 +433,13 @@ for (elem in imageCollection) {
         return;
       }
       console.log('leave')
+      insideImage = false;
       imageTooltip.style.visibility = "hidden";
       shadowRootContainer.style.zIndex = '-1';
     });
 
   } catch {
-    //do nothing
+    sendNotification('failure', error);
   }
 }
 
@@ -470,11 +477,39 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 
     }
     else if (key === 'currentTheme') {
-      for (const variable in cssThemeVariables) {
-        tooltipContainer.style.setProperty(variable, cssThemeVariables[variable][newValue]);
-      }
+      setTheme(newValue);
     }
   }
 });
+
+
+async function render() {
+  try {
+    const theme = await getCurrentTheme();
+    console.log(theme);
+    setTheme(theme);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function setTheme(theme) {
+  if (theme !== 'light' && theme !== 'dark') return;
+  for (const variable in cssThemeVariables) {
+    tooltipContainer.style.setProperty(variable, cssThemeVariables[variable][theme]);
+  }
+}
+
+function getCurrentTheme() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get(['currentTheme'], function (result) {
+      (result.currentTheme) ? resolve(result.currentTheme) : resolve(null);
+    });
+  })
+}
+
+function sendNotification(status, error) {
+  console.log(status + error);
+}
 
 
