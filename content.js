@@ -36,27 +36,21 @@ function handleResponse(res) {
   }
 }
 
-const tooltipXoffset = 10;
-const tooltipYoffset = 10;
-let payloadText = null;
-
-
 const shadowRootContainer = document.createElement('div');
 shadowRootContainer.id = 'shadowRootContainer';
 shadowRootContainer.style.position = 'absolute';
-shadowRootContainer.style.left = window.pageXOffset + "px";
-shadowRootContainer.style.top = window.pageYOffset + "px";
-shadowRootContainer.style.zIndex = '500';
-shadowRootContainer.style.visibility = "hidden";
+shadowRootContainer.style.zIndex = '-1';
+shadowRootContainer.style.top = '0px';
+shadowRootContainer.style.left = '0px';
 
 document.body.appendChild(shadowRootContainer);
 
 var host = document.getElementById('shadowRootContainer');
 var root = host.attachShadow({ mode: 'open' });
-const textTooltipContainer = document.createElement('div');
-textTooltipContainer.id = 'textTooltipContainer';
-textTooltipContainer.className = 'textTooltipContainer';
-textTooltipContainer.innerHTML = `<style>
+const tooltipContainer = document.createElement('div');
+tooltipContainer.id = 'tooltipContainer';
+tooltipContainer.className = 'tooltipContainer';
+tooltipContainer.innerHTML = `<style>
 
 * {
   font-family: "Poppins", sans-serif;
@@ -74,9 +68,10 @@ textTooltipContainer.innerHTML = `<style>
 :host {
   --color-primary: #0ed095;
   --color-background: #fff;
-  --color-logo-background: #d3d3d3;
-  --color-text: #a9a9a9;
   --color-shadow: rgba(0, 0, 0, 0.2);
+  --color-logo-shadow1: rgba(0, 0, 0, 0.17);
+  --color-logo-shadow2: rgba(0, 0, 0, 0.15);
+  --color-logo-shadow3: rgba(0, 0, 0, 0.1);
   --tooltip-buttons-width: 155px;
   --tooltip-logo-width: 40px;
   --gap-width: 12px;
@@ -88,6 +83,7 @@ textTooltipContainer.innerHTML = `<style>
   align-items: center;
   position: relative;
   height: var(--tooltip-logo-width);
+  visibility: hidden;
   border-radius: calc(var(--tooltip-logo-width) / 2);
   transition: width cubic-bezier(0, 0.89, 1, 1) 350ms;
 }
@@ -102,16 +98,16 @@ textTooltipContainer.innerHTML = `<style>
   height: 100%;
   border-radius: 50%;
   z-index: 2;
-  box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset,
-      rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
-  background-color: var(--color-logo-background);
+  box-shadow: var(--color-logo-shadow1) 0px -10px 25px 0px inset,
+      var(--color-logo-shadow2) 0px -15px 30px 0px inset,
+      var(--color-logo-shadow3) 0px -40px 40px 0px inset;
+  background-color: white;
 }
 
 .appLogo .iconLogo {
-  width: 70%;
-  height: 70%;
+  width: 80%;
+  height: 80%;
   border-radius: 50%;
-  background-color: var(--color-background);
 }
 
 .tooltipButton {
@@ -153,6 +149,52 @@ textTooltipContainer.innerHTML = `<style>
 .button:hover {
   fill: var(--color-primary);
   transform: scale(1.1);
+}
+
+.imageTooltip {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: var(--tooltip-logo-width);
+  height: var(--tooltip-logo-width);
+  visibility: hidden;
+  border-radius: 50%;
+}
+
+.imageTooltip .iconLogo {
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+}
+
+.imageTooltip span {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  z-index: 2;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: var(--color-primary);
+  transition: opacity 350ms ease-in-out 50ms;
+}
+
+.imageTooltip .iconPlus {
+  width: 27.5px;
+  height: 27.5px;
+  fill: var(--color-background);
+}
+
+.imageTooltip:hover .iconLogo {
+  visibility: hidden;
+}
+
+.imageTooltip:hover span {
+  visibility: visible;
+  opacity: 1;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -199,13 +241,53 @@ textTooltipContainer.innerHTML = `<style>
           </svg>
       </span>
   </div>
+</div>
+<div id="imageTooltip" class="imageTooltip">
+  <div class="appLogo"><img id="iconLogo" class="iconLogo" src="https://source.unsplash.com/random" alt="Logo" title="Simplify Notes"></div>
+  <span title="Add Image">
+      <svg id="iconPlus" class="iconPlus" viewBox="0 0 16 16">
+          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
+      </svg>
+  </span>
 </div>`;
-root.appendChild(textTooltipContainer);
+
+root.appendChild(tooltipContainer);
+
+const cssThemeVariables = {
+  '--color-background': {
+    'light': '#fff',
+    'dark': '#000'
+  },
+  '--color-shadow': {
+    'light': 'rgba(0, 0, 0, 0.2)',
+    'dark': 'rgba(255, 255, 255, 0.2)'
+  }
+}
+
+const tooltipXoffset = 10;
+const tooltipYoffset = 10;
+let payloadText = null;
+const payloadImage = {
+  url: null,
+  width: 0,
+  height: 0,
+};
 
 const shadowElem = document.querySelector('#shadowRootContainer').shadowRoot;
-shadowElem.querySelector('#iconLogo').src = chrome.runtime.getURL("images/tooltip-logo.png");
+const textTooltip = shadowElem.querySelector('#textTooltip');
+const imageTooltip = shadowElem.querySelector('#imageTooltip');
+const iconLogos = shadowElem.querySelectorAll('.iconLogo');
+const iconHeading = shadowElem.querySelector('#iconHeading');
+const iconSubheading = shadowElem.querySelector('#iconSubheading');
+const iconBullet = shadowElem.querySelector('#iconBullet');
+const iconParagraph = shadowElem.querySelector('#iconParagraph');
+const iconPlus = shadowElem.querySelector('#iconPlus');
 
-shadowElem.querySelector('#iconHeading').addEventListener("click", function () {
+for (const logo of iconLogos) {
+  logo.src = chrome.runtime.getURL("images/tooltip-logo.png");
+}
+
+iconHeading.addEventListener("click", function () {
   if (!payloadText) {
     return;
   }
@@ -215,7 +297,7 @@ shadowElem.querySelector('#iconHeading').addEventListener("click", function () {
   );
 });
 
-shadowElem.querySelector('#iconSubheading').addEventListener("click", function () {
+iconSubheading.addEventListener("click", function () {
   if (!payloadText) {
     return;
   }
@@ -225,7 +307,7 @@ shadowElem.querySelector('#iconSubheading').addEventListener("click", function (
   );
 });
 
-shadowElem.querySelector('#iconBullet').addEventListener("click", function () {
+iconBullet.addEventListener("click", function () {
   if (!payloadText) {
     return;
   }
@@ -235,7 +317,7 @@ shadowElem.querySelector('#iconBullet').addEventListener("click", function () {
   );
 });
 
-shadowElem.querySelector('#iconParagraph').addEventListener("click", function () {
+iconParagraph.addEventListener("click", function () {
   if (!payloadText) {
     return;
   }
@@ -244,146 +326,20 @@ shadowElem.querySelector('#iconParagraph').addEventListener("click", function ()
     handleResponse
   );
 });
-// this.document
-//   .querySelector(".subHeading")
-//   .addEventListener("click", function (event) {
-//     payload.formatting = "subheading";
-//     console.log(payload);
-//     chrome.runtime.sendMessage(
-//       { message: "insert_text", key: "sub_heading", value: payload.textData },
-//       handleResponse
-//     );
-//     div.style.display = "none";
-//   });
 
-// this.document
-//   .querySelector(".bullets")
-//   .addEventListener("click", function (event) {
-//     payload.formatting = "bullets";
-//     console.log(payload);
-//     chrome.runtime.sendMessage(
-//       { message: "insert_text", key: "bullets", value: payload.textData },
-//       handleResponse
-//     );
-//     div.style.display = "none";
-//   });
+iconPlus.addEventListener("click", function () {
+  console.log('clicked');
+  if (!payloadImage || !payloadImage.url || payloadImage.height <= 0 || payloadImage.width <= 0) {
+    console.log('jaaa');
+    return;
+  }
+  console.log('sending');
+  chrome.runtime.sendMessage(
+    { message: "insert_image", imageData: payloadImage },
+    handleResponse
+  );
+});
 
-// this.document
-//   .querySelector(".paragraph")
-//   .addEventListener("click", function (event) {
-//     payload.formatting = "paragraph";
-//     console.log(payload);
-//     chrome.runtime.sendMessage(
-//       { message: "insert_text", key: "paragraph", value: payload.textData },
-//       handleResponse
-//     );
-//     div.style.display = "none";
-//   });
-
-//Calling the backend API here...
-
-
-
-// document
-//   .querySelector("#insertHeading")
-//   .addEventListener("click", async function () {
-//     chrome.runtime.sendMessage(
-//       { message: "insertHeading", key: "heading", value: payload.textData },
-//       handleResponse
-//     );
-//   });
-
-// document
-//   .querySelector("#insertSubheading")
-//   .addEventListener("click", async function () {
-//     chrome.runtime.sendMessage(
-//       { message: "insertSubheading", key: "subheading", value: payload.textData },
-//       handleResponse
-//     );
-//   });
-
-// document
-//   .querySelector("#insertParagraph")
-//   .addEventListener("click", async function () {
-//     chrome.runtime.sendMessage(
-//       { message: "insertParagraph", key: "paragraph", value: payload.textData },
-//       handleResponse
-//     );
-//   });
-
-// document
-//   .querySelector("#insertBullet")
-//   .addEventListener("click", async function () {
-//     chrome.runtime.sendMessage(
-//       { message: "insertBullet", key: "bullet", value: payload.textData },
-//       handleResponse
-//     );
-//   });
-
-// var imageData = {
-//   url: null,
-//   width: 0,
-//   height: 0,
-// };
-
-
-// document
-//   .querySelector("#insertImage")
-//   .addEventListener("click", async function () {
-//     imageTooltip.style.display = "none";
-//     chrome.runtime.sendMessage(
-//       { message: "insertImage", key: "image", value: imageData },
-//       handleResponse
-//     );
-//   });
-
-// document
-//   .getElementById("insertHeading")
-//   .addEventListener("mouseover", function (event) {
-//     event.target.style.backgroundColor = "#4de1ff";
-//   });
-// document
-//   .getElementById("insertHeading")
-//   .addEventListener("mouseout", function (event) {
-//     event.target.style.backgroundColor = "white";
-//   });
-
-// document
-//   .getElementById("insertSubheading")
-//   .addEventListener("mouseover", function (event) {
-//     event.target.style.backgroundColor = "#4de1ff";
-//   });
-// document
-//   .getElementById("insertSubheading")
-//   .addEventListener("mouseout", function (event) {
-//     event.target.style.backgroundColor = "white";
-//   });
-
-// document
-//   .getElementById("insertBullet")
-//   .addEventListener("mouseover", function (event) {
-//     event.target.style.backgroundColor = "#4de1ff";
-//   });
-// document
-//   .getElementById("insertBullet")
-//   .addEventListener("mouseout", function (event) {
-//     event.target.style.backgroundColor = "white";
-//   });
-
-// document
-//   .getElementById("insertParagraph")
-//   .addEventListener("mouseover", function (event) {
-//     event.target.style.backgroundColor = "#4de1ff";
-//   });
-// document
-//   .getElementById("insertParagraph")
-//   .addEventListener("mouseout", function (event) {
-//     event.target.style.backgroundColor = "white";
-//   });
-
-function sendNotification(status, error) {
-  console.log(status + error);
-}
 
 //Trigger for tooltip
 window.addEventListener("mouseup", async function (event) {
@@ -391,9 +347,12 @@ window.addEventListener("mouseup", async function (event) {
     const tooltipUnchecked = await getTooltipUnchecked();
     const tooltipDisabled = await getTooltipDisabled();
 
+    // return if tooltip is disabled or turned off
     if (tooltipUnchecked || tooltipDisabled) {
       return;
     }
+
+    imageTooltip.style.visibility = "hidden";  //hide imageTooltip
 
     const mouseX = event.pageX;
     const mouseY = event.pageY;
@@ -401,13 +360,17 @@ window.addEventListener("mouseup", async function (event) {
 
     if (selectedText.length > 0) {
       payloadText = selectedText;
-      shadowRootContainer.style.left = mouseX + tooltipXoffset + "px";
-      shadowRootContainer.style.top = mouseY + tooltipYoffset + "px";
-      shadowRootContainer.style.visibility = "visible";
+      shadowRootContainer.style.zIndex = '500';
+      textTooltip.style.left = mouseX + tooltipXoffset + "px";
+      textTooltip.style.top = mouseY + tooltipYoffset + "px";
+      textTooltip.style.visibility = "visible";
       shadowElem.querySelector('#tooltipButton').classList.add('expand');
     } else {
-      shadowRootContainer.style.visibility = "hidden";
       shadowElem.querySelector('#tooltipButton').classList.remove('expand');
+      setTimeout(() => {
+        textTooltip.style.visibility = "hidden";
+        shadowRootContainer.style.zIndex = '-1';
+      }, 350)
     }
   } catch (error) {
     sendNotification('failure', error);
@@ -415,97 +378,63 @@ window.addEventListener("mouseup", async function (event) {
 
 });
 
-// this.document
-//   .querySelector("#insertImage")
-//   .addEventListener("click", function (event) {
-//     var currentElement = event.target;
-//     var imageSource = currentElement.src;
-//     imageTooltip.style.display = "none";
-//     chrome.runtime.sendMessage(
-//       { message: "insert_image", src: imageSource },
-//       handleResponse
-//     );
-//   });
-
 //Display Tootip for image
-// let imageCollection = document.getElementsByTagName("img");
+const imageCollection = document.getElementsByTagName("img");
 // console.log(imageCollection);
-// for (elem in imageCollection) {
-//   try {
-//     imageCollection[elem].addEventListener("mouseover", function (event) {
-//       //add code to show button over image
-//       let imgRect = this.getBoundingClientRect();
-//       let mouseX =
-//         window.scrollX + imgRect.left + (imgRect.right - imgRect.left) / 2 - 25;
-//       let mouseY =
-//         window.scrollY + imgRect.top + (imgRect.bottom - imgRect.top) / 2 - 15;
-//       imageTooltip.style.left = mouseX + "px";
-//       imageTooltip.style.top = mouseY + "px";
-//       imageTooltip.style.display = "block";
-//     });
-//   } catch {
-//     //do nothing
-//   }
+for (elem in imageCollection) {
+  try {
+    imageCollection[elem].addEventListener("mouseenter", async function (event) {
+      console.log('enter');
+      const tooltipUnchecked = await getTooltipUnchecked();
+      const tooltipDisabled = await getTooltipDisabled();
 
-//   try {
-//     this.addEventListener("mouseout", function (event) {
-//       imageTooltip.style.display = "none";
-//     });
-//   } catch {
-//     //do nothing
-//   }
-// }
+      // return if tooltip is disabled or turned off
+      if (tooltipUnchecked || tooltipDisabled) {
+        return;
+      }
 
-//Display Tootip for image
-// let imageCollection = document.getElementsByTagName("img");
-// // console.log(imageCollection);
-// for (elem in imageCollection) {
-//   try {
-//     imageCollection[elem].addEventListener("mouseenter", async function (event) {
-//       const tooltipUnchecked = await getTooltipUnchecked();
-//       const tooltipDisabled = await getTooltipDisabled();
+      const imgRect = this.getBoundingClientRect();
 
-//       if (tooltipUnchecked || tooltipDisabled) {
-//         return;
-//       }
-//       //add code to show button over image
-//       // imageCollection[elem].appendChild(imageTooltip);
-//       isMouseIn = true;
-//       imageData.url = this.src;
-//       imageData.width = this.width;
-//       imageData.height = this.height;
-//       let imgRect = this.getBoundingClientRect();
-//       // imageXstart = imgRect.left;
-//       // imageXend = imgRect.right;
-//       // imageYstart = imgRect.top;
-//       // imageYend = imgRect.bottom;
-//       let mouseX =
-//         window.scrollX + imgRect.left + (imgRect.right - imgRect.left) / 2 - 25;
-//       let mouseY =
-//         window.scrollY + imgRect.top + (imgRect.bottom - imgRect.top) / 2 - 15;
-//       imageTooltip.style.left = mouseX + "px";
-//       imageTooltip.style.top = mouseY + "px";
-//       if (imageTooltip.style.display != "block") {
-//         imageTooltip.style.display = "block";
-//       }
-//       this.addEventListener("mouseleave", function (event) {
-//         if (
-//           event.pageX < this.getBoundingClientRect().left ||
-//           event.pageX > this.getBoundingClientRect().right ||
-//           event.pageY < this.getBoundingClientRect().top ||
-//           event.pageY > this.getBoundingClientRect().bottom
-//         ) {
-//           imageTooltip.style.display = "none";
-//           isMouseIn = false;
-//           imageXstart = imageXend = imageYstart = imageYend = 0;
-//           //   console.log("mouseout");
-//         }
-//       });
-//     });
-//   } catch {
-//     //do nothing
-//   }
-// }
+      // return if image smaller that 80*80
+      if (imgRect.height < 80 || imgRect.width < 80) {
+        return;
+      }
+
+      // hide textTooltip
+      shadowElem.querySelector('#tooltipButton').classList.remove('expand');
+      setTimeout(() => {
+        textTooltip.style.visibility = "hidden";
+      }, 350)
+
+
+      payloadImage.url = this.src;
+      payloadImage.width = this.width;
+      payloadImage.height = this.height;
+      const mouseX = window.scrollX + imgRect.left + (imgRect.right - imgRect.left) / 2 - 25;
+      const mouseY = window.scrollY + imgRect.top + (imgRect.bottom - imgRect.top) / 2 - 15;
+      imageTooltip.style.left = mouseX + "px";
+      imageTooltip.style.top = mouseY + "px";
+      shadowRootContainer.style.zIndex = '500';
+      imageTooltip.style.visibility = "visible";
+    });
+
+    imageCollection[elem].addEventListener("mouseleave", function (event) {
+      let imgRect = this.getBoundingClientRect();
+      // console.log(imgRect);
+      // console.log(event.clientX);
+      // console.log(event.clientY);
+      if ((imgRect.left <= event.clientX && event.clientX <= imgRect.right) && (imgRect.top <= event.clientY && event.clientY <= imgRect.bottom)) {
+        return;
+      }
+      console.log('leave')
+      imageTooltip.style.visibility = "hidden";
+      shadowRootContainer.style.zIndex = '-1';
+    });
+
+  } catch {
+    //do nothing
+  }
+}
 
 
 
@@ -522,7 +451,6 @@ function getSelectionText() {
   return { text, boundingRect };
 }
 
-
 chrome.storage.onChanged.addListener(function (changes, namespace) {
   for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
     // console.log(
@@ -530,8 +458,23 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     //   `Old value was "${oldValue}", new value is "${newValue}".`
     // );
     if ((key === 'tooltipUnchecked' || key === 'tooltipDisabled') && newValue === true) {
-      div.style.display = "none";
-      imageTooltip.style.display = "none";
+
+      imageTooltip.style.visibility = "hidden"; //hide imageTooltip
+
+      //hide textTooltip
+      shadowElem.querySelector('#tooltipButton').classList.remove('expand');
+      setTimeout(() => {
+        textTooltip.style.visibility = "hidden";
+        shadowRootContainer.style.zIndex = '-1';
+      }, 350)
+
+    }
+    else if (key === 'currentTheme') {
+      for (const variable in cssThemeVariables) {
+        tooltipContainer.style.setProperty(variable, cssThemeVariables[variable][newValue]);
+      }
     }
   }
 });
+
+
