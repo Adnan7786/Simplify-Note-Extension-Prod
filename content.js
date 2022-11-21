@@ -282,6 +282,8 @@ const iconSubheading = shadowElem.querySelector('#iconSubheading');
 const iconBullet = shadowElem.querySelector('#iconBullet');
 const iconParagraph = shadowElem.querySelector('#iconParagraph');
 const iconPlus = shadowElem.querySelector('#iconPlus');
+const textTooltipWidth = (40 / 2) + 155;
+const textTooltipHeight = 40;
 
 window.onloadstart = render();
 
@@ -364,8 +366,25 @@ window.addEventListener("mouseup", async function (event) {
     if (selectedText.length > 0) {
       payloadText = selectedText;
       shadowRootContainer.style.zIndex = '500';
-      textTooltip.style.left = mouseX + tooltipXoffset + "px";
-      textTooltip.style.top = mouseY + tooltipYoffset + "px";
+      const posX = mouseX + tooltipXoffset;
+      const posY = mouseY + tooltipYoffset;
+      const pageWidth = getWidth();
+      const pageHeight = getHeight();
+
+
+      if (posX + textTooltipWidth + tooltipXoffset > pageWidth) {
+        textTooltip.style.left = pageWidth - tooltipXoffset - textTooltipWidth + "px";  // if tooltip goes outside pageview
+      } else {
+        textTooltip.style.left = mouseX + tooltipXoffset + "px";
+      }
+
+      if (posY + textTooltipHeight + tooltipYoffset > pageHeight) {
+        textTooltip.style.top = pageHeight - tooltipYoffset - textTooltipHeight + "px";  // if tooltip goes outside pageview
+      } else {
+        textTooltip.style.top = mouseY + tooltipYoffset + "px";
+      }
+
+
       textTooltip.style.visibility = "visible";
       shadowElem.querySelector('#tooltipButton').classList.add('expand');
     } else {
@@ -384,13 +403,13 @@ window.addEventListener("mouseup", async function (event) {
 //Display Tootip for image
 const imageCollection = document.getElementsByTagName("img");
 // console.log(imageCollection);
-let insideImage = false;
+// let insideImage = false;
 for (elem in imageCollection) {
   try {
     imageCollection[elem].addEventListener("mouseenter", async function (event) {
-      if (insideImage) return;
+      // if (insideImage) return; // return if already inside image - to avoid flickering issue
       console.log('enter');
-      insideImage = true;
+      // insideImage = true;
       const tooltipUnchecked = await getTooltipUnchecked();
       const tooltipDisabled = await getTooltipDisabled();
 
@@ -433,12 +452,12 @@ for (elem in imageCollection) {
         return;
       }
       console.log('leave')
-      insideImage = false;
+      // insideImage = false;
       imageTooltip.style.visibility = "hidden";
       shadowRootContainer.style.zIndex = '-1';
     });
 
-  } catch {
+  } catch (error) {
     sendNotification('failure', error);
   }
 }
@@ -513,3 +532,25 @@ function sendNotification(status, error) {
 }
 
 
+function getWidth() {
+  return Math.max(
+    document.body.scrollWidth,
+    document.documentElement.scrollWidth,
+    document.body.offsetWidth,
+    document.documentElement.offsetWidth,
+    document.documentElement.clientWidth
+  );
+}
+
+function getHeight() {
+  return Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.offsetHeight,
+    document.documentElement.clientHeight
+  );
+}
+
+console.log('Width:  ' + getWidth());
+console.log('Height: ' + getHeight());
