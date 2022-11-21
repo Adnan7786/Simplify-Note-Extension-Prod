@@ -475,6 +475,7 @@ function apiCreateFolder(name, parentFolderId) {
       }),
     }).then((res) => {
       res.json().then((res) => {
+        console.log(res);
         resolve(res);
       }).catch((error) => {
         reject(error);
@@ -497,15 +498,18 @@ function apiInsertText(style, text) {
         text
       }),
     }).then((res) => {
-      res.json().then((res) => {
-        resolve(res);
-      }).catch((error) => {
-        reject(error);
-      });
+      if (res.ok) {
+        resolve(`${toTitleCase(style)} successfully inserted to the document`);
+      }
+      reject(res.statusText);
     }).catch((error) => {
-      reject(error);
+      reject(error.message);
     });
   });
+}
+
+function toTitleCase(txt) {
+  return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 }
 
 async function signInAndRefreshPopup() {

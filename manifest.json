@@ -6,7 +6,8 @@
   "content_scripts": [
     {
       "matches": [
-        "<all_urls>"
+        "<all_urls>",
+        "file://*/*.pdf"
       ],
       "js": [
         "content.js"
@@ -41,7 +42,8 @@
     "scripting",
     "activeTab",
     "tabs",
-    "cookies"
+    "cookies",
+    "notifications"
   ],
   "host_permissions": [
     "<all_urls>"

@@ -1,3 +1,5 @@
+console.log('Hello from Simplify Notes');
+
 function getTooltipUnchecked() {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get(['tooltipUnchecked'], function (result) {
@@ -404,24 +406,23 @@ window.addEventListener("mouseup", async function (event) {
 
 });
 
-let imageArrayLength = 0;
+let currentLength = 0;
 //Display Tootip for image
-let insideImage = false;
+// let insideImage = false;
 setInterval(() => {
   const imageCollection = document.getElementsByTagName("img");
-  if (imageCollection.length === imageArrayLength) {
+  if (imageCollection.length === currentLength) {
     return;
   }
-
-  imageArrayLength = imageCollection.length;
-
+  console.log('laaa');
   // console.log(imageCollection);
-  for (elem in imageCollection) {
+  for (let index = currentLength; index < imageCollection.length; index++) {
+    console.log(index);
     try {
-      imageCollection[elem].addEventListener("mouseenter", async function (event) {
-        if (insideImage) return; // return if already inside image - to avoid flickering issue
+      imageCollection[index].addEventListener("mouseenter", async function (event) {
+        // if (insideImage) return; // return if already inside image - to avoid flickering issue
         console.log('enter');
-        insideImage = true;
+        // insideImage = true;
         const tooltipUnchecked = await getTooltipUnchecked();
         const tooltipDisabled = await getTooltipDisabled();
 
@@ -455,7 +456,7 @@ setInterval(() => {
         imageTooltip.style.visibility = "visible";
       });
 
-      imageCollection[elem].addEventListener("mouseleave", function (event) {
+      imageCollection[index].addEventListener("mouseleave", function (event) {
         let imgRect = this.getBoundingClientRect();
         // console.log(imgRect);
         // console.log(event.clientX);
@@ -464,7 +465,7 @@ setInterval(() => {
           return;
         }
         console.log('leave')
-        insideImage = false;
+        // insideImage = false;
         imageTooltip.style.visibility = "hidden";
         shadowRootContainer.style.zIndex = '-1';
       });
@@ -473,6 +474,8 @@ setInterval(() => {
       sendNotification('failure', error);
     }
   }
+
+  currentLength = imageCollection.length;
 }, 1000);
 
 
