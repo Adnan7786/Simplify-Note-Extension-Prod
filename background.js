@@ -40,7 +40,6 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   }
 });
 
-
 chrome.storage.onChanged.addListener(async function (changes, namespace) {
   for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
     if (key === 'tooltipUnchecked') {
@@ -61,7 +60,6 @@ chrome.storage.onChanged.addListener(async function (changes, namespace) {
     }
   }
 });
-
 
 function apiInsertText(style, text) {
   return new Promise((resolve, reject) => {
@@ -122,7 +120,6 @@ function sendNotification(status, message) {
   })
 }
 
-
 function getTooltipUnchecked() {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get(['tooltipUnchecked'], function (result) {
@@ -168,7 +165,6 @@ function turnBadgeOn() {
     console.log(error);
   }
 }
-
 
 function turnBadgeOff() {
   chrome.action.setBadgeBackgroundColor({
