@@ -1,14 +1,26 @@
 const domain = "https://simpli-notes.herokuapp.com"; //prod
 
-// // set live badge if tooltip is not disabled and switched on
-// if (!tooltipUnchecked && !tooltipDisabled) {
-//   setLiveBadge();
-// } else {
-//   removeLiveBadge();
-// }
+chrome.runtime.onInstalled.addListener(async (details) => {
+  const tooltipUnchecked = await getTooltipUnchecked();
+  const tooltipDisabled = await getTooltipDisabled();
+  if (tooltipUnchecked || tooltipDisabled) {
+    turnBadgeOff();
+  } else {
+    turnBadgeOn();
+  }
+});
+
+chrome.runtime.onStartup.addListener(async () => {
+  const tooltipUnchecked = await getTooltipUnchecked();
+  const tooltipDisabled = await getTooltipDisabled();
+  if (tooltipUnchecked || tooltipDisabled) {
+    turnBadgeOff();
+  } else {
+    turnBadgeOn();
+  }
+});
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-
   if (request.message === "insert_text") {
     try {
       const message = await apiInsertText(request.style, request.text);
@@ -34,17 +46,17 @@ chrome.storage.onChanged.addListener(async function (changes, namespace) {
     if (key === 'tooltipUnchecked') {
       const tooltipDisabled = await getTooltipDisabled();
       if (!newValue && !tooltipDisabled) {
-        setLiveBadge();
+        turnBadgeOn();
       } else {
-        removeLiveBadge();
+        turnBadgeOff();
       }
 
     } else if (key === 'tooltipDisabled') {
       const tooltipUnchecked = await getTooltipUnchecked();
       if (!newValue && !tooltipUnchecked) {
-        setLiveBadge();
+        turnBadgeOn();
       } else {
-        removeLiveBadge();
+        turnBadgeOff();
       }
     }
   }
@@ -119,6 +131,14 @@ function getTooltipUnchecked() {
   });
 }
 
+function storeTooltipUnchecked(value) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.set({ 'tooltipUnchecked': value }, function () {
+      resolve();
+    });
+  })
+}
+
 function getTooltipDisabled() {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get(['tooltipDisabled'], function (result) {
@@ -127,13 +147,21 @@ function getTooltipDisabled() {
   });
 }
 
-function setLiveBadge() {
+function storeTooltipDisabled(value) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.set({ 'tooltipDisabled': value }, function () {
+      resolve();
+    });
+  })
+}
+
+function turnBadgeOn() {
   try {
     chrome.action.setBadgeBackgroundColor({
-      color: [54, 178, 56, 1]
+      color: [103, 252, 95, 1]
     }, () => {
       chrome.action.setBadgeText({
-        text: "Live"
+        text: " ON "
       })
     })
   } catch (error) {
@@ -142,8 +170,12 @@ function setLiveBadge() {
 }
 
 
-function removeLiveBadge() {
-  chrome.action.setBadgeText({
-    text: ""
+function turnBadgeOff() {
+  chrome.action.setBadgeBackgroundColor({
+    color: [249, 159, 159, 1]
+  }, () => {
+    chrome.action.setBadgeText({
+      text: " OFF "
+    })
   })
 }

@@ -69,7 +69,8 @@ tooltipContainer.innerHTML = `<style>
 
 :host {
   --color-primary: #0ed095;
-  --color-background: #fff;
+  --color-background: #f3f6fd;
+  --color-text: #7c7c7c;
   --color-shadow: rgba(0, 0, 0, 0.2);
   --color-logo-shadow1: rgba(0, 0, 0, 0.17);
   --color-logo-shadow2: rgba(0, 0, 0, 0.15);
@@ -100,6 +101,7 @@ tooltipContainer.innerHTML = `<style>
   height: 100%;
   border-radius: 50%;
   z-index: 2;
+  cursor: pointer;
   box-shadow: var(--color-logo-shadow1) 0px -10px 25px 0px inset,
       var(--color-logo-shadow2) 0px -15px 30px 0px inset,
       var(--color-logo-shadow3) 0px -40px 40px 0px inset;
@@ -144,7 +146,7 @@ tooltipContainer.innerHTML = `<style>
   width: 20px;
   height: 30px;
   cursor: pointer;
-  fill: darkgrey;
+  fill: var(--color-text);
   transition: transform ease-in-out 100ms;
 }
 
@@ -205,7 +207,8 @@ tooltipContainer.innerHTML = `<style>
 
 @media (prefers-color-scheme: dark) {
   :host {
-      --color-background: #000;
+      --color-background: #1e1e1e;
+      --color-text: #eaeaea;
       --color-shadow: rgba(255, 255, 255, 0.2);
   }
 }
@@ -261,8 +264,12 @@ root.appendChild(tooltipContainer);
 
 const cssThemeVariables = {
   '--color-background': {
-    'light': '#fff',
-    'dark': '#000'
+    'light': '#f3f6fd',
+    'dark': '#1e1e1e'
+  },
+  '--color-text': {
+    'light': '#7c7c7c',
+    'dark': '#eaeaea'
   },
   '--color-shadow': {
     'light': 'rgba(0, 0, 0, 0.2)',
@@ -296,6 +303,16 @@ window.onloadstart = render();
 
 for (const logo of iconLogos) {
   logo.src = chrome.runtime.getURL("images/tooltip-logo.png");
+  logo.addEventListener('click', function () {
+    window.getSelection().empty();  //clear selection - for chrome
+    window.open('https://www.simplifynote.com', '_blank');
+    shadowElem.querySelector('#tooltipButton').classList.remove('expand');
+    setTimeout(() => {
+      imageTooltip.style.visibility = "hidden";
+      textTooltip.style.visibility = "hidden";
+      shadowRootContainer.style.zIndex = '-1';
+    }, 350);
+  });
 }
 
 iconHeading.addEventListener("click", function () {
@@ -350,7 +367,6 @@ iconPlus.addEventListener("click", function () {
     handleResponse
   );
 });
-
 
 //Trigger for tooltip
 window.addEventListener("mouseup", async function (event) {
@@ -408,21 +424,22 @@ window.addEventListener("mouseup", async function (event) {
 
 let currentLength = 0;
 //Display Tootip for image
-// let insideImage = false;
+// let insideImage = {};
 setInterval(() => {
   const imageCollection = document.getElementsByTagName("img");
   if (imageCollection.length === currentLength) {
     return;
   }
-  console.log('laaa');
+  // console.log('laaa');
   // console.log(imageCollection);
   for (let index = currentLength; index < imageCollection.length; index++) {
-    console.log(index);
+    // insideImage[index] = false;
+    // console.log(index);
     try {
       imageCollection[index].addEventListener("mouseenter", async function (event) {
-        // if (insideImage) return; // return if already inside image - to avoid flickering issue
+        // if (insideImage[index]) return; // return if already inside image - to avoid flickering issue
         console.log('enter');
-        // insideImage = true;
+        // insideImage[index] = true;
         const tooltipUnchecked = await getTooltipUnchecked();
         const tooltipDisabled = await getTooltipDisabled();
 
@@ -439,6 +456,7 @@ setInterval(() => {
         }
 
         // hide textTooltip
+        window.getSelection().empty();  //clear selection - for chrome
         shadowElem.querySelector('#tooltipButton').classList.remove('expand');
         setTimeout(() => {
           textTooltip.style.visibility = "hidden";
@@ -465,7 +483,7 @@ setInterval(() => {
           return;
         }
         console.log('leave')
-        // insideImage = false;
+        // insideImage[index] = false;
         imageTooltip.style.visibility = "hidden";
         shadowRootContainer.style.zIndex = '-1';
       });
