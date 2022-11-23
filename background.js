@@ -155,7 +155,7 @@ function storeTooltipDisabled(value) {
 function turnBadgeOn() {
   try {
     chrome.action.setBadgeBackgroundColor({
-      color: [103, 252, 95, 1]
+      color: [14, 208, 149, 1]
     }, () => {
       chrome.action.setBadgeText({
         text: " ON "
