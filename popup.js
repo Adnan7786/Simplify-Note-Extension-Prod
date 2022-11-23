@@ -29,6 +29,10 @@ const cssThemeVariables = {
   '--color-box-shadow': {
     'light': 'rgba(60, 64, 67, 0.3)',
     'dark': 'rgba(195, 191, 188, 0.3)'
+  },
+  '--color-box-shadow2': {
+    'light': 'rgba(0, 0, 0, 0.35)',
+    'dark': 'rgba(255, 255, 255, 0.35)'
   }
 }
 
@@ -53,6 +57,8 @@ const addNoteForm = document.querySelector('#addNoteForm');
 const tooltipSubmitMessage = document.querySelector('#tooltipSubmitMessage');
 const loadingMessage = document.querySelector('#tooltipLoadingMessage');
 const responseMessage = document.querySelector('#tooltipResponseMessage');
+const logoutButton = document.querySelector('.profile-avatar #logout');
+console.log(logoutButton);
 
 
 const createDocForm = document.querySelector('#createDoc');
@@ -141,7 +147,10 @@ iconMoon.addEventListener("click", async function () {
   } catch (error) {
     sendNotification('failure', error);
   }
+});
 
+userAvatar.addEventListener("click", function () {
+  navbarTabs[3].click();
 });
 
 for (let i = 0; i < navbarTabs.length; i++) {
@@ -177,6 +186,8 @@ addNoteInput.addEventListener('input', function () {
 addNoteInput.addEventListener('keypress', function (event) {
   if (event.key === 'Enter') event.preventDefault();
 });
+
+
 
 // for (let i = 0; i < tooltipButtons.length; i++) {
 //   tooltipButtons[i].addEventListener('submit', function(){
@@ -215,9 +226,9 @@ document.querySelector('input[name=toggle-switch-input]').addEventListener('clic
   }
 });
 
+noAvatar.addEventListener('click', redirectToSignInPage);
 
-document.querySelector('#icon-no-avatar').addEventListener('click', redirectToSignInPage);
-document.querySelector('#user-avatar').addEventListener('click', async () => {
+logoutButton.addEventListener('click', async () => {
   try {
     return await logoutAndRefreshPopup();
   } catch (error) {
@@ -573,6 +584,7 @@ async function render() {
     if (userIsSignedIn) {
       user = await signInAndRefreshPopup();
     }
+    console.log(user);
 
     if (!userIsSignedIn || !user.currentDocID || user.currentDocID === "") {
       disableTooltipSwitch(true);
@@ -581,6 +593,10 @@ async function render() {
     else {
       await storeTooltipDisabled(false);
     }
+
+    tabContents[3].querySelector('#avatar').src = user.image;
+    tabContents[3].querySelector('.user-details #name').innerHTML = user.name;
+    tabContents[3].querySelector('.user-details #email').innerHTML = user.email;
 
 
   } catch (error) {

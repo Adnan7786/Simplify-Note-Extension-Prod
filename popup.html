@@ -183,7 +183,60 @@
           Styles
         </div>
         <div class="tab-content profile">
-          Profile
+          <div class="profile-avatar">
+            <img id="avatar" class="avatar" src="">
+            <span id="logout" class="logout">
+              <svg class="iconLogout" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                  d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z" />
+                <path fill-rule="evenodd"
+                  d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
+              </svg>
+            </span>
+          </div>
+          <div class="user-details">
+            <div class="user-name">
+              <span class="label">Name:</span>
+              <span id='name' class="value"></span>
+            </div>
+            <div class="user-email">
+              <span class="label">Email:</span>
+              <span id='email' class="value"></span>
+            </div>
+            <div class="user-notes-created">
+              <span class="label">Notes created:</span>
+              <span class="value">88</span>
+            </div>
+            <div class="user-subscription">
+              <span class="label">Subscription:</span>
+              <span id='subscription' class="value">1 year Free Trial</span>
+            </div>
+            <div class="user-subscription-ends">
+              <span class="label">Subscription Ends:</span>
+              <span id='subscriptionEnds' class="value">12th August, 2023</span>
+            </div>
+          </div>
+          <div class="user-permissions">
+            <span class="title">User Permissions</span>
+            <div class="google-drive-access">
+              <span class="label">Allow google drive access:</span>
+              <span class="switch">
+                <label class="switch">
+                  <input type="checkbox" checked>
+                  <span class="slider round"></span>
+                </label>
+              </span>
+            </div>
+            <div class="all-sites-access">
+              <span class="label">Allow access on all sites:</span>
+              <span class="switch">
+                <label class="switch">
+                  <input type="checkbox" checked>
+                  <span class="slider round"></span>
+                </label>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
