@@ -38,6 +38,7 @@
   --color-icon-background: #171717;
   --color-icon-text: var(--color-white);
   --color-black-white: #000;
+  --color-white-black: #fff;
   --color-white: #ffffff;
   --color-white-hover: #def9e5;
   --color-grey-light: #686868;
@@ -903,6 +904,104 @@ div.social-media {
   border-right: 2px solid var(--color-bgr-secondary);
 }
 
+.styles-container {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+  height: calc(100% - 10px);
+  width: calc(100% - 20px);
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: var(--color-bgr-main);
+}
+
+.styles-sidebar {
+  display: inline-flex;
+  height: 100%;
+  width: 25%;
+}
+
+.styles-divider {
+  display: inline-block;
+  width: 1px;
+  height: 80%;
+  background-color: var(--color-bgr-secondary);
+}
+
+.styles-content {
+  height: 100%;
+  width: 75%;
+}
+
+.styles-sidebar .list {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+}
+
+.styles-sidebar .list::before {
+  content: '';
+  position: absolute;
+  width: 7px;
+  height: 100%;
+  background-color: var(--color-primary);
+}
+
+.styles-sidebar .list .list-item {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  height: 15%;
+  position: relative;
+  margin-left: 7px;
+  padding-left: 7px;
+  cursor: default;
+}
+
+.styles-sidebar .list .list-item:not(.active) {
+  cursor: pointer;
+}
+
+.styles-sidebar .list .list-item .highlighter {
+  display: inline-block;
+  width: 0%;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-primary);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s;
+}
+
+.styles-sidebar .list .list-item.active .highlighter {
+  transform: scaleX(1);
+  transform-origin: left;
+  transition: transform 0.5s;
+}
+
+.styles-sidebar .list .list-item h4 {
+  position: relative;
+  color: var(--color-black-white);
+  transition: transform 0.5s;
+}
+
+.styles-sidebar .list .list-item.active h4 {
+  color: var(--color-white-black);
+  transform: scale(1.1);
+}
+
+.styles-content .styles-form {
+  height: 100%;
+}
+
+
 .profile-avatar {
   display: inline-flex;
   height: 60px;
@@ -1059,6 +1158,7 @@ span.logout .iconLogout {
     --color-icon-background: #ffffff;
     --color-icon-text: #cecccc;
     --color-black-white: #fff;
+    --color-white-black: #000;
     --color-box-shadow: rgba(195, 191, 188, 0.3);
     --color-box-shadow2: rgba(255, 255, 255, 0.35);
   }

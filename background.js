@@ -158,7 +158,7 @@ function turnBadgeOn() {
       color: [14, 208, 149, 1]
     }, () => {
       chrome.action.setBadgeText({
-        text: " ON "
+        text: " "
       })
     })
   } catch (error) {
@@ -171,7 +171,7 @@ function turnBadgeOff() {
     color: [249, 159, 159, 1]
   }, () => {
     chrome.action.setBadgeText({
-      text: " OFF "
+      text: " "
     })
   })
 }

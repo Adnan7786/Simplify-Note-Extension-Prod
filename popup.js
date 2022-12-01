@@ -10,6 +10,10 @@ const cssThemeVariables = {
     'light': '#000',
     'dark': '#fff'
   },
+  '--color-white-black': {
+    'light': '#fff',
+    'dark': '#000'
+  },
   '--color-bgr-main': {
     'light': '#f3f6fd',
     'dark': '#1e1e1e'
@@ -37,6 +41,7 @@ const cssThemeVariables = {
 }
 
 let activeTab = 0;
+let activeStyle = 0;
 const textStyles = ['heading', 'subheading', 'bullet', 'paragraph'];
 
 const documentRoot = document.querySelector(':root');
@@ -58,7 +63,7 @@ const tooltipSubmitMessage = document.querySelector('#tooltipSubmitMessage');
 const loadingMessage = document.querySelector('#tooltipLoadingMessage');
 const responseMessage = document.querySelector('#tooltipResponseMessage');
 const logoutButton = document.querySelector('.profile-avatar #logout');
-console.log(logoutButton);
+const stylesListItems = document.querySelectorAll('.styles-sidebar .list .list-item');
 
 
 const createDocForm = document.querySelector('#createDoc');
@@ -75,7 +80,7 @@ createDocForm.addEventListener("submit", async function (event) {
   this.elements['docNameInput'].value = "";
   try {
     const folderTree = await apiFetchFolderTree();
-    const parentFolderId = folderTree.root;
+    const parentFolderId = folderTree.rootId;
     const response = await apiCreateDoc(inputValue, parentFolderId);
   } catch (error) {
     console.log('error' + error);
@@ -88,7 +93,7 @@ createFolderForm.addEventListener("submit", async function (event) {
   this.elements['folderNameInput'].value = "";
   try {
     const folderTree = await apiFetchFolderTree();
-    const parentFolderId = folderTree.root;
+    const parentFolderId = folderTree.rootId;
     const response = await apiCreateFolder(inputValue, parentFolderId);
   } catch (error) {
     console.log('error' + error);
@@ -187,6 +192,15 @@ addNoteInput.addEventListener('keypress', function (event) {
   if (event.key === 'Enter') event.preventDefault();
 });
 
+
+for (let index = 0; index < stylesListItems.length; index++) {
+  stylesListItems[index].addEventListener('click', () => {
+    stylesListItems[activeStyle].classList.remove('active');
+    stylesListItems[index].classList.add('active');
+    activeStyle = index;
+  });
+
+}
 
 
 // for (let i = 0; i < tooltipButtons.length; i++) {
