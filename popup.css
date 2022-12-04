@@ -1,5 +1,59 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap");
 
+@keyframes moveGradient {
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 187;
+  }
+
+  50% {
+    stroke-dashoffset: 46.75;
+    transform: rotate(135deg);
+  }
+
+  100% {
+    stroke-dashoffset: 187;
+    transform: rotate(450deg);
+  }
+}
+
+@keyframes colors {
+  0% {
+    stroke: #4285F4;
+  }
+
+  25% {
+    stroke: #DE3E35;
+  }
+
+  50% {
+    stroke: #F7C223;
+  }
+
+  75% {
+    stroke: #1B9A59;
+  }
+
+  100% {
+    stroke: #4285F4;
+  }
+}
+
+@keyframes rotator {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(270deg);
+  }
+}
+
 @keyframes loading {
   0% {
     cy: 10;
@@ -31,15 +85,17 @@
 
 :root {
   /* --current-theme: light; */
-  --color-bgr-main: #f3f6fd;
+  --color-bgr-main: hsl(222, 71%, 97%);
+  --color-bgr-main-hover: hsl(222, 71%, 90%);
   --color-bgr-secondary: var(--color-white);
+
   --color-primary: #0ed095;
   --color-secondary: #4a4a4a;
   --color-icon-background: #171717;
   --color-icon-text: var(--color-white);
   --color-black-white: #000;
   --color-white-black: #fff;
-  --color-white: #ffffff;
+  --color-white: #fff;
   --color-white-hover: #def9e5;
   --color-grey-light: #686868;
   --color-box-shadow: rgba(60, 64, 67, 0.3);
@@ -66,6 +122,32 @@ body {
   background-color: var(--color-bgr-main);
   transition: background-color ease-out 400ms;
 }
+
+.page-load {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  z-index: 500;
+  width: 100%;
+  height: 100%;
+  background-color: inherit;
+}
+
+.page-load .spinner {
+  height: 65px;
+  width: 65px;
+  animation: rotator 1.4s linear infinite;
+}
+
+.page-load .spinner .path {
+  stroke-dasharray: 187;
+  stroke-dashoffset: 0;
+  transform-origin: center;
+  animation: dash 1.4s ease-in-out infinite, colors 5.6s ease-in-out infinite;
+}
+
+
 
 header,
 div.content,
@@ -540,7 +622,7 @@ div.social-media {
   background-color: var(--color-white);
 }
 
-.icon-google {
+.google-logo .icon-google {
   margin: auto;
   width: 18px;
   height: 18px;
@@ -612,7 +694,7 @@ div.social-media {
   flex-direction: column;
   /* justify-content: center; */
   align-items: center;
-  gap: 20px;
+  gap: 15px;
   margin-top: 20px;
   color: var(--color-secondary);
   /* transition: all ease-out 100ms; */
@@ -1003,61 +1085,45 @@ div.social-media {
 
 
 .profile-avatar {
+  --avatar-size: 60px;
   display: inline-flex;
-  height: 60px;
-  width: 60px;
+  height: var(--avatar-size);
+  width: var(--avatar-size);
   position: relative;
   border-radius: 50%;
-  overflow: hidden;
   /* border: 1px solid red; */
-  box-shadow: var(--color-box-shadow2) 0px 30px 90px;
-  transition: box-shadow 350ms ease-in, transform 350ms ease-in;
+  /* box-shadow: var(--color-box-shadow2) 0px 30px 90px; */
+  transition: transform 350ms ease-in;
 }
 
-.profile-avatar:hover {
-  box-shadow: none;
-  transform: scale(1.1);
+.profile-avatar::after {
+  position: absolute;
+  content: "";
+  top: calc(-0.1 * var(--avatar-size));
+  left: calc(-0.1 * var(--avatar-size));
+  z-index: 1;
+  width: calc(20% + var(--avatar-size));
+  height: calc(20% + var(--avatar-size));
+  background: linear-gradient(60deg, #5f86f2, #a65ff2, #f25fd0, #f25f61, #f2cb5f, #abf25f, #5ff281, #5ff2f0);
+  background-size: 300% 300%;
+  background-position: 0 50%;
+  border-radius: 50%;
+  animation: moveGradient 4s alternate infinite;
 }
 
 .profile-avatar .avatar {
   height: 100%;
   width: 100%;
+  z-index: 2;
   position: absolute;
   top: 0;
   left: 0;
   border-radius: 50%;
+  transition: transform 350ms ease-in;
 }
 
-.profile-avatar span.logout {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0%;
-  border-radius: 50%;
-  cursor: pointer;
-  background: var(--color-bgr-secondary);
-  transition: width 350ms ease-in, box-shadow 350ms ease-in;
-}
-
-.profile-avatar:hover span.logout {
-  width: 100%;
-  box-shadow: var(--color-box-shadow2) 0px 30px 60px -12px inset, var(--color-box-shadow2) 0px 18px 36px -18px inset;
-  /* box-shadow: var(--color-box-shadow2) 0px -50px 36px -28px inset; */
-}
-
-span.logout .iconLogout {
-  height: 50%;
-  width: 50%;
-  fill: var(--color-black-white);
-  visibility: hidden;
-}
-
-.profile-avatar:hover .iconLogout {
-  visibility: visible;
+.profile-avatar:hover .avatar {
+  transform: scale(1.1);
 }
 
 .user-details {
@@ -1067,30 +1133,62 @@ span.logout .iconLogout {
   padding-left: 10px;
   /* align-items: center; */
   width: 90%;
+  height: 30%;
+  border-radius: 5px;
+  background-color: var(--color-bgr-main);
+}
+
+.account-settings {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
   height: 35%;
   border-radius: 5px;
   background-color: var(--color-bgr-main);
 }
 
-.user-permissions {
-  display: inline-flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 3px;
-  padding-left: 10px;
-  width: 90%;
-  height: 25%;
-  border-radius: 5px;
-  background-color: var(--color-bgr-main);
-}
-
-.user-permissions .title {
+.account-settings .title {
+  width: 93%;
+  height: 25px;
   font-weight: 500;
-  padding-bottom: 5px;
+  margin-bottom: 2px;
   color: var(--color-black-white);
 }
 
-.user-permissions .switch {
+.account-settings .google-drive-access,
+.account-settings .all-webpage-access,
+.account-settings .sign-out {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  width: 93%;
+  margin-bottom: 1px;
+  padding-left: 5px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.account-settings .google-drive-access:hover,
+.account-settings .all-webpage-access:hover,
+.account-settings .sign-out:hover {
+  background-color: var(--color-bgr-main-hover);
+}
+
+.google-drive-access .label,
+.sign-out .label {
+  padding-left: 5px;
+}
+
+.account-settings .icon-google,
+.account-settings .icon-sign-out {
+  fill: var(--color-secondary);
+  height: 15px;
+  width: 15px;
+}
+
+/* .account-settings .switch {
   position: relative;
   display: inline-block;
   padding-left: 5px;
@@ -1098,13 +1196,13 @@ span.logout .iconLogout {
   height: var(--permission-switch-height);
 }
 
-.user-permissions .switch input {
+.account-settings .switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.user-permissions .slider {
+.account-settings .slider {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -1115,7 +1213,7 @@ span.logout .iconLogout {
   transition: .4s;
 }
 
-.user-permissions .slider:before {
+.account-settings .slider:before {
   position: absolute;
   content: "";
   height: calc(var(--permission-switch-height) - (var(--permission-switch-margin) * 2));
@@ -1126,34 +1224,35 @@ span.logout .iconLogout {
   transition: .4s;
 }
 
-.user-permissions input:checked+.slider {
+.account-settings input:checked+.slider {
   background-color: var(--color-primary);
 }
 
-.user-permissions input:checked+.slider:before {
+.account-settings input:checked+.slider:before {
   transform: translateX(calc(var(--permission-switch-width) - var(--permission-switch-height)));
 }
 
-.user-permissions .slider.round {
+.account-settings .slider.round {
   border-radius: 34px;
 }
 
-.user-permissions .slider.round:before {
+.account-settings .slider.round:before {
   border-radius: 50%;
 }
 
-.user-permissions .google-drive-access,
-.user-permissions .all-sites-access {
+.account-settings .google-drive-access,
+.account-settings .all-sites-access {
   display: inline-flex;
   align-items: center;
-  /* padding-left: 5px; */
 }
+*/
 
 @media (prefers-color-scheme: dark) {
   :root {
     /* --current-theme: dark; */
     --color-secondary: #b4b4b4;
-    --color-bgr-main: #1e1e1e;
+    --color-bgr-main: hsl(0, 0%, 12%);
+    --color-bgr-main-hover: hsl(0, 0%, 20%);
     --color-bgr-secondary: #000;
     --color-icon-background: #ffffff;
     --color-icon-text: #cecccc;
