@@ -57,10 +57,10 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "/images/*"
+        "/images/*",
+        "/src/*"
       ],
       "matches": [
-        "https://web-accessible-resources-1.glitch.me/*",
         "<all_urls>"
       ]
     }

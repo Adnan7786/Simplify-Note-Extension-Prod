@@ -716,61 +716,48 @@ div.social-media {
 }
 
 .workspace .current-doc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
   color: var(--color-secondary);
-  /* display: none; */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-
 }
 
 .workspace .currently-editing {
-  height: 60%;
-  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  width: 90%;
+  height: 50%;
+  overflow: hidden;
+  border-radius: 5px;
+  background-color: var(--color-bgr-main);
+  /* justify-content: center; */
 }
 
-.workspace .currently-editing .currently-editing-title {
-  height: 25%;
-  width: 100%;
+.currently-editing .title {
   display: flex;
-  gap: 5px;
-  justify-content: left;
-  align-items: flex-end;
-  padding-left: 15px;
-  font-size: 1.1em;
-  /* color: var(--color-secondary); */
-  /* border: 1px solid var(--color-primary); */
-}
-
-.currently-editing-title .icon-online-container {
-  display: inline-flex;
   align-items: center;
-}
-
-.icon-online-container {
-  width: 6px;
-  height: 20px;
-  fill: var(--color-primary);
-}
-
-
-.workspace .currently-editing .currently-editing-content {
-  height: 75%;
+  height: 30px;
   width: 100%;
+  font-weight: 500;
+  margin-bottom: 10px;
+  padding-left: 10px;
+  color: var(--color-black-white);
+  background-color: var(--color-bgr-main-hover);
+}
+
+.currently-editing .doc {
   display: flex;
   justify-content: left;
   align-items: center;
+  /* height: 75%; */
+  width: 100%;
 }
 
-.currently-editing-content .document-icon-container {
+.doc .document-icon-container {
   width: 35%;
   height: 100%;
   display: flex;
@@ -1139,39 +1126,42 @@ div.social-media {
 }
 
 .account-settings {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
   width: 90%;
   height: 35%;
+  overflow: hidden;
   border-radius: 5px;
   background-color: var(--color-bgr-main);
 }
 
 .account-settings .title {
-  width: 93%;
-  height: 25px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 30px;
   font-weight: 500;
-  margin-bottom: 2px;
+  margin-bottom: 10px;
+  padding-left: 10px;
   color: var(--color-black-white);
+  background-color: var(--color-bgr-main-hover);
 }
 
 .account-settings .google-drive-access,
-.account-settings .all-webpage-access,
 .account-settings .sign-out {
   display: flex;
   align-items: center;
-  height: 30px;
+  height: 25px;
   width: 93%;
-  margin-bottom: 1px;
+  margin-bottom: 2px;
   padding-left: 5px;
   cursor: pointer;
   border-radius: 3px;
 }
 
 .account-settings .google-drive-access:hover,
-.account-settings .all-webpage-access:hover,
 .account-settings .sign-out:hover {
   background-color: var(--color-bgr-main-hover);
 }
@@ -1181,11 +1171,16 @@ div.social-media {
   padding-left: 5px;
 }
 
-.account-settings .icon-google,
-.account-settings .icon-sign-out {
+.account-settings .icon-google {
   fill: var(--color-secondary);
   height: 15px;
   width: 15px;
+}
+
+.account-settings .icon-sign-out {
+  fill: var(--color-secondary);
+  height: 16px;
+  width: 16px;
 }
 
 /* .account-settings .switch {
