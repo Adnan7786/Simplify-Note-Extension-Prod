@@ -1,4 +1,14 @@
-console.log('Hello from Simplify Notes');
+function isPDF(url) {
+  return url.split('.').pop() === 'pdf';
+}
+
+// if url is pdf, open pdf using pdf viewer present in src folder
+if (isPDF(window.location.href)) {
+  // alert('Hi')
+  if (!window.location.href.startsWith('chrome-extension://')) {
+    window.location.href = chrome.runtime.getURL('src/pdfjs/web/viewer.html') + '?file=' + window.location.href;
+  }
+}
 
 function getTooltipUnchecked() {
   return new Promise((resolve, reject) => {
@@ -595,13 +605,3 @@ console.log('Height: ' + getHeight());
 //   console.log(imageCollection.length);
 // }, 1000)
 
-
-function isPDF(url) {
-  return url.split('.').pop() === 'pdf';
-}
-
-// if url is pdf, open pdf using pdf viewer present in src folder
-if (isPDF(window.location.href)) {
-  alert('Hi')
-  window.location.href = chrome.runtime.getURL('src/pdfviewer/web/viewer.html') + '?file=' + window.location.href;
-}
