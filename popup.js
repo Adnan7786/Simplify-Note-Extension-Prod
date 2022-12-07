@@ -543,6 +543,9 @@ function toTitleCase(txt) {
 async function signInAndRefreshPopup(user, folderTree) {
   console.log(user);
   console.log(folderTree);
+  if (!user.currentDocID || user.currentDocID === '') {
+    pageLoad.style.visibility = 'hidden';
+  }
   updateAvatar(true, user.image);
   updateContentBox(true, user);
   await updateTooltipSwitch(user.currentDocID);
