@@ -1,4 +1,4 @@
-const domain = "https://simplify-note.onrender.com"; //prod
+const domain = "https://simplify-note.vercel.app"; //prod
 
 chrome.runtime.onInstalled.addListener(async (details) => {
   const tooltipUnchecked = await getTooltipUnchecked();

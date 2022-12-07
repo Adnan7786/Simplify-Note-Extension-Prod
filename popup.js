@@ -1,4 +1,4 @@
-const domain = "https://simplify-note.onrender.com"; //prod
+const domain = "https://simplify-note.vercel.app"; //prod
 // const domain = "http://localhost:3000" //dev
 
 const cssThemeVariables = {
