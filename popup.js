@@ -547,12 +547,12 @@ async function signInAndRefreshPopup(user, folderTree) {
     pageLoad.style.visibility = 'hidden';
   }
   updateAvatar(true, user.image);
+  updateProfileTab(user);
   updateContentBox(true, user);
   await updateTooltipSwitch(user.currentDocID);
   updateWorkspaceTab(user, folderTree);
   // updateNotesTab();
   // updateStylesTab();
-  updateProfileTab(user);
   return;
 }
 
@@ -618,14 +618,21 @@ function updateWorkspaceTab(user, folderTree) {
   workspaceTab.querySelector('.doc-details .doc-name .value').innerHTML = currDocObj.name;
 
   workspaceTab.querySelector('.doc-details .doc-created .value').innerHTML = dateCreated;
-  workspaceTab.querySelector('.doc-details .doc-modified .value').innerHTML = dateModified;
+  // workspaceTab.querySelector('.doc-details .doc-modified .value').innerHTML = dateModified;
 
   workspaceTab.querySelector('#icon-document').addEventListener('click', function () {
     docIconClickAndEnter(currDocObj.docID);
   });
   workspaceTab.querySelector('#icon-document').addEventListener('keypress', function (event) {
     if (event.key === 'Enter') docIconClickAndEnter(currDocObj.docID);
-  })
+  });
+
+  workspaceTab.querySelector('#open-in-docs').addEventListener('click', function () {
+    docIconClickAndEnter(currDocObj.docID);
+  });
+  workspaceTab.querySelector('#open-in-docs').addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') docIconClickAndEnter(currDocObj.docID);
+  });
 
 }
 

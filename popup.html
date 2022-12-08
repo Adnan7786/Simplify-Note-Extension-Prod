@@ -104,10 +104,11 @@
                     <span class="label">Created At :</span>
                     <span class="value"></span>
                   </div>
-                  <div class="doc-modified">
+                  <button id="open-in-docs" class="open-in-docs" tabindex=0>Open in Google Docs</button>
+                  <!-- <div class="doc-modified">
                     <span class="label">Last Modified :</span>
                     <span class="value"></span>
-                  </div>
+                  </div> -->
                   <!-- <div class="doc-folder">
                     <span class="label">Folder Name :</span>
                     <span class="value"></span>
@@ -117,7 +118,7 @@
             </div>
             <form id="addNoteForm" class="add-note">
               <input type="text" name="addNoteInput" id="addNoteInput" class="add-note-input"
-                placeholder="Add a note to the document" autocomplete="off" required="">
+                placeholder="What's on your mind ?" autocomplete="off" required="">
               <div class="text-tooltip">
                 <div id="tooltipSubmitMessage" class="submitMessage">
                   <div id="tooltipLoadingMessage" class="loadingMessage">
@@ -212,7 +213,7 @@
                 <br>
                 <br>
                 <label>Font Size:
-                  <select id="fontStyles" name="fontStyles">
+                  <select id="fontSize" name="fontSize">
                     <option value="10">10</option>
                     <option value="20">20</option>
                     <option value="30">30</option>
@@ -255,8 +256,8 @@
                 </label>
                 <br>
                 <br>
-                <button type="submit">Reset to default</button>
-                <button type="submit">Apply</button>
+                <button type="submit" id="default">Reset</button>
+                <button type="submit" id="apply">Submit</button>
 
               </form>
             </div>
