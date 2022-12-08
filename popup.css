@@ -1,8 +1,21 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap");
 
-@keyframes moveGradient {
-  50% {
-    background-position: 100% 50%;
+@keyframes bounce2 {
+
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateY(0);
+  }
+
+  40% {
+    transform: translateY(-5px);
+  }
+
+  60% {
+    transform: translateY(-3px);
   }
 }
 
@@ -145,6 +158,10 @@ body {
   stroke-dashoffset: 0;
   transform-origin: center;
   animation: dash 1.4s ease-in-out infinite, colors 5.6s ease-in-out infinite;
+}
+
+.bounce {
+  animation: bounce2 2s ease infinite;
 }
 
 
@@ -775,10 +792,10 @@ div.social-media {
   transition: transform ease-out 100ms;
 }
 
-.document-icon-container .icon-document:hover,
+/* .document-icon-container .icon-document:hover,
 .document-icon-container .icon-document:focus {
   transform: scale3d(1.1, 1.1, 1.1);
-}
+} */
 
 .currently-editing-content .doc-details {
   width: 65%;
@@ -988,7 +1005,7 @@ button.open-in-docs:focus {
 .styles-container {
   display: flex;
   flex-direction: row;
-  gap: 16px;
+  gap: 14px;
   align-items: center;
   height: calc(100% - 10px);
   width: calc(100% - 20px);
@@ -1068,9 +1085,9 @@ button.open-in-docs:focus {
   /* transition: transform 100ms; */
 }
 
-.styles-sidebar .list .list-item h4 {
+.styles-sidebar .list .list-item span {
   position: relative;
-  color: var(--color-black-white);
+  color: var(--color-secondary);
   /* transition: transform 0.2s; */
 }
 
@@ -1078,8 +1095,8 @@ button.open-in-docs:focus {
   border-left: 3px solid var(--color-primary);
 } */
 
-.styles-sidebar .list .list-item.active h4 {
-  color: var(--color-primary);
+.styles-sidebar .list .list-item.active span {
+  color: var(--color-black-white);
   /* transform: scale(1.1); */
 }
 
@@ -1092,17 +1109,8 @@ button.open-in-docs:focus {
   margin-left: 5px;
   padding: 2px;
   border-radius: 3px;
-  color: var(--color-secondary);
-  background-color: var(--color-bgr-secondary);
-}
-
-
-
-.styles-form #bold,
-.styles-form #italic,
-.styles-form #underline {
-  /* appearance: none; */
-  background: #0ed095;
+  color: var(--color-black-white);
+  background-color: var(--color-bgr-main-hover);
 }
 
 .styles-form input[type="radio"][name="color"],
@@ -1115,7 +1123,8 @@ button.open-in-docs:focus {
   width: var(--size);
   border-radius: 50%;
   border: 2px solid var(--color-bgr-main);
-  background-color: orange;
+  background-color: var(--color-primary);
+  transition: transform 100ms;
 }
 
 .styles-form input[type="radio"][name="color"]:hover,
@@ -1128,22 +1137,71 @@ button.open-in-docs:focus {
   outline: 1px solid var(--color-primary);
 }
 
+.styles-form input[type="checkbox"][name="bold"],
+.styles-form input[type="checkbox"][name="italic"],
+.styles-form input[type="checkbox"][name="underline"] {
+  --size: 25px;
+  appearance: none;
+  position: relative;
+  height: var(--size);
+  width: var(--size);
+  margin-right: 20px;
+}
+
+.styles-form input[type="checkbox"][name="bold"]::after,
+.styles-form input[type="checkbox"][name="italic"]::after,
+.styles-form input[type="checkbox"][name="underline"]::after {
+  --size: 30px;
+  content: attr(data-value);
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  height: var(--size);
+  width: var(--size);
+  color: var(--color-black-white);
+  cursor: pointer;
+  border-radius: 5px;
+  border: 2px solid var(--color-bgr-main);
+  background-color: var(--color-bgr-main-hover);
+  transition: transform 100ms;
+}
+
+.styles-form input[type="checkbox"][name="bold"]:hover::after,
+.styles-form input[type="checkbox"][name="italic"]:hover::after,
+.styles-form input[type="checkbox"][name="underline"]:hover::after {
+  transform: scale(1.05);
+}
+
+.styles-form input[type="checkbox"][name="bold"]:checked::after,
+.styles-form input[type="checkbox"][name="italic"]:checked::after,
+.styles-form input[type="checkbox"][name="underline"]:checked::after {
+  outline: 1px solid var(--color-primary);
+}
+
 .styles-form button#default,
 .styles-form button#apply {
-  margin-top: 10px;
+  height: 26px;
+  width: 62px;
   padding: 3px 7px;
   cursor: pointer;
   border-radius: 5px;
+  transition: transform 100ms;
+}
+
+.styles-form button#default:hover,
+.styles-form button#apply:hover {
+  transform: scale(1.05);
 }
 
 .styles-form button#default {
-  color: var(--color-black-white);
-  background-color: var(--color-bgr-main-hover);
+  color: var(--color-white-black);
+  background-color: var(--color-secondary);
 }
 
 .styles-form button#apply {
   float: right;
-  margin-right: 18px;
+  margin-right: 15px;
   color: var(--color-white-black);
   background-color: var(--color-primary);
 }

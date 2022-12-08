@@ -618,7 +618,7 @@ function updateWorkspaceTab(user, folderTree) {
   workspaceTab.querySelector('.doc-details .doc-name .value').innerHTML = currDocObj.name;
 
   workspaceTab.querySelector('.doc-details .doc-created .value').innerHTML = dateCreated;
-  // workspaceTab.querySelector('.doc-details .doc-modified .value').innerHTML = dateModified;
+  workspaceTab.querySelector('.doc-details .doc-modified .value').innerHTML = dateModified;
 
   workspaceTab.querySelector('#icon-document').addEventListener('click', function () {
     docIconClickAndEnter(currDocObj.docID);
@@ -627,12 +627,12 @@ function updateWorkspaceTab(user, folderTree) {
     if (event.key === 'Enter') docIconClickAndEnter(currDocObj.docID);
   });
 
-  workspaceTab.querySelector('#open-in-docs').addEventListener('click', function () {
-    docIconClickAndEnter(currDocObj.docID);
-  });
-  workspaceTab.querySelector('#open-in-docs').addEventListener('keypress', function (event) {
-    if (event.key === 'Enter') docIconClickAndEnter(currDocObj.docID);
-  });
+  // workspaceTab.querySelector('#open-in-docs').addEventListener('click', function () {
+  //   docIconClickAndEnter(currDocObj.docID);
+  // });
+  // workspaceTab.querySelector('#open-in-docs').addEventListener('keypress', function (event) {
+  //   if (event.key === 'Enter') docIconClickAndEnter(currDocObj.docID);
+  // });
 
 }
 

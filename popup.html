@@ -60,7 +60,7 @@
         <img class="app-full-logo" src="images/full-logo.png" alt="Simplify Note" title="Simplify Note" />
         <span class="app-tagline">Your personal note-taking assistant</span>
       </div>
-      <div id="sign-in-button" class="sign-in-button" tabindex="0">
+      <div id="sign-in-button" class="sign-in-button bounce" tabindex="0">
         <span class="google-logo">
           <img class="icon-google" alt="G" src="images/google-logo.png" />
         </span>
@@ -90,7 +90,7 @@
               <span class="title">Currently Editing</span>
               <div class="doc">
                 <span class="document-icon-container">
-                  <svg id="icon-document" class="icon-document" viewBox="0 0 16 16" tabindex=0>
+                  <svg id="icon-document" class="icon-document bounce" viewBox="0 0 16 16" tabindex=0>
                     <path
                       d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM7 6.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-.861 1.542 1.33.886 1.854-1.855a.25.25 0 0 1 .289-.047l1.888.974V9.5a.5.5 0 0 1-.5.5H5a.5.5 0 0 1-.5-.5V9s1.54-1.274 1.639-1.208zM5 11h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1zm0 2h3a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1z" />
                   </svg>
@@ -104,11 +104,11 @@
                     <span class="label">Created At :</span>
                     <span class="value"></span>
                   </div>
-                  <button id="open-in-docs" class="open-in-docs" tabindex=0>Open in Google Docs</button>
-                  <!-- <div class="doc-modified">
+                  <!-- <button id="open-in-docs" class="open-in-docs" tabindex=0>Open in Google Docs</button> -->
+                  <div class="doc-modified">
                     <span class="label">Last Modified :</span>
                     <span class="value"></span>
-                  </div> -->
+                  </div>
                   <!-- <div class="doc-folder">
                     <span class="label">Folder Name :</span>
                     <span class="value"></span>
@@ -181,27 +181,26 @@
               <div class="list">
                 <div class="list-item active">
                   <span class="highlighter"></span>
-                  <h4>Heading</h4>
+                  <span>Heading</span>
                 </div>
                 <div class="list-item">
                   <span class="highlighter"></span>
-                  <h4>Subheading</h4>
+                  <span>Subheading</span>
                 </div>
                 <div class="list-item">
                   <span class="highlighter"></span>
-                  <h4>Bullet</h4>
+                  <span>Bullet</span>
                 </div>
                 <div class="list-item">
                   <span class="highlighter"></span>
-                  <h4>Pragraph</h4>
+                  <span>Pragraph</span>
                 </div>
               </div>
             </div>
             <span class="styles-divider"></span>
             <div class="styles-content">
               <form id="stylesForm" class="styles-form">
-                <br>
-                <br>
+                <br><br>
                 <label>Font Style:
                   <select id="fontStyles" name="fontStyles">
                     <option value="Montserrat">Montserrat</option>
@@ -210,8 +209,7 @@
                     <option value="Roboto">Roboto</option>
                   </select>
                 </label>
-                <br>
-                <br>
+                <br><br>
                 <label>Font Size:
                   <select id="fontSize" name="fontSize">
                     <option value="10">10</option>
@@ -220,17 +218,15 @@
                     <option value="40">40</option>
                   </select>
                 </label>
-                <br>
-                <br>
-                <label>Color:
+                <br><br>
+                <label>Color
                   <input type="radio" name="color" data-red="0.07421875" data-green="0.18359375" data-blue="0.16796875">
                   <input type="radio" name="color" data-red="0.07421875" data-green="0.18359375" data-blue="0.16796875">
                   <input type="radio" name="color" data-red="0.07421875" data-green="0.18359375" data-blue="0.16796875">
                   <input type="radio" name="color" data-red="0.07421875" data-green="0.18359375" data-blue="0.16796875">
                   <input type="radio" name="color" data-red="0.07421875" data-green="0.18359375" data-blue="0.16796875">
                 </label>
-                <br>
-                <br>
+                <br><br>
                 <label>Highlighter:
                   <input type="radio" name="highlighter" data-red="0.07421875" data-green="0.18359375"
                     data-blue="0.16796875">
@@ -243,19 +239,11 @@
                   <input type="radio" name="highlighter" data-red="0.07421875" data-green="0.18359375"
                     data-blue="0.16796875">
                 </label>
-                <br>
-                <br>
-                <label> <strong>B</strong>
-                  <input type="checkbox" id="bold" name="bold">
-                </label>
-                <label> I
-                  <input type="checkbox" id="italic" name="italic">
-                </label>
-                <label> U
-                  <input type="checkbox" id="underline" name="underline">
-                </label>
-                <br>
-                <br>
+                <br><br>
+                <input type="checkbox" id="bold" name="bold" data-value="B">
+                <input type="checkbox" id="italic" name="italic" data-value="I">
+                <input type="checkbox" id="underline" name="underline" data-value="U">
+                <br><br>
                 <button type="submit" id="default">Reset</button>
                 <button type="submit" id="apply">Submit</button>
 
