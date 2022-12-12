@@ -169,37 +169,6 @@ div {
   animation: dash 1.4s ease-in-out infinite, colors 5.6s ease-in-out infinite;
 }
 
-.popup {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  z-index: 500;
-  width: 100%;
-  height: 100%;
-  visibility: hidden;
-  background-color: hsla(255, 100%, 100%, 0.7);
-}
-
-.popup .popup-box {
-  /* display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center; */
-  position: absolute;
-  width: 90%;
-  padding: 20px;
-  /* height: 40%; */
-  transform: scale(0);
-  transform-origin: center;
-  transition: transform 250ms ease-out;
-  background-color: var(--color-bgr-main);
-}
-
-.popup .popup-box.show {
-  transform: scale(1);
-}
-
 header,
 div.content,
 footer {
@@ -1043,6 +1012,7 @@ button.open-in-docs:focus {
 }
 
 .notes-container .toolbar {
+  position: relative;
   height: 12%;
   width: 100%;
   background-color: var(--color-bgr-main-hover);
@@ -1120,6 +1090,87 @@ button.open-in-docs:focus {
   height: var(--size);
   width: var(--size);
   fill: var(--color-black-white);
+}
+
+
+.toolbar .dialog-box {
+  --width: 99%;
+  --b-radius: 7px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  height: 120px;
+  padding: 20px;
+  z-index: 500;
+  border-bottom: 2px solid var(--color-bgr-secondary);
+  border-bottom-left-radius: var(--b-radius);
+  border-bottom-right-radius: var(--b-radius);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 250ms;
+  background-color: var(--color-bgr-main);
+}
+
+.toolbar .dialog-box.show {
+  transform: scaleY(1);
+}
+
+.dialog-box .heading {
+  display: block;
+  width: var(--width);
+  font-size: 1.2em;
+  color: var(--color-secondary);
+}
+
+.dialog-box input {
+  display: block;
+  padding: 3px 7px;
+  width: var(--width);
+  height: 25px;
+  border-radius: 3px;
+  color: var(--color-black-white);
+  background-color: var(--color-bgr-main-hover);
+}
+
+.dialog-box .buttons {
+  --margin: 7px;
+  --b-radius: 3px;
+  width: var(--width);
+}
+
+.dialog-box .buttons .cancel {
+  margin-left: var(--margin);
+  padding: 2px 7px;
+  color: var(--color-black-white);
+  cursor: pointer;
+  border-radius: var(--b-radius);
+  /* box-shadow: var(--color-box-shadow2) 0px 0px 0px 1px; */
+  background-color: var(--color-bgr-main-hover);
+  transition: all 350ms;
+}
+
+.dialog-box .buttons .cancel:hover {
+  transform: scale(1.05);
+}
+
+.dialog-box .buttons .submit {
+  margin-right: var(--margin);
+  padding: 2px 7px;
+  color: var(--color-black-white);
+  cursor: pointer;
+  border-radius: var(--b-radius);
+  /* box-shadow: var(--color-box-shadow2) 0px 0px 0px 1px; */
+  background-color: var(--color-primary);
+  transition: all 350ms;
+}
+
+.dialog-box .buttons .submit:hover {
+  transform: scale(1.05);
 }
 
 .notes-container .docs-container {

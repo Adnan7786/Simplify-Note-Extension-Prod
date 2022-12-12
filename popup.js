@@ -665,10 +665,9 @@ function updateProfileTab(user) {
 }
 
 function showPopup(context, docID) {
-  var popup = document.querySelector('.popup');
-  popup.style.visibility = 'visible';
-  var popupBox = popup.querySelector(`.${context}`);
-  popupBox.classList.add('show');
+  var dialogBox = tabContents[1].querySelector(`.toolbar .${context}.dialog-box`);
+  console.log(dialogBox);
+  dialogBox.classList.add('show');
 }
 
 function navTabsClickAndEnter(index) {
