@@ -18,6 +18,20 @@
       <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
     </svg>
   </div>
+  <div class="popup">
+    <div class="create popup-box">
+      <h3 class="title">Create Document</h3>
+      <div class="description">Create a new document with simplify notes</div>
+      <input type="text" id='name' placeholder="Enter document name here" required>
+      <button type="submit">Cancel</button>
+      <button type="submit">Create</button>
+    </div>
+    <div class="add popup-box"></div>
+    <div class="edit popup-box"></div>
+    <div class="open popup-box"></div>
+    <div class="rename popup-box"></div>
+    <div class="delete popup-box"></div>
+  </div>
   <header>
     <div class="header-left">
       <img class="app-logo" src="/images/logo.png" alt="App Logo" title="Simplify Note" />
@@ -146,34 +160,55 @@
           </div>
         </div>
         <div class="tab-content notes">
-          <form id="createDoc" class="create-doc">
-            <input type="text" name="docNameInput" id="docNameInput" class="doc-name-input" placeholder="Untitled"
-              autocomplete="off" required>
-            <button type='submit' class="submit-button">Create Document</button>
-            <!-- <svg class='icon-loading' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 17">
-              <circle class="loadingCircle" cx="2.2" cy="10" r="1.6" />
-              <circle class="loadingCircle" cx="9.5" cy="10" r="1.6" />
-              <circle class="loadingCircle" cx="16.8" cy="10" r="1.6" />
-            </svg> -->
-          </form>
-
-          <form id="createFolder" class="create-folder">
-            <input type="text" name="folderNameInput" id="folderNameInput" class="folder-name-input"
-              placeholder="Untitled" autocomplete="off" required>
-            <button type='submit' class="submit-button">Create Folder</button>
-            <!-- <svg class='icon-loading' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19 17">
-              <circle class="loadingCircle" cx="2.2" cy="10" r="1.6" />
-              <circle class="loadingCircle" cx="9.5" cy="10" r="1.6" />
-              <circle class="loadingCircle" cx="16.8" cy="10" r="1.6" />
-            </svg> -->
-          </form>
-          <div id="folderTree" class="folderTree">
-
+          <div class="notes-container">
+            <div class="toolbar">
+              <span class="title">My Notes</span>
+              <span class="icons-tray">
+                <span class="icon-box" title="Create" data-context="create">
+                  <svg class="icon" viewBox="0 0 16 16">
+                    <path
+                      d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM8.5 7v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 1 0z" />
+                  </svg>
+                </span>
+                <span class="icon-box" title="Add" data-context="add">
+                  <svg class="icon" viewBox="0 0 16 16">
+                    <path
+                      d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
+                  </svg>
+                </span>
+                <span class="vertical-bar"></span>
+                <span class="icon-box" title="Edit" data-context="edit">
+                  <svg class="icon" viewBox="0 0 16 16">
+                    <path
+                      d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                  </svg>
+                </span>
+                <span class="icon-box" title="Open" data-context="open">
+                  <svg class="icon" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                      d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z" />
+                    <path fill-rule="evenodd"
+                      d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z" />
+                  </svg>
+                </span>
+                <span class="icon-box" title="Rename" data-context="rename">
+                  <svg class="icon" viewBox="0 0 16 16">
+                    <path
+                      d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                    <path fill-rule="evenodd"
+                      d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                  </svg>
+                </span>
+                <span class="icon-box" title="Delete" data-context="delete">
+                  <svg class="icon" viewBox="0 0 16 16">
+                    <path
+                      d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z" />
+                  </svg>
+                </span>
+              </span>
+            </div>
+            <div class="docs-container"></div>
           </div>
-          <button id='fetchFolderTree' type='submit' class="submit-button">Fetch Folder Tree</button>
-          <a href="https://simpli-notes.herokuapp.com/api/v1/google-auth/" target="_blank" class="button">Authorize
-            Google
-            API</a>
         </div>
         <div class="tab-content styles">
           <div class="styles-container">

@@ -68,51 +68,11 @@ const tooltipSubmitMessage = document.querySelector('#tooltipSubmitMessage');
 const loadingMessage = document.querySelector('#tooltipLoadingMessage');
 const responseMessage = document.querySelector('#tooltipResponseMessage');
 // const logoutButton = document.querySelector('.profile-avatar #logout');
+const docEditIcons = document.querySelectorAll('.tab-content.notes .icon-box');
 const stylesListItems = document.querySelectorAll('.styles-sidebar .list .list-item');
 
 
-const createDocForm = document.querySelector('#createDoc');
-const createFolderForm = document.querySelector('#createFolder');
-const folderTree = document.querySelector('#folderTree');
-const fetchFolderTree = document.querySelector('#fetchFolderTree');
-
-
 window.onload = render;
-
-createDocForm.addEventListener("submit", async function (event) {
-  event.preventDefault();
-  const inputValue = this.elements['docNameInput'].value;
-  this.elements['docNameInput'].value = "";
-  try {
-    const folderTree = await apiFetchFolderTree();
-    const parentFolderId = folderTree.rootId;
-    const response = await apiCreateDoc(inputValue, parentFolderId);
-  } catch (error) {
-    console.log('error' + error);
-  }
-});
-
-createFolderForm.addEventListener("submit", async function (event) {
-  event.preventDefault();
-  const inputValue = this.elements['folderNameInput'].value;
-  this.elements['folderNameInput'].value = "";
-  try {
-    const folderTree = await apiFetchFolderTree();
-    const parentFolderId = folderTree.rootId;
-    const response = await apiCreateFolder(inputValue, parentFolderId);
-  } catch (error) {
-    console.log('error' + error);
-  }
-});
-
-fetchFolderTree.addEventListener("click", async function (event) {
-  try {
-    const response = await apiFetchFolderTree();
-    console.log(response);
-  } catch (error) {
-    console.log('error' + error);
-  }
-});
 
 addNoteForm.addEventListener("submit", async function (event) {
   event.preventDefault();
@@ -142,6 +102,16 @@ addNoteForm.addEventListener("submit", async function (event) {
     console.log('error' + error);
   }
 });
+
+docEditIcons.forEach((icon) => {
+  icon.addEventListener('click', () => {
+    console.log('aha');
+    if (icon.dataset.context === 'create' || icon.dataset.context === 'add' || icon.dataset.docid) {
+      console.log('huhhhhh');
+      showPopup(icon.dataset.context, icon.dataset.docid);
+    }
+  })
+})
 
 iconSun.addEventListener("click", async function () {
   try {
@@ -326,7 +296,7 @@ function getTooltipDisabled() {
 }
 
 function sendNotification(status, error) {
-  console.log(status + error);
+  console.log(status, error);
 }
 
 function getCSSVariableValue(variable) {
@@ -550,8 +520,8 @@ async function signInAndRefreshPopup(user, folderTree) {
   updateProfileTab(user);
   updateContentBox(true, user);
   await updateTooltipSwitch(user.currentDocID);
-  updateWorkspaceTab(user, folderTree);
-  // updateNotesTab();
+  updateWorkspaceTab(folderTree);
+  updateNotesTab(folderTree);
   // updateStylesTab();
   return;
 }
@@ -593,47 +563,68 @@ async function updateTooltipSwitch(currentDocID) {
   }
 }
 
-function updateWorkspaceTab(user, folderTree) {
+function updateWorkspaceTab(folderTree) {
   const workspaceTab = tabContents[0];
   const rootId = folderTree.rootId;
   console.log('root ' + rootId);
   let currDocObj = null;
   for (const doc of folderTree.folders[rootId].documents) {
-    console.log(folderTree.documents[doc].docID, user.currentDocID);
-    if (folderTree.documents[doc].docID === user.currentDocID) {
+    if (folderTree.documents[doc].currentlyEditing) {
       currDocObj = folderTree.documents[doc];
       break;
     }
   }
-
-  console.log(currDocObj);
-
   if (!currDocObj) {
     sendNotification('Failure', 'Something went wrong while fetching current document details. Please try again.')
   }
-  console.log('now we are here');
   const dateCreated = getFormattedDate(currDocObj.createdAt);
   const dateModified = getFormattedDate(currDocObj.updatedAt);
-
   workspaceTab.querySelector('.doc-details .doc-name .value').innerHTML = currDocObj.name;
-
   workspaceTab.querySelector('.doc-details .doc-created .value').innerHTML = dateCreated;
   workspaceTab.querySelector('.doc-details .doc-modified .value').innerHTML = dateModified;
-
   workspaceTab.querySelector('#icon-document').addEventListener('click', function () {
     docIconClickAndEnter(currDocObj.docID);
   });
   workspaceTab.querySelector('#icon-document').addEventListener('keypress', function (event) {
     if (event.key === 'Enter') docIconClickAndEnter(currDocObj.docID);
   });
+}
 
-  // workspaceTab.querySelector('#open-in-docs').addEventListener('click', function () {
-  //   docIconClickAndEnter(currDocObj.docID);
-  // });
-  // workspaceTab.querySelector('#open-in-docs').addEventListener('keypress', function (event) {
-  //   if (event.key === 'Enter') docIconClickAndEnter(currDocObj.docID);
-  // });
-
+function updateNotesTab(folderTree) {
+  const notesTab = tabContents[1];
+  const rootId = folderTree.rootId;
+  const docsContainer = notesTab.querySelector('.notes-container .docs-container');
+  const docEditIcons = [...notesTab.querySelectorAll('.icon-box')].splice(2);
+  const docElem = document.createElement('div');
+  docElem.className = 'doc-card';
+  docElem.innerHTML = `
+  <svg id="icon-document" class="icon-document" viewBox="0 0 16 16" tabindex=0>
+    <path
+      d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM7 6.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-.861 1.542 1.33.886 1.854-1.855a.25.25 0 0 1 .289-.047l1.888.974V9.5a.5.5 0 0 1-.5.5H5a.5.5 0 0 1-.5-.5V9s1.54-1.274 1.639-1.208zM5 11h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1zm0 2h3a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1z" />
+  </svg>
+  <div class="doc-name"></div>`;
+  folderTree.folders[rootId].documents.sort((doc1, doc2) => {
+    return new Date(folderTree.documents[doc2].updatedAt) - new Date(folderTree.documents[doc1].updatedAt)
+  })
+  for (const doc of folderTree.folders[rootId].documents) {
+    const docClone = docElem.cloneNode(true);
+    if (folderTree.documents[doc].currentlyEditing) docClone.classList.add('active');
+    docClone.querySelector('.doc-name').innerText = folderTree.documents[doc].name;
+    docClone.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const selectedDoc = notesTab.querySelector('.doc-card.selected');
+      if (selectedDoc) selectedDoc.classList.remove('selected');
+      docClone.classList.add('selected');
+      docEditIcons.forEach((icon) => {
+        icon.dataset.docid = folderTree.documents[doc].docID;
+      });
+    })
+    docsContainer.appendChild(docClone);
+  }
+  docsContainer.addEventListener('click', () => {
+    const selectedDoc = docsContainer.querySelector('.doc-card.selected')
+    if (selectedDoc) selectedDoc.classList.remove('selected')
+  })
 }
 
 function updateProfileTab(user) {
@@ -671,6 +662,13 @@ function updateProfileTab(user) {
       return sendNotification('failure', error);
     }
   })
+}
+
+function showPopup(context, docID) {
+  var popup = document.querySelector('.popup');
+  popup.style.visibility = 'visible';
+  var popupBox = popup.querySelector(`.${context}`);
+  popupBox.classList.add('show');
 }
 
 function navTabsClickAndEnter(index) {

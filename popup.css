@@ -136,6 +136,15 @@ body {
   transition: background-color ease-out 400ms;
 }
 
+span,
+div {
+  cursor: default;
+}
+
+.bounce {
+  animation: bounce2 2s ease infinite;
+}
+
 .page-load {
   display: flex;
   justify-content: center;
@@ -160,11 +169,36 @@ body {
   animation: dash 1.4s ease-in-out infinite, colors 5.6s ease-in-out infinite;
 }
 
-.bounce {
-  animation: bounce2 2s ease infinite;
+.popup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  z-index: 500;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+  background-color: hsla(255, 100%, 100%, 0.7);
 }
 
+.popup .popup-box {
+  /* display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; */
+  position: absolute;
+  width: 90%;
+  padding: 20px;
+  /* height: 40%; */
+  transform: scale(0);
+  transform-origin: center;
+  transition: transform 250ms ease-out;
+  background-color: var(--color-bgr-main);
+}
 
+.popup .popup-box.show {
+  transform: scale(1);
+}
 
 header,
 div.content,
@@ -789,7 +823,6 @@ div.social-media {
   height: 100px;
   fill: var(--color-primary);
   cursor: pointer;
-  transition: transform ease-out 100ms;
 }
 
 /* .document-icon-container .icon-document:hover,
@@ -1000,6 +1033,153 @@ button.open-in-docs:focus {
 
 .tooltip-button-container .tooltip-button:not(:last-child) {
   border-right: 2px solid var(--color-bgr-secondary);
+}
+
+.notes-container {
+  height: calc(100% - 10px);
+  width: calc(100% - 20px);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.notes-container .toolbar {
+  height: 12%;
+  width: 100%;
+  background-color: var(--color-bgr-main-hover);
+}
+
+/* .notes-container .toolbar {
+  display: flex;
+  align-items: center;
+} */
+
+.notes-container .toolbar .title {
+  display: flex;
+  align-items: center;
+  padding-left: 15px;
+  height: 100%;
+  float: left;
+  font-size: small;
+  color: var(--color-black-white);
+}
+
+.notes-container .toolbar .icons-tray {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding-right: 10px;
+  height: 100%;
+  float: right;
+}
+
+.toolbar .icons-tray .vertical-bar {
+  height: 65%;
+  width: 1.5px;
+  background-color: var(--color-bgr-secondary);
+}
+
+.toolbar .icons-tray .icon-box {
+  --size: 23px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: var(--size);
+  width: var(--size);
+  opacity: 0.2;
+  border-radius: 50%;
+  transition: all 350ms ease-out;
+}
+
+.notes-container:has(.doc-card.selected) .icon-box {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.notes-container:has(.doc-card.selected) .icon-box:hover,
+.notes-container:has(.doc-card.selected) .icon-box:focus {
+  transform: scale(1.1);
+  background-color: var(--color-bgr-secondary);
+}
+
+.notes-container .icon-box[data-context="create"],
+.notes-container .icon-box[data-context="add"] {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.notes-container .icon-box[data-context="create"]:hover,
+.notes-container .icon-box[data-context="add"]:hover,
+.notes-container .icon-box[data-context="create"]:focus,
+.notes-container .icon-box[data-context="add"]:focus {
+  transform: scale(1.1);
+  background-color: var(--color-bgr-secondary);
+}
+
+.icons-tray .icon-box .icon {
+  --size: 13px;
+  height: var(--size);
+  width: var(--size);
+  fill: var(--color-black-white);
+}
+
+.notes-container .docs-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: flex-start;
+  padding-top: 10px;
+  padding-inline: 11px;
+  gap: 7px;
+  height: 88%;
+  width: 100%;
+  overflow: scroll;
+  background-color: var(--color-bgr-main);
+}
+
+.docs-container .doc-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 60px;
+  height: 80px;
+  border-radius: 5px;
+  overflow: hidden;
+  transition: transform 350ms ease-out;
+}
+
+.docs-container .doc-card:hover,
+.docs-container .doc-card:focus {
+  transform: scale(1.1);
+}
+
+.docs-container .doc-card.selected {
+  transform: scale(1.1);
+  background-color: var(--color-bgr-secondary);
+}
+
+.docs-container .doc-card .icon-document {
+  width: 90%;
+  cursor: pointer;
+  fill: var(--color-bgr-main-hover)
+}
+
+.docs-container .doc-card.active .icon-document {
+  fill: var(--color-primary);
+}
+
+.docs-container .doc-card .doc-name {
+  width: 90%;
+  line-height: 1em;
+  font-size: smaller;
+  text-align: center;
+  cursor: pointer;
+}
+
+.docs-container .doc-card.active .doc-name {
+  color: var(--color-primary)
 }
 
 .styles-container {
