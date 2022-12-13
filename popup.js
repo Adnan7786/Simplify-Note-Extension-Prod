@@ -104,11 +104,22 @@ addNoteForm.addEventListener("submit", async function (event) {
 });
 
 docEditIcons.forEach((icon) => {
-  icon.addEventListener('click', () => {
-    console.log('aha');
-    if (icon.dataset.context === 'create' || icon.dataset.context === 'add' || icon.dataset.docid) {
-      console.log('huhhhhh');
-      showPopup(icon.dataset.context, icon.dataset.docid);
+  icon.addEventListener('click', async () => {
+    if (icon.dataset.context === 'edit') {
+      pageLoad.style.visibility = 'visible';
+      // console.log(pageLoad);
+      await apiEditDoc(icon.dataset.docid);
+      const folderTree = await apiFetchFolderTree();
+      updateWorkspaceTab(folderTree);
+      navbarTabs[0].click();
+      pageLoad.style.visibility = 'hidden';
+      updateNotesTab(folderTree);
+    }
+    else if (icon.dataset.context === 'open') {
+      docIconClickAndEnter(icon.dataset.gdocid);
+    }
+    else {
+      showPopup(icon.dataset.context, icon.dataset.folderid, icon.dataset.docid);
     }
   })
 })
@@ -167,8 +178,18 @@ for (let index = 0; index < stylesListItems.length; index++) {
     stylesListItems[index].classList.add('active');
     activeStyle = index;
   });
-
 }
+
+tabContents[0].querySelector('#icon-document').addEventListener('click', function (event) {
+  const target = event.currentTarget;
+  console.log(target);
+  console.log(target.dataset.gdocid);
+  docIconClickAndEnter(target.dataset.gdocid);
+});
+tabContents[0].querySelector('#icon-document').addEventListener('keypress', function (event) {
+  const target = event.currentTarget;
+  if (event.key === 'Enter') docIconClickAndEnter(target.dataset.gdocid);
+});
 
 
 // for (let i = 0; i < tooltipButtons.length; i++) {
@@ -459,21 +480,90 @@ function apiCreateDoc(name, parentFolderId) {
   });
 }
 
-function apiCreateFolder(name, parentFolderId) {
+function apiAddDoc(documentId, parentFolderId) {
   return new Promise((resolve, reject) => {
-    fetch(`${domain}/api/v1/dashboard/folder`, {
+    fetch(`${domain}/api/v1/dashboard/document/add`, {
       method: "POST",
       headers: {
         "Accept": "application/json",
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name,
+        documentId,
         parentFolderId
       }),
     }).then((res) => {
       res.json().then((res) => {
-        console.log(res);
+        resolve(res);
+      }).catch((error) => {
+        reject(error);
+      });
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
+function apiEditDoc(documentId) {
+  return new Promise((resolve, reject) => {
+    fetch(`${domain}/api/v1/dashboard/document/edit`, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        documentId
+      }),
+    }).then((res) => {
+      res.json().then((res) => {
+        resolve(res);
+      }).catch((error) => {
+        reject(error);
+      });
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
+function apiRenameDoc(name, documentId) {
+  return new Promise((resolve, reject) => {
+    fetch(`${domain}/api/v1/dashboard/document`, {
+      method: "PATCH",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        documentId
+      }),
+    }).then((res) => {
+      res.json().then((res) => {
+        resolve(res);
+      }).catch((error) => {
+        reject(error);
+      });
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
+function apiDeleteDoc(documentId) {
+  return new Promise((resolve, reject) => {
+    fetch(`${domain}/api/v1/dashboard/document`, {
+      method: "DELETE",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        documentId
+      }),
+    }).then((res) => {
+      res.json().then((res) => {
         resolve(res);
       }).catch((error) => {
         reject(error);
@@ -568,32 +658,38 @@ function updateWorkspaceTab(folderTree) {
   const rootId = folderTree.rootId;
   console.log('root ' + rootId);
   let currDocObj = null;
-  for (const doc of folderTree.folders[rootId].documents) {
-    if (folderTree.documents[doc].currentlyEditing) {
-      currDocObj = folderTree.documents[doc];
+  let currDocId = null;
+  for (const docId of folderTree.folders[rootId].documents) {
+    if (folderTree.documents[docId].currentlyEditing) {
+      currDocId = docId;
+      currDocObj = folderTree.documents[docId];
       break;
     }
   }
-  if (!currDocObj) {
-    sendNotification('Failure', 'Something went wrong while fetching current document details. Please try again.')
-  }
-  const dateCreated = getFormattedDate(currDocObj.createdAt);
-  const dateModified = getFormattedDate(currDocObj.updatedAt);
-  workspaceTab.querySelector('.doc-details .doc-name .value').innerHTML = currDocObj.name;
-  workspaceTab.querySelector('.doc-details .doc-created .value').innerHTML = dateCreated;
-  workspaceTab.querySelector('.doc-details .doc-modified .value').innerHTML = dateModified;
-  workspaceTab.querySelector('#icon-document').addEventListener('click', function () {
-    docIconClickAndEnter(currDocObj.docID);
-  });
-  workspaceTab.querySelector('#icon-document').addEventListener('keypress', function (event) {
-    if (event.key === 'Enter') docIconClickAndEnter(currDocObj.docID);
-  });
+  const docIcon = workspaceTab.querySelector('#icon-document');
+  const docName = workspaceTab.querySelector('.doc-details .doc-name .value');
+  const docCreated = workspaceTab.querySelector('.doc-details .doc-created .value');
+  const docModified = workspaceTab.querySelector('.doc-details .doc-modified .value');
+
+  // if (!currDocObj) {
+  //   sendNotification('Failure', 'Something went wrong while fetching current document details. Please try again.');
+  //   return;
+  // }
+  console.log('cuu', currDocObj);
+  const dateCreated = getFormattedDate(currDocObj?.createdAt);
+  const dateModified = getFormattedDate(currDocObj?.updatedAt);
+  docIcon.dataset.docid = currDocId ? currDocId : '';
+  docIcon.dataset.gdocid = currDocObj ? currDocObj.docID : '';
+  docName.innerHTML = currDocObj ? currDocObj.name : '';
+  docCreated.innerHTML = dateCreated ? dateCreated : '';
+  docModified.innerHTML = dateModified ? dateModified : '';
 }
 
 function updateNotesTab(folderTree) {
   const notesTab = tabContents[1];
-  const rootId = folderTree.rootId;
+  const rootFolderId = folderTree.rootId;
   const docsContainer = notesTab.querySelector('.notes-container .docs-container');
+  docsContainer.innerHTML = ""; //clear doc container before updating
   const docEditIcons = [...notesTab.querySelectorAll('.icon-box')].splice(2);
   const docElem = document.createElement('div');
   docElem.className = 'doc-card';
@@ -603,20 +699,25 @@ function updateNotesTab(folderTree) {
       d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM7 6.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm-.861 1.542 1.33.886 1.854-1.855a.25.25 0 0 1 .289-.047l1.888.974V9.5a.5.5 0 0 1-.5.5H5a.5.5 0 0 1-.5-.5V9s1.54-1.274 1.639-1.208zM5 11h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1zm0 2h3a.5.5 0 0 1 0 1H5a.5.5 0 0 1 0-1z" />
   </svg>
   <div class="doc-name"></div>`;
-  folderTree.folders[rootId].documents.sort((doc1, doc2) => {
+  folderTree.folders[rootFolderId].documents.sort((doc1, doc2) => {
     return new Date(folderTree.documents[doc2].updatedAt) - new Date(folderTree.documents[doc1].updatedAt)
   })
-  for (const doc of folderTree.folders[rootId].documents) {
+  for (const docId of folderTree.folders[rootFolderId].documents) {
     const docClone = docElem.cloneNode(true);
-    if (folderTree.documents[doc].currentlyEditing) docClone.classList.add('active');
-    docClone.querySelector('.doc-name').innerText = folderTree.documents[doc].name;
+    docClone.dataset.folderid = rootFolderId;
+    docClone.dataset.docid = docId;
+    docClone.dataset.gdocid = folderTree.documents[docId].docID;
+    if (folderTree.documents[docId].currentlyEditing) docClone.classList.add('active');
+    docClone.querySelector('.doc-name').innerText = folderTree.documents[docId].name;
     docClone.addEventListener('click', (event) => {
       event.stopPropagation();
       const selectedDoc = notesTab.querySelector('.doc-card.selected');
       if (selectedDoc) selectedDoc.classList.remove('selected');
       docClone.classList.add('selected');
       docEditIcons.forEach((icon) => {
-        icon.dataset.docid = folderTree.documents[doc].docID;
+        icon.dataset.folderid = docClone.dataset.folderid;
+        icon.dataset.docid = docClone.dataset.docid;
+        icon.dataset.gdocid = docClone.dataset.gdocid;
       });
     })
     docsContainer.appendChild(docClone);
@@ -665,8 +766,9 @@ function updateProfileTab(user) {
 }
 
 function showPopup(context, docID) {
+  var visibleDialog = tabContents[1].querySelector(`.toolbar .dialog-box.show`);
+  visibleDialog?.classList.remove('show');
   var dialogBox = tabContents[1].querySelector(`.toolbar .${context}.dialog-box`);
-  console.log(dialogBox);
   dialogBox.classList.add('show');
 }
 
@@ -689,6 +791,7 @@ function toTitleCase(txt) {
 }
 
 function getFormattedDate(datetimeStr) {
+  if (!datetimeStr) return;
   const [weekday, month, day, year] = (new Date(datetimeStr).toDateString()).split(' ');
   return day + ' ' + month + ', ' + year
 }
