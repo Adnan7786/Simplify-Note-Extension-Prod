@@ -193,20 +193,24 @@
                 </span>
               </span>
               <div class="create dialog-box">
-                <div class="heading">Create Document</div>
-                <input type="text" id='name' placeholder="Enter document name here" required>
-                <div class="buttons">
-                  <button class="submit" type="submit">Create</button>
-                  <button class="cancel" type="submit">Cancel</button>
-                </div>
+                <form id="createDocForm" class="create-doc-form">
+                  <div class="heading">Create Document</div>
+                  <input type="text" name='name' id='name' placeholder="Enter document name here" required>
+                  <div class="buttons">
+                    <button class="submit" type="submit" data-action="create">Create</button>
+                    <button class="cancel" type="submit" data-action="cancel">Cancel</button>
+                  </div>
+                </form>
               </div>
               <div class="add dialog-box">
-                <div class="heading">Add Document</div>
-                <input type="text" id='name' placeholder="Paste google doc link here" required>
-                <div class="buttons">
-                  <button class="submit" type="submit">Add</button>
-                  <button class="cancel" type="submit">Cancel</button>
-                </div>
+                <form id="addDocForm" class="add-doc-form">
+                  <div class="heading">Add Document</div>
+                  <input type="text" id='name' placeholder="Paste google doc link here" required>
+                  <div class="buttons">
+                    <button class="submit" type="submit">Add</button>
+                    <button class="cancel" type="submit">Cancel</button>
+                  </div>
+                </form>
               </div>
               <div class="edit dialog-box"></div>
               <div class="open dialog-box"></div>

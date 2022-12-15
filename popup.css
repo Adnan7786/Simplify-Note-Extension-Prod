@@ -125,6 +125,7 @@
   --permission-switch-width: 30px;
   --permission-switch-height: 13px;
   --permission-switch-margin: 2.4px;
+  --color-glass-effect: rgba(255, 255, 255, 0.4)
 }
 
 body {
@@ -1096,28 +1097,34 @@ button.open-in-docs:focus {
 .toolbar .dialog-box {
   --width: 99%;
   --b-radius: 7px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
   position: absolute;
   top: 100%;
   width: 100%;
   height: 120px;
   padding: 20px;
-  z-index: 500;
+  z-index: 400;
   border-bottom: 2px solid var(--color-bgr-secondary);
   border-bottom-left-radius: var(--b-radius);
   border-bottom-right-radius: var(--b-radius);
   transform: scaleY(0);
   transform-origin: top;
   transition: transform 250ms;
-  background-color: var(--color-bgr-main);
+  background-color: var(--color-glass-effect);
+  backdrop-filter: saturate(180%) blur(10px);
 }
 
 .toolbar .dialog-box.show {
   transform: scaleY(1);
+}
+
+.dialog-box form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
 }
 
 .dialog-box .heading {
@@ -1622,6 +1629,7 @@ button.open-in-docs:focus {
     --color-white-black: #000;
     --color-box-shadow: rgba(195, 191, 188, 0.3);
     --color-box-shadow2: rgba(255, 255, 255, 0.35);
+    --color-glass-effect: rgba(0, 0, 0, 0.4)
   }
 
   .icon-moon {

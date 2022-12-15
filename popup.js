@@ -41,6 +41,10 @@ const cssThemeVariables = {
   '--color-box-shadow2': {
     'light': 'rgba(0, 0, 0, 0.35)',
     'dark': 'rgba(255, 255, 255, 0.35)'
+  },
+  '--color-glass-effect': {
+    'light': 'rgba(255, 255, 255, 0.4)',
+    'dark': 'rgba(0, 0, 0, 0.4)'
   }
 }
 
@@ -70,6 +74,7 @@ const responseMessage = document.querySelector('#tooltipResponseMessage');
 // const logoutButton = document.querySelector('.profile-avatar #logout');
 const docEditIcons = document.querySelectorAll('.tab-content.notes .icon-box');
 const stylesListItems = document.querySelectorAll('.styles-sidebar .list .list-item');
+const createDocForm = tabContents[1].querySelector('#createDocForm')
 
 
 window.onload = render;
@@ -103,9 +108,39 @@ addNoteForm.addEventListener("submit", async function (event) {
   }
 });
 
+createDocForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const action = document.activeElement.dataset.action;
+  if (action === 'cancel') {
+    const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
+    openedDialogBoxes.forEach((box) => {
+      box.classList.remove('show');
+    });
+    return;
+  }
+  if (action !== 'create') return;
+  const name = this.elements['name'].value;
+  const parentFolderId = tabContents[1].querySelector('.notes-container .icon-box[data-context="create"]').dataset.folderid
+  console.log(name, parentFolderId);
+  pageLoad.style.visibility = 'visible';
+  const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
+  openedDialogBoxes.forEach((box) => {
+    box.classList.remove('show');
+  });
+  await apiCreateDoc(name, parentFolderId);
+  const folderTree = await apiFetchFolderTree();
+  updateWorkspaceTab(folderTree);
+  navbarTabs[0].click();
+  pageLoad.style.visibility = 'hidden';
+  updateNotesTab(folderTree);
+});
+
 docEditIcons.forEach((icon) => {
   icon.addEventListener('click', async () => {
     if (icon.dataset.context === 'edit') {
+      if (!icon.dataset.docid) {
+        return;
+      }
       pageLoad.style.visibility = 'visible';
       // console.log(pageLoad);
       await apiEditDoc(icon.dataset.docid);
@@ -116,6 +151,9 @@ docEditIcons.forEach((icon) => {
       updateNotesTab(folderTree);
     }
     else if (icon.dataset.context === 'open') {
+      if (!icon.dataset.gdocid) {
+        return;
+      }
       docIconClickAndEnter(icon.dataset.gdocid);
     }
     else {
@@ -691,6 +729,11 @@ function updateNotesTab(folderTree) {
   const docsContainer = notesTab.querySelector('.notes-container .docs-container');
   docsContainer.innerHTML = ""; //clear doc container before updating
   const docEditIcons = [...notesTab.querySelectorAll('.icon-box')].splice(2);
+  const docCreateIcons = [...notesTab.querySelectorAll('.icon-box')].splice(0, 2);
+  console.log(docCreateIcons);
+  docCreateIcons.forEach((icon) => {
+    icon.dataset.folderid = rootFolderId;
+  })
   const docElem = document.createElement('div');
   docElem.className = 'doc-card';
   docElem.innerHTML = `
@@ -723,8 +766,12 @@ function updateNotesTab(folderTree) {
     docsContainer.appendChild(docClone);
   }
   docsContainer.addEventListener('click', () => {
-    const selectedDoc = docsContainer.querySelector('.doc-card.selected')
-    if (selectedDoc) selectedDoc.classList.remove('selected')
+    const selectedDoc = docsContainer.querySelector('.doc-card.selected');
+    if (selectedDoc) selectedDoc.classList.remove('selected');
+    const openedDialogBoxes = notesTab.querySelectorAll('.toolbar .dialog-box.show')
+    openedDialogBoxes.forEach((box) => {
+      box.classList.remove('show');
+    });
   })
 }
 
