@@ -75,6 +75,7 @@ const responseMessage = document.querySelector('#tooltipResponseMessage');
 const docEditIcons = document.querySelectorAll('.tab-content.notes .icon-box');
 const stylesListItems = document.querySelectorAll('.styles-sidebar .list .list-item');
 const createDocForm = tabContents[1].querySelector('#createDocForm')
+const addDocForm = tabContents[1].querySelector('#addDocForm')
 
 
 window.onload = render;
@@ -110,15 +111,6 @@ addNoteForm.addEventListener("submit", async function (event) {
 
 createDocForm.addEventListener("submit", async function (event) {
   event.preventDefault();
-  const action = document.activeElement.dataset.action;
-  if (action === 'cancel') {
-    const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
-    openedDialogBoxes.forEach((box) => {
-      box.classList.remove('show');
-    });
-    return;
-  }
-  if (action !== 'create') return;
   const name = this.elements['name'].value;
   const parentFolderId = tabContents[1].querySelector('.notes-container .icon-box[data-context="create"]').dataset.folderid
   console.log(name, parentFolderId);
@@ -128,6 +120,25 @@ createDocForm.addEventListener("submit", async function (event) {
     box.classList.remove('show');
   });
   await apiCreateDoc(name, parentFolderId);
+  const folderTree = await apiFetchFolderTree();
+  updateWorkspaceTab(folderTree);
+  navbarTabs[0].click();
+  pageLoad.style.visibility = 'hidden';
+  updateNotesTab(folderTree);
+});
+
+addDocForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const docURL = this.elements['docURL'].value;
+  const docID = docURL.match(/[-\w]{25,}(?!.*[-\w]{25,})/)[0];
+  const parentFolderId = tabContents[1].querySelector('.notes-container .icon-box[data-context="add"]').dataset.folderid
+  console.log(docURL, docID, parentFolderId);
+  pageLoad.style.visibility = 'visible';
+  const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
+  openedDialogBoxes.forEach((box) => {
+    box.classList.remove('show');
+  });
+  await apiAddDoc(docID, parentFolderId);
   const folderTree = await apiFetchFolderTree();
   updateWorkspaceTab(folderTree);
   navbarTabs[0].click();
@@ -227,6 +238,15 @@ tabContents[0].querySelector('#icon-document').addEventListener('click', functio
 tabContents[0].querySelector('#icon-document').addEventListener('keypress', function (event) {
   const target = event.currentTarget;
   if (event.key === 'Enter') docIconClickAndEnter(target.dataset.gdocid);
+});
+
+tabContents[1].querySelectorAll('.dialog-box .buttons .cancel').forEach((button) => {
+  button.addEventListener('click', () => {
+    const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
+    openedDialogBoxes.forEach((box) => {
+      box.classList.remove('show');
+    });
+  });
 });
 
 

@@ -197,18 +197,20 @@
                   <div class="heading">Create Document</div>
                   <input type="text" name='name' id='name' placeholder="Enter document name here" required>
                   <div class="buttons">
-                    <button class="submit" type="submit" data-action="create">Create</button>
-                    <button class="cancel" type="submit" data-action="cancel">Cancel</button>
+                    <button class="submit" type="submit">Create</button>
+                    <button class="cancel" type="button">Cancel</button>
                   </div>
                 </form>
               </div>
               <div class="add dialog-box">
                 <form id="addDocForm" class="add-doc-form">
                   <div class="heading">Add Document</div>
-                  <input type="text" id='name' placeholder="Paste google doc link here" required>
+                  <input type="text" name='docURL' id='docURL' placeholder="Please paste google doc link here" required
+                    pattern="https://docs.google.com/document/d/[-\w]{25,}(?!.*[-\w]{25,})/edit"
+                    title="Eg: https://docs.google.com/document/d/1vnYFE4GvJvnYFESvnvnYFE7A-pvnYFEkpHNvGe/edit">
                   <div class="buttons">
                     <button class="submit" type="submit">Add</button>
-                    <button class="cancel" type="submit">Cancel</button>
+                    <button class="cancel" type="button">Cancel</button>
                   </div>
                 </form>
               </div>

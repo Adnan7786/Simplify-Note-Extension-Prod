@@ -1127,11 +1127,15 @@ button.open-in-docs:focus {
   height: 100%;
 }
 
+.dialog-box form input:valid {
+  border: 1px solid var(--color-primary);
+}
+
 .dialog-box .heading {
   display: block;
   width: var(--width);
   font-size: 1.2em;
-  color: var(--color-secondary);
+  color: var(--color-black-white);
 }
 
 .dialog-box input {
@@ -1153,11 +1157,11 @@ button.open-in-docs:focus {
 .dialog-box .buttons .cancel {
   margin-left: var(--margin);
   padding: 2px 7px;
-  color: var(--color-black-white);
+  color: var(--color-white-black);
   cursor: pointer;
   border-radius: var(--b-radius);
   /* box-shadow: var(--color-box-shadow2) 0px 0px 0px 1px; */
-  background-color: var(--color-bgr-main-hover);
+  background-color: var(--color-secondary);
   transition: all 350ms;
 }
 
@@ -1168,7 +1172,7 @@ button.open-in-docs:focus {
 .dialog-box .buttons .submit {
   margin-right: var(--margin);
   padding: 2px 7px;
-  color: var(--color-black-white);
+  color: var(--color-white-black);
   cursor: pointer;
   border-radius: var(--b-radius);
   /* box-shadow: var(--color-box-shadow2) 0px 0px 0px 1px; */
