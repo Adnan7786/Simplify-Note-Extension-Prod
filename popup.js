@@ -50,7 +50,10 @@ const cssThemeVariables = {
 
 let activeTab = 0;
 let activeStyle = 0;
+let userStyle = null;
 const textStyles = ['heading', 'subheading', 'bullet', 'paragraph'];
+const fontColors = [];
+const highlightColors = [];
 
 const documentRoot = document.querySelector(':root');
 const computedStyle = getComputedStyle(documentRoot);
@@ -76,7 +79,12 @@ const docEditIcons = document.querySelectorAll('.tab-content.notes .icon-box');
 const stylesListItems = document.querySelectorAll('.styles-sidebar .list .list-item');
 const createDocForm = tabContents[1].querySelector('#createDocForm')
 const addDocForm = tabContents[1].querySelector('#addDocForm')
-
+const renameDocForm = tabContents[1].querySelector('#renameDocForm')
+const deleteDocForm = tabContents[1].querySelector('#deleteDocForm')
+const styleForms = tabContents[2].querySelectorAll('.styles-form')
+const styleIconContainer = tabContents[2].querySelector('.icon-container')
+const styleEditIcon = tabContents[2].querySelector('#iconEdit')
+const styleCloseIcon = tabContents[2].querySelector('#iconClose')
 
 window.onload = render;
 
@@ -112,7 +120,7 @@ addNoteForm.addEventListener("submit", async function (event) {
 createDocForm.addEventListener("submit", async function (event) {
   event.preventDefault();
   const name = this.elements['name'].value;
-  const parentFolderId = tabContents[1].querySelector('.notes-container .icon-box[data-context="create"]').dataset.folderid
+  const parentFolderId = tabContents[1].querySelector('.notes-container .icon-box[data-context="new"]').dataset.folderid
   console.log(name, parentFolderId);
   pageLoad.style.visibility = 'visible';
   const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
@@ -131,7 +139,7 @@ addDocForm.addEventListener("submit", async function (event) {
   event.preventDefault();
   const docURL = this.elements['docURL'].value;
   const docID = docURL.match(/[-\w]{25,}(?!.*[-\w]{25,})/)[0];
-  const parentFolderId = tabContents[1].querySelector('.notes-container .icon-box[data-context="add"]').dataset.folderid
+  const parentFolderId = tabContents[1].querySelector('.notes-container .icon-box[data-context="new"]').dataset.folderid
   console.log(docURL, docID, parentFolderId);
   pageLoad.style.visibility = 'visible';
   const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
@@ -146,12 +154,44 @@ addDocForm.addEventListener("submit", async function (event) {
   updateNotesTab(folderTree);
 });
 
+renameDocForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const name = this.elements['name'].value;
+  const docID = tabContents[1].querySelector('.notes-container .icon-box[data-context="rename"]').dataset.docid
+  pageLoad.style.visibility = 'visible';
+  const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
+  openedDialogBoxes.forEach((box) => {
+    box.classList.remove('show');
+  });
+  await apiRenameDoc(name, docID);
+  const folderTree = await apiFetchFolderTree();
+  updateWorkspaceTab(folderTree);
+  navbarTabs[0].click();
+  pageLoad.style.visibility = 'hidden';
+  updateNotesTab(folderTree);
+});
+
+
+deleteDocForm.addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const docID = tabContents[1].querySelector('.notes-container .icon-box[data-context="delete"]').dataset.docid
+  pageLoad.style.visibility = 'visible';
+  const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
+  openedDialogBoxes.forEach((box) => {
+    box.classList.remove('show');
+  });
+  await apiDeleteDoc(docID);
+  const folderTree = await apiFetchFolderTree();
+  updateWorkspaceTab(folderTree);
+  navbarTabs[0].click();
+  pageLoad.style.visibility = 'hidden';
+  updateNotesTab(folderTree);
+});
+
 docEditIcons.forEach((icon) => {
   icon.addEventListener('click', async () => {
     if (icon.dataset.context === 'edit') {
-      if (!icon.dataset.docid) {
-        return;
-      }
+      if (!icon.dataset.docid) return;
       pageLoad.style.visibility = 'visible';
       // console.log(pageLoad);
       await apiEditDoc(icon.dataset.docid);
@@ -162,13 +202,12 @@ docEditIcons.forEach((icon) => {
       updateNotesTab(folderTree);
     }
     else if (icon.dataset.context === 'open') {
-      if (!icon.dataset.gdocid) {
-        return;
-      }
+      if (!icon.dataset.gdocid) return;
       docIconClickAndEnter(icon.dataset.gdocid);
     }
     else {
-      showPopup(icon.dataset.context, icon.dataset.folderid, icon.dataset.docid);
+      if ((icon.dataset.context === 'rename' || icon.dataset.context === 'delete') && (!icon.dataset.docid)) return;
+      showPopup(icon.dataset.context);
     }
   })
 })
@@ -224,8 +263,15 @@ addNoteInput.addEventListener('keypress', function (event) {
 for (let index = 0; index < stylesListItems.length; index++) {
   stylesListItems[index].addEventListener('click', () => {
     stylesListItems[activeStyle].classList.remove('active');
-    stylesListItems[index].classList.add('active');
+    styleForms[activeStyle].classList.remove('active');
+    console.log(getComputedStyle(styleCloseIcon, null).display);
+    if (getComputedStyle(styleCloseIcon, null).display !== 'none') {
+      console.log('closeon');
+      styleIconContainer.click();
+    }
     activeStyle = index;
+    stylesListItems[activeStyle].classList.add('active');
+    styleForms[activeStyle].classList.add('active');
   });
 }
 
@@ -248,6 +294,70 @@ tabContents[1].querySelectorAll('.dialog-box .buttons .cancel').forEach((button)
     });
   });
 });
+
+
+styleIconContainer.addEventListener('click', () => {
+  if (getComputedStyle(styleEditIcon, null).display !== 'none') {
+    styleEditIcon.style.display = 'none';
+    styleCloseIcon.style.display = 'block';
+    styleForms[activeStyle].querySelector('fieldset').disabled = false;
+  } else {
+    const style = textStyles[activeStyle];
+    styleForms[activeStyle].querySelector('#fontStyles').value = userStyle[style]["fontFamily"];
+    let { red: cR, green: cG, blue: cB } = userStyle[style]["foregroundColor"];
+    const color_hex = rgbToHex(cR, cG, cB);
+    const selcolorElem = styleForms[activeStyle].querySelector(`input[name="color"][value="${color_hex}"]`);
+    if (selcolorElem) selcolorElem.checked = true;
+    let { red: hR, green: hG, blue: hB } = userStyle[style]["backgroundColor"];
+    const highlighter_hex = rgbToHex(hR, hG, hB);
+    const selHighlighterElem = styleForms[activeStyle].querySelector(`input[name="highlighter"][value="${highlighter_hex}"]`);
+    if (selHighlighterElem) selHighlighterElem.checked = true;
+    styleForms[activeStyle].querySelector('#bold').checked = userStyle[style]["bold"];
+    styleForms[activeStyle].querySelector('#italic').checked = userStyle[style]["italic"];
+    styleForms[activeStyle].querySelector('#underline').checked = userStyle[style]["underline"];
+    if (style === 'bullet') {
+      styleForms[activeStyle].querySelector('#bulletStyles').value = userStyle["bulletPreset"]
+    };
+    styleCloseIcon.style.display = 'none';
+    styleEditIcon.style.display = 'block';
+    styleForms[activeStyle].querySelector('fieldset').disabled = true;
+  }
+})
+
+styleForms.forEach(form => {
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const buttonId = document.activeElement.id;
+    console.log(buttonId);
+    pageLoad.style.visibility = 'visible';
+    if (buttonId === 'submit') {
+      const style = textStyles[activeStyle]
+      const payload = {}
+      payload["fontFamily"] = styleForms[activeStyle].querySelector('#fontStyles').value;
+      styleForms[activeStyle].querySelectorAll('input[name="color"]').forEach(radioBtn => {
+        if (radioBtn.checked) payload["foregroundColor"] = hexToRgb(radioBtn.value);
+      });
+      styleForms[activeStyle].querySelectorAll('input[name="highlighter"]').forEach(radioBtn => {
+        if (radioBtn.checked) payload["backgroundColor"] = hexToRgb(radioBtn.value);
+      });
+      payload["bold"] = styleForms[activeStyle].querySelector('#bold').checked;
+      payload["italic"] = styleForms[activeStyle].querySelector('#italic').checked;
+      payload["underline"] = styleForms[activeStyle].querySelector('#underline').checked;
+      if (style === 'bullet') {
+        payload["bulletPreset"] = styleForms[activeStyle].querySelector('#bulletStyles').value;
+      }
+      console.log(payload);
+      await apiUpdateUserStyle(style, payload);
+    } else {
+      const style = textStyles[activeStyle]
+      await apiResetUserStyle(style);
+    }
+    userStyle = await apiFetchUserStyle();
+    updateStylesTab();
+    pageLoad.style.visibility = 'hidden';
+  });
+})
+
 
 
 // for (let i = 0; i < tooltipButtons.length; i++) {
@@ -317,6 +427,8 @@ async function render() {
 
     const user = await apiFetchUser();
     const folderTree = await apiFetchFolderTree();
+    userStyle = await apiFetchUserStyle();
+
 
     await signInAndRefreshPopup(user, folderTree);
     pageLoad.style.visibility = 'hidden';
@@ -514,6 +626,67 @@ function apiFetchFolderTree() {
   });
 }
 
+function apiFetchUserStyle() {
+  return new Promise((resolve, reject) => {
+    const user = {};
+    fetch(`${domain}/api/v1/style`, {})
+      .then((res) => {
+        res.json()
+          .then((res) => {
+            resolve(res);
+          })
+          .catch((error) => {
+            reject('From apiFetchStyle ' + error);
+          });
+      })
+      .catch((error) => {
+        reject('From apiFetchStyle ' + error);
+      });
+  });
+}
+
+function apiUpdateUserStyle(style, payload) {
+  return new Promise((resolve, reject) => {
+    fetch(`${domain}/api/v1/style/${style}`, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }).then((res) => {
+      res.json().then((res) => {
+        resolve(res);
+      }).catch((error) => {
+        reject(error);
+      });
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
+function apiResetUserStyle(style) {
+  return new Promise((resolve, reject) => {
+    fetch(`${domain}/api/v1/style/${style}/reset`, {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({}),
+    }).then((res) => {
+      res.json().then((res) => {
+        resolve(res);
+      }).catch((error) => {
+        reject(error);
+      });
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
 function apiCreateDoc(name, parentFolderId) {
   return new Promise((resolve, reject) => {
     fetch(`${domain}/api/v1/dashboard/document`, {
@@ -670,7 +843,7 @@ async function signInAndRefreshPopup(user, folderTree) {
   await updateTooltipSwitch(user.currentDocID);
   updateWorkspaceTab(folderTree);
   updateNotesTab(folderTree);
-  // updateStylesTab();
+  updateStylesTab();
   return;
 }
 
@@ -748,12 +921,9 @@ function updateNotesTab(folderTree) {
   const rootFolderId = folderTree.rootId;
   const docsContainer = notesTab.querySelector('.notes-container .docs-container');
   docsContainer.innerHTML = ""; //clear doc container before updating
-  const docEditIcons = [...notesTab.querySelectorAll('.icon-box')].splice(2);
-  const docCreateIcons = [...notesTab.querySelectorAll('.icon-box')].splice(0, 2);
-  console.log(docCreateIcons);
-  docCreateIcons.forEach((icon) => {
-    icon.dataset.folderid = rootFolderId;
-  })
+  const docEditIcons = [...notesTab.querySelectorAll('.icon-box')].splice(1);
+  const docNewIcon = notesTab.querySelector('.icon-box[data-context="new"]');
+  docNewIcon.dataset.folderid = rootFolderId;
   const docElem = document.createElement('div');
   docElem.className = 'doc-card';
   docElem.innerHTML = `
@@ -782,6 +952,10 @@ function updateNotesTab(folderTree) {
         icon.dataset.docid = docClone.dataset.docid;
         icon.dataset.gdocid = docClone.dataset.gdocid;
       });
+      const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
+      openedDialogBoxes.forEach((box) => {
+        box.classList.remove('show');
+      });
     })
     docsContainer.appendChild(docClone);
   }
@@ -794,6 +968,32 @@ function updateNotesTab(folderTree) {
     });
   })
 }
+
+function updateStylesTab() {
+  const activeStyleButton = stylesListItems[activeStyle];
+  activeStyleButton.click();
+  for (const index in textStyles) {
+    if (Object.hasOwnProperty.call(textStyles, index)) {
+      const style = textStyles[index];
+      styleForms[index].querySelector('#fontStyles').value = userStyle[style]["fontFamily"];
+      let { red: cR, green: cG, blue: cB } = userStyle[style]["foregroundColor"];
+      const color_hex = rgbToHex(cR, cG, cB);
+      const selcolorElem = styleForms[index].querySelector(`input[name="color"][value="${color_hex}"]`);
+      if (selcolorElem) selcolorElem.checked = true;
+      let { red: hR, green: hG, blue: hB } = userStyle[style]["backgroundColor"];
+      const highlighter_hex = rgbToHex(hR, hG, hB);
+      const selHighlighterElem = styleForms[index].querySelector(`input[name="highlighter"][value="${highlighter_hex}"]`);
+      if (selHighlighterElem) selHighlighterElem.checked = true;
+      styleForms[index].querySelector('#bold').checked = userStyle[style]["bold"];
+      styleForms[index].querySelector('#italic').checked = userStyle[style]["italic"];
+      styleForms[index].querySelector('#underline').checked = userStyle[style]["underline"];
+      if (style === 'bullet') {
+        styleForms[index].querySelector('#bulletStyles').value = userStyle["bulletPreset"]
+      };
+    }
+  }
+}
+
 
 function updateProfileTab(user) {
   const profileTab = tabContents[3];
@@ -832,7 +1032,7 @@ function updateProfileTab(user) {
   })
 }
 
-function showPopup(context, docID) {
+function showPopup(context) {
   var visibleDialog = tabContents[1].querySelector(`.toolbar .dialog-box.show`);
   visibleDialog?.classList.remove('show');
   var dialogBox = tabContents[1].querySelector(`.toolbar .${context}.dialog-box`);
@@ -861,4 +1061,25 @@ function getFormattedDate(datetimeStr) {
   if (!datetimeStr) return;
   const [weekday, month, day, year] = (new Date(datetimeStr).toDateString()).split(' ');
   return day + ' ' + month + ', ' + year
+}
+
+function componentToHex(c) {
+  var hex = c.toString(16);
+  return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+  r = r * 255;
+  g = g * 255;
+  b = b * 255;
+  return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+function hexToRgb(hex) {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    red: parseInt(result[1], 16) / 255,
+    green: parseInt(result[2], 16) / 255,
+    blue: parseInt(result[3], 16) / 255
+  } : null;
 }

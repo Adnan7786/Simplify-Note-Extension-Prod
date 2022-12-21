@@ -150,13 +150,13 @@
             <div class="toolbar">
               <span class="title">My Notes</span>
               <span class="icons-tray">
-                <span class="icon-box" title="Create" data-context="create">
+                <!-- <span class="icon-box" title="Create" data-context="create">
                   <svg class="icon" viewBox="0 0 16 16">
                     <path
                       d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM8.5 7v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 1 0z" />
                   </svg>
-                </span>
-                <span class="icon-box" title="Add" data-context="add">
+                </span> -->
+                <span class="icon-box" title="Add" data-context="new">
                   <svg class="icon" viewBox="0 0 16 16">
                     <path
                       d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
@@ -192,19 +192,21 @@
                   </svg>
                 </span>
               </span>
-              <div class="create dialog-box">
+              <!-- <div class="create dialog-box">
+
+              </div> -->
+              <div class="new dialog-box">
                 <form id="createDocForm" class="create-doc-form">
-                  <div class="heading">Create Document</div>
+                  <div class="heading">Create New Document</div>
                   <input type="text" name='name' id='name' placeholder="Enter document name here" required>
                   <div class="buttons">
                     <button class="submit" type="submit">Create</button>
                     <button class="cancel" type="button">Cancel</button>
                   </div>
                 </form>
-              </div>
-              <div class="add dialog-box">
+                <!-- <span>--OR--</span> -->
                 <form id="addDocForm" class="add-doc-form">
-                  <div class="heading">Add Document</div>
+                  <div class="heading">Add Existing Document</div>
                   <input type="text" name='docURL' id='docURL' placeholder="Please paste google doc link here" required
                     pattern="https://docs.google.com/document/d/[-\w]{25,}(?!.*[-\w]{25,})/edit"
                     title="Eg: https://docs.google.com/document/d/1vnYFE4GvJvnYFESvnvnYFE7A-pvnYFEkpHNvGe/edit">
@@ -216,17 +218,36 @@
               </div>
               <div class="edit dialog-box"></div>
               <div class="open dialog-box"></div>
-              <div class="rename dialog-box"></div>
-              <div class="delete dialog-box"></div>
+              <div class="rename dialog-box">
+                <form id="renameDocForm" class="rename-doc-form">
+                  <div class="heading">Rename Document</div>
+                  <input type="text" name='name' id='name' placeholder="Enter document new name here" required>
+                  <div class="buttons">
+                    <button class="submit" type="submit">Rename</button>
+                    <button class="cancel" type="button">Cancel</button>
+                  </div>
+                </form>
+              </div>
+              <div class="delete dialog-box">
+                <form id="deleteDocForm" class="delete-doc-form">
+                  <div class="heading">Delete Document</div>
+                  <div class="warning-text">Are you sure you want to delete selected document?</div>
+                  <span class="note">Note: This will not delete the doc from Google Docs</span>
+                  <div class="buttons">
+                    <button class="submit" type="submit">Delete</button>
+                    <button class="cancel" type="button">Cancel</button>
+                  </div>
+                </form>
+              </div>
             </div>
-            <div class="docs-container"></div>
+            <div class="docs-container mac-scrollbar"></div>
           </div>
         </div>
         <div class="tab-content styles">
           <div class="styles-container">
             <div class="styles-sidebar">
               <div class="list">
-                <div class="list-item active">
+                <div class="list-item">
                   <span class="highlighter"></span>
                   <span>Heading</span>
                 </div>
@@ -246,54 +267,163 @@
             </div>
             <span class="styles-divider"></span>
             <div class="styles-content">
-              <form id="stylesForm" class="styles-form">
-                <br><br>
-                <label>Font Style:
-                  <select id="fontStyles" name="fontStyles">
-                    <option value="Montserrat">Montserrat</option>
-                    <option value="Open Sans">Open Sans</option>
-                    <option value="Poppins">Poppins</option>
-                    <option value="Roboto">Roboto</option>
-                  </select>
-                </label>
-                <br><br>
-                <label>Font Size:
-                  <select id="fontSize" name="fontSize">
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="30">30</option>
-                    <option value="40">40</option>
-                  </select>
-                </label>
-                <br><br>
-                <label>Color
-                  <input type="radio" name="color" data-red="0.07421875" data-green="0.18359375" data-blue="0.16796875">
-                  <input type="radio" name="color" data-red="0.07421875" data-green="0.18359375" data-blue="0.16796875">
-                  <input type="radio" name="color" data-red="0.07421875" data-green="0.18359375" data-blue="0.16796875">
-                  <input type="radio" name="color" data-red="0.07421875" data-green="0.18359375" data-blue="0.16796875">
-                  <input type="radio" name="color" data-red="0.07421875" data-green="0.18359375" data-blue="0.16796875">
-                </label>
-                <br><br>
-                <label>Highlighter:
-                  <input type="radio" name="highlighter" data-red="0.07421875" data-green="0.18359375"
-                    data-blue="0.16796875">
-                  <input type="radio" name="highlighter" data-red="0.07421875" data-green="0.18359375"
-                    data-blue="0.16796875">
-                  <input type="radio" name="highlighter" data-red="0.07421875" data-green="0.18359375"
-                    data-blue="0.16796875">
-                  <input type="radio" name="highlighter" data-red="0.07421875" data-green="0.18359375"
-                    data-blue="0.16796875">
-                  <input type="radio" name="highlighter" data-red="0.07421875" data-green="0.18359375"
-                    data-blue="0.16796875">
-                </label>
-                <br><br>
-                <input type="checkbox" id="bold" name="bold" data-value="B">
-                <input type="checkbox" id="italic" name="italic" data-value="I">
-                <input type="checkbox" id="underline" name="underline" data-value="U">
-                <br><br>
-                <button type="submit" id="default">Reset</button>
-                <button type="submit" id="apply">Submit</button>
-
+              <span class="icon-container" title="Edit">
+                <svg id="iconEdit" class="icon" viewBox="0 0 16 16">
+                  <path
+                    d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+                </svg>
+                <svg id="iconClose" class="icon" viewBox="0 0 16 16">
+                  <path
+                    d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                </svg>
+              </span>
+              <form id="stylesForm" class="styles-form heading active">
+                <fieldset disabled="disabled">
+                  <label>Font Style:
+                    <select id="fontStyles" name="fontStyles">
+                      <option value="Comic Sans MS">Comic Sans</option>
+                      <option value="Georgia">Georgia</option>
+                      <option value="Roboto">Roboto</option>
+                      <option value="Times New Roman">Times New</option>
+                    </select>
+                  </label>
+                  <label>Color:
+                    <input type="radio" name="color" value="#000000" style="background-color: #000000;">
+                    <input type="radio" name="color" value="#4fdbf7" style="background-color: #4fdbf7;">
+                    <input type="radio" name="color" value="#f5954c" style="background-color: #f5954c">
+                    <input type="radio" name="color" value="#55ed6c" style="background-color: #55ed6c;">
+                    <input type="radio" name="color" value="#8697f7" style="background-color: #8697f7;">
+                  </label>
+                  <label>Highlighter:
+                    <input type="radio" name="highlighter" value="#ffffff" style="background-color: #ffffff;">
+                    <input type="radio" name="highlighter" value="#d1f7ff" style="background-color: #d1f7ff;">
+                    <input type="radio" name="highlighter" value="#fad8bb" style="background-color: #fad8bb;">
+                    <input type="radio" name="highlighter" value="#c3f7cb" style="background-color: #c3f7cb;">
+                    <input type="radio" name="highlighter" value="#c3cbf7" style="background-color: #c3cbf7;">
+                  </label>
+                  <span>
+                    <input type="checkbox" id="bold" name="bold" data-value="B">
+                    <input type="checkbox" id="italic" name="italic" data-value="I">
+                    <input type="checkbox" id="underline" name="underline" data-value="U">
+                  </span>
+                  <span>
+                    <button type="submit" id="reset">Reset</button>
+                    <button type="submit" id="submit">Submit</button>
+                  </span>
+                </fieldset>
+              </form>
+              <form id="stylesForm" class="styles-form subheading">
+                <fieldset disabled="disabled">
+                  <label>Font Style:
+                    <select id="fontStyles" name="fontStyles">
+                      <option value="Comic Sans MS">Comic Sans</option>
+                      <option value="Georgia">Georgia</option>
+                      <option value="Roboto">Roboto</option>
+                      <option value="Times New Roman">Times New</option>
+                    </select>
+                  </label>
+                  <label>Color:
+                    <input type="radio" name="color" value="#000000" style="background-color: #000000;">
+                    <input type="radio" name="color" value="#4fdbf7" style="background-color: #4fdbf7;">
+                    <input type="radio" name="color" value="#f5954c" style="background-color: #f5954c">
+                    <input type="radio" name="color" value="#55ed6c" style="background-color: #55ed6c;">
+                    <input type="radio" name="color" value="#8697f7" style="background-color: #8697f7;">
+                  </label>
+                  <label>Highlighter:
+                    <input type="radio" name="highlighter" value="#ffffff" style="background-color: #ffffff;">
+                    <input type="radio" name="highlighter" value="#d1f7ff" style="background-color: #d1f7ff;">
+                    <input type="radio" name="highlighter" value="#fad8bb" style="background-color: #fad8bb;">
+                    <input type="radio" name="highlighter" value="#c3f7cb" style="background-color: #c3f7cb;">
+                    <input type="radio" name="highlighter" value="#c3cbf7" style="background-color: #c3cbf7;">
+                  </label>
+                  <span>
+                    <input type="checkbox" id="bold" name="bold" data-value="B">
+                    <input type="checkbox" id="italic" name="italic" data-value="I">
+                    <input type="checkbox" id="underline" name="underline" data-value="U">
+                  </span>
+                  <span>
+                    <button type="submit" id="reset">Reset</button>
+                    <button type="submit" id="submit">Submit</button>
+                  </span>
+                </fieldset>
+              </form>
+              <form id="stylesForm" class="styles-form bullet">
+                <fieldset disabled="disabled">
+                  <label>Font Style:
+                    <select id="fontStyles" name="fontStyles">
+                      <option value="Comic Sans MS">Comic Sans</option>
+                      <option value="Georgia">Georgia</option>
+                      <option value="Roboto">Roboto</option>
+                      <option value="Times New Roman">Times New</option>
+                    </select>
+                  </label>
+                  <label>Bullet Style:
+                    <select id="bulletStyles" name="bulletStyles">
+                      <option value="BULLET_DISC_CIRCLE_SQUARE">Disc</option>
+                      <option value="BULLET_LEFTTRIANGLE_DIAMOND_DISC">Triangle</option>
+                      <option value="NUMBERED_DECIMAL_NESTED">Number</option>
+                      <option value="NUMBERED_UPPERROMAN_UPPERALPHA_DECIMAL">Roman</option>
+                    </select>
+                  </label>
+                  <label>Color:
+                    <input type="radio" name="color" value="#000000" style="background-color: #000000;">
+                    <input type="radio" name="color" value="#4fdbf7" style="background-color: #4fdbf7;">
+                    <input type="radio" name="color" value="#f5954c" style="background-color: #f5954c">
+                    <input type="radio" name="color" value="#55ed6c" style="background-color: #55ed6c;">
+                    <input type="radio" name="color" value="#8697f7" style="background-color: #8697f7;">
+                  </label>
+                  <label>Highlighter:
+                    <input type="radio" name="highlighter" value="#ffffff" style="background-color: #ffffff;">
+                    <input type="radio" name="highlighter" value="#d1f7ff" style="background-color: #d1f7ff;">
+                    <input type="radio" name="highlighter" value="#fad8bb" style="background-color: #fad8bb;">
+                    <input type="radio" name="highlighter" value="#c3f7cb" style="background-color: #c3f7cb;">
+                    <input type="radio" name="highlighter" value="#c3cbf7" style="background-color: #c3cbf7;">
+                  </label>
+                  <span>
+                    <input type="checkbox" id="bold" name="bold" data-value="B">
+                    <input type="checkbox" id="italic" name="italic" data-value="I">
+                    <input type="checkbox" id="underline" name="underline" data-value="U">
+                  </span>
+                  <span>
+                    <button type="submit" id="reset">Reset</button>
+                    <button type="submit" id="submit">Submit</button>
+                  </span>
+                </fieldset>
+              </form>
+              <form id="stylesForm" class="styles-form paragraph">
+                <fieldset disabled="disabled">
+                  <label>Font Style:
+                    <select id="fontStyles" name="fontStyles">
+                      <option value="Comic Sans MS">Comic Sans</option>
+                      <option value="Georgia">Georgia</option>
+                      <option value="Roboto">Roboto</option>
+                      <option value="Times New Roman">Times New</option>
+                    </select>
+                  </label>
+                  <label>Color:
+                    <input type="radio" name="color" value="#000000" style="background-color: #000000;">
+                    <input type="radio" name="color" value="#4fdbf7" style="background-color: #4fdbf7;">
+                    <input type="radio" name="color" value="#f5954c" style="background-color: #f5954c">
+                    <input type="radio" name="color" value="#55ed6c" style="background-color: #55ed6c;">
+                    <input type="radio" name="color" value="#8697f7" style="background-color: #8697f7;">
+                  </label>
+                  <label>Highlighter:
+                    <input type="radio" name="highlighter" value="#ffffff" style="background-color: #ffffff;">
+                    <input type="radio" name="highlighter" value="#d1f7ff" style="background-color: #d1f7ff;">
+                    <input type="radio" name="highlighter" value="#fad8bb" style="background-color: #fad8bb;">
+                    <input type="radio" name="highlighter" value="#c3f7cb" style="background-color: #c3f7cb;">
+                    <input type="radio" name="highlighter" value="#c3cbf7" style="background-color: #c3cbf7;">
+                  </label>
+                  <span>
+                    <input type="checkbox" id="bold" name="bold" data-value="B">
+                    <input type="checkbox" id="italic" name="italic" data-value="I">
+                    <input type="checkbox" id="underline" name="underline" data-value="U">
+                  </span>
+                  <span>
+                    <button type="submit" id="reset">Reset</button>
+                    <button type="submit" id="submit">Submit</button>
+                  </span>
+                </fieldset>
               </form>
             </div>
           </div>

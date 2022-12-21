@@ -718,6 +718,7 @@ div.social-media {
   gap: 15px;
   margin-top: 20px;
   color: var(--color-secondary);
+  overflow: hidden;
   /* transition: all ease-out 100ms; */
 }
 
@@ -1072,16 +1073,13 @@ button.open-in-docs:focus {
   background-color: var(--color-bgr-secondary);
 }
 
-.notes-container .icon-box[data-context="create"],
-.notes-container .icon-box[data-context="add"] {
+.notes-container .icon-box[data-context="new"] {
   opacity: 1;
   cursor: pointer;
 }
 
-.notes-container .icon-box[data-context="create"]:hover,
-.notes-container .icon-box[data-context="add"]:hover,
-.notes-container .icon-box[data-context="create"]:focus,
-.notes-container .icon-box[data-context="add"]:focus {
+.notes-container .icon-box[data-context="new"] :hover,
+.notes-container .icon-box[data-context="new"] :focus {
   transform: scale(1.1);
   background-color: var(--color-bgr-secondary);
 }
@@ -1097,10 +1095,16 @@ button.open-in-docs:focus {
 .toolbar .dialog-box {
   --width: 99%;
   --b-radius: 7px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
   position: absolute;
   top: 100%;
   width: 100%;
-  height: 120px;
+  height: 250px;
   padding: 20px;
   z-index: 400;
   border-bottom: 2px solid var(--color-bgr-secondary);
@@ -1124,7 +1128,7 @@ button.open-in-docs:focus {
   align-items: center;
   gap: 10px;
   width: 100%;
-  height: 100%;
+  height: 40%;
 }
 
 .dialog-box form input:valid {
@@ -1192,10 +1196,10 @@ button.open-in-docs:focus {
   align-content: flex-start;
   padding-top: 10px;
   padding-inline: 11px;
-  gap: 7px;
+  gap: 6px;
   height: 88%;
   width: 100%;
-  overflow: scroll;
+  overflow-y: scroll;
   background-color: var(--color-bgr-main);
 }
 
@@ -1234,7 +1238,10 @@ button.open-in-docs:focus {
 
 .docs-container .doc-card .doc-name {
   width: 90%;
+  height: 1.1em;
   line-height: 1em;
+  white-space: nowrap;
+  overflow: hidden;
   font-size: smaller;
   text-align: center;
   cursor: pointer;
@@ -1342,12 +1349,77 @@ button.open-in-docs:focus {
   /* transform: scale(1.1); */
 }
 
+.styles-content {
+  position: relative;
+}
+
+.styles-content .icon-container {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  aspect-ratio: 1 / 1;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  /* border: none; */
+  transition: transform 250ms ease-in-out;
+}
+
+.styles-container .icon-container .icon {
+  width: 15px;
+  aspect-ratio: 1 / 1;
+  fill: var(--color-black-white);
+}
+
+.styles-container .icon-container #iconClose {
+  display: none;
+}
+
+.styles-content .icon-container:hover {
+  background-color: var(--color-bgr-main-hover);
+}
+
+/* .styles-content .icon-container:hover .icon-edit {
+  fill: var(--color-white-black);
+} */
+
 .styles-content .styles-form {
-  height: 100%;
+  /* height: 100%; */
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  transition: transform 350ms ease-in-out,
+    opacity 350ms ease-in-out;
+}
+
+.styles-content .styles-form {
+  top: 80px;
+}
+
+.styles-content .styles-form.bullet {
+  top: 60px;
+}
+
+.styles-content .styles-form:has(fieldset:not(:disabled)) {
+  transform: translateY(-10px);
+}
+
+.styles-form fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.styles-content form.active {
+  visibility: visible;
+  opacity: 1;
 }
 
 .styles-form #fontStyles,
-.styles-form #fontSize {
+.styles-form #bulletStyles {
   margin-left: 5px;
   padding: 2px;
   border-radius: 3px;
@@ -1365,13 +1437,16 @@ button.open-in-docs:focus {
   width: var(--size);
   border-radius: 50%;
   border: 2px solid var(--color-bgr-main);
-  background-color: var(--color-primary);
   transition: transform 100ms;
 }
 
-.styles-form input[type="radio"][name="color"]:hover,
-.styles-form input[type="radio"][name="highlighter"]:hover {
-  transform: scale(1.05);
+/* .styles-form input[type="radio"][name="color"]:not(:checked),
+.styles-form input[type="radio"][name="highlighter"]:not(:checked) {} */
+
+.styles-form fieldset:not(:disabled) input[type="radio"][name="color"]:not(:checked):hover,
+.styles-form fieldset:not(:disabled) input[type="radio"][name="highlighter"]:not(:checked):hover {
+  cursor: pointer;
+  transform: scale(1.1);
 }
 
 .styles-form input[type="radio"][name="color"]:checked,
@@ -1402,16 +1477,16 @@ button.open-in-docs:focus {
   height: var(--size);
   width: var(--size);
   color: var(--color-black-white);
-  cursor: pointer;
   border-radius: 5px;
   border: 2px solid var(--color-bgr-main);
   background-color: var(--color-bgr-main-hover);
   transition: transform 100ms;
 }
 
-.styles-form input[type="checkbox"][name="bold"]:hover::after,
-.styles-form input[type="checkbox"][name="italic"]:hover::after,
-.styles-form input[type="checkbox"][name="underline"]:hover::after {
+.styles-form fieldset:not(:disabled) input[type="checkbox"][name="bold"]:hover::after,
+.styles-form fieldset:not(:disabled) input[type="checkbox"][name="italic"]:hover::after,
+.styles-form fieldset:not(:disabled) input[type="checkbox"][name="underline"]:hover::after {
+  cursor: pointer;
   transform: scale(1.05);
 }
 
@@ -1421,27 +1496,37 @@ button.open-in-docs:focus {
   outline: 1px solid var(--color-primary);
 }
 
-.styles-form button#default,
-.styles-form button#apply {
+.styles-form button#reset,
+.styles-form button#submit {
   height: 26px;
   width: 62px;
   padding: 3px 7px;
   cursor: pointer;
   border-radius: 5px;
-  transition: transform 100ms;
 }
 
-.styles-form button#default:hover,
-.styles-form button#apply:hover {
+.styles-form.active button#reset,
+.styles-form.active button#submit {
+  transition: all 250ms ease-in-out 100ms;
+}
+
+.styles-form fieldset:disabled button#reset,
+.styles-form fieldset:disabled button#submit {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.styles-form button#reset:hover,
+.styles-form button#submit:hover {
   transform: scale(1.05);
 }
 
-.styles-form button#default {
+.styles-form button#reset {
   color: var(--color-white-black);
   background-color: var(--color-secondary);
 }
 
-.styles-form button#apply {
+.styles-form button#submit {
   float: right;
   margin-right: 15px;
   color: var(--color-white-black);
@@ -1658,6 +1743,38 @@ button.open-in-docs:focus {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* total width */
+.mac-scrollbar::-webkit-scrollbar {
+  background-color: inherit;
+  width: 4px
+}
+
+/* background of the scrollbar except button or resizer */
+.mac-scrollbar::-webkit-scrollbar-track {
+  background-color: var(--color-bgr-main)
+}
+
+/* .mac-scrollbar::-webkit-scrollbar-track:hover {
+  background-color: var(--color-bgr-main-hover)
+} */
+
+/* scrollbar itself */
+.mac-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #babac0;
+  border-radius: 16px;
+  border: none;
+}
+
+.mac-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #a0a0a5;
+  border: none;
+}
+
+/* set button(top and bottom of the scrollbar) */
+.mac-scrollbar::-webkit-scrollbar-button {
+  display: none
 }
 
 /* .button {
