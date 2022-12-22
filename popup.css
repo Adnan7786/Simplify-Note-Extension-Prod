@@ -429,6 +429,7 @@ span.avatar {
 }
 
 div.website {
+  margin-left: 2px;
   margin-right: auto;
 }
 
@@ -443,6 +444,7 @@ div.website a:focus {
 }
 
 div.social-media {
+  margin-right: 2px;
   margin-left: auto;
   color: var(--color-secondary);
 }
@@ -470,6 +472,10 @@ div.social-media {
   box-shadow: 0 1px 1px var(--color-secondary);
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.wrapper .icon * {
+  cursor: pointer;
 }
 
 .wrapper .icon:hover,
@@ -504,7 +510,7 @@ div.social-media {
 
 .wrapper .icon:hover .tooltip,
 .wrapper .icon:focus .tooltip {
-  top: -45px;
+  top: -40px;
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -517,22 +523,22 @@ div.social-media {
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.1);
 }
 
-.wrapper .facebook:hover,
-.wrapper .facebook:focus,
-.wrapper .facebook:hover .tooltip,
-.wrapper .facebook:focus .tooltip,
-.wrapper .facebook:hover .tooltip::before,
-.wrapper .facebook:focus .tooltip::before {
+.wrapper .linkedin:hover,
+.wrapper .linkedin:focus,
+.wrapper .linkedin:hover .tooltip,
+.wrapper .linkedin:focus .tooltip,
+.wrapper .linkedin:hover .tooltip::before,
+.wrapper .linkedin:focus .tooltip::before {
   background: #1877F2;
   color: var(--color-white);
 }
 
-.wrapper .twitter:hover,
-.wrapper .twitter:focus,
-.wrapper .twitter:hover .tooltip,
-.wrapper .twitter:focus .tooltip,
-.wrapper .twitter:hover .tooltip::before,
-.wrapper .twitter:focus .tooltip::before {
+.wrapper .telegram:hover,
+.wrapper .telegram:focus,
+.wrapper .telegram:hover .tooltip,
+.wrapper .telegram:focus .tooltip,
+.wrapper .telegram:hover .tooltip::before,
+.wrapper .telegram:focus .tooltip::before {
   background: #1DA1F2;
   color: var(--color-white);
 }
@@ -720,6 +726,11 @@ div.social-media {
   color: var(--color-secondary);
   overflow: hidden;
   /* transition: all ease-out 100ms; */
+}
+
+.tab-content.profile {
+  gap: 13px;
+  justify-content: center;
 }
 
 .tab-content.active {
@@ -1067,8 +1078,8 @@ button.open-in-docs:focus {
   cursor: pointer;
 }
 
-.notes-container:has(.doc-card.selected) .icon-box:hover,
-.notes-container:has(.doc-card.selected) .icon-box:focus {
+.notes-container:has(.doc-card.selected) .icon-box:not([data-context="new"]):hover,
+.notes-container:has(.doc-card.selected) .icon-box:not([data-context="new"]):focus {
   transform: scale(1.1);
   background-color: var(--color-bgr-secondary);
 }
@@ -1078,19 +1089,29 @@ button.open-in-docs:focus {
   cursor: pointer;
 }
 
-.notes-container .icon-box[data-context="new"] :hover,
-.notes-container .icon-box[data-context="new"] :focus {
+/* .notes-container .icon-box[data-context="new"]:hover,
+.notes-container .icon-box[data-context="new"]:focus {
   transform: scale(1.1);
-  background-color: var(--color-bgr-secondary);
-}
+  background-color: var(--color-primary);
+} */
 
 .icons-tray .icon-box .icon {
-  --size: 13px;
+  --size: 12px;
   height: var(--size);
   width: var(--size);
   fill: var(--color-black-white);
 }
 
+.icons-tray .icon-box[data-context="new"] .icon {
+  --size: 17px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+}
+
+.icons-tray .icon-box[data-context="new"]:hover,
+.icons-tray .icon-box[data-context="new"]:focus {
+  transform: scale(1.1);
+}
 
 .toolbar .dialog-box {
   --width: 99%;

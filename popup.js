@@ -75,7 +75,7 @@ const tooltipSubmitMessage = document.querySelector('#tooltipSubmitMessage');
 const loadingMessage = document.querySelector('#tooltipLoadingMessage');
 const responseMessage = document.querySelector('#tooltipResponseMessage');
 // const logoutButton = document.querySelector('.profile-avatar #logout');
-const docEditIcons = document.querySelectorAll('.tab-content.notes .icon-box');
+const docIcons = document.querySelectorAll('.tab-content.notes .icon-box');
 const stylesListItems = document.querySelectorAll('.styles-sidebar .list .list-item');
 const createDocForm = tabContents[1].querySelector('#createDocForm')
 const addDocForm = tabContents[1].querySelector('#addDocForm')
@@ -157,7 +157,8 @@ addDocForm.addEventListener("submit", async function (event) {
 renameDocForm.addEventListener("submit", async function (event) {
   event.preventDefault();
   const name = this.elements['name'].value;
-  const docID = tabContents[1].querySelector('.notes-container .icon-box[data-context="rename"]').dataset.docid
+  const selectedDoc = tabContents[1].querySelector('.doc-card.selected');
+  const docID = selectedDoc.dataset.docid
   pageLoad.style.visibility = 'visible';
   const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
   openedDialogBoxes.forEach((box) => {
@@ -174,7 +175,8 @@ renameDocForm.addEventListener("submit", async function (event) {
 
 deleteDocForm.addEventListener("submit", async function (event) {
   event.preventDefault();
-  const docID = tabContents[1].querySelector('.notes-container .icon-box[data-context="delete"]').dataset.docid
+  const selectedDoc = tabContents[1].querySelector('.doc-card.selected');
+  const docID = selectedDoc.dataset.docid
   pageLoad.style.visibility = 'visible';
   const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
   openedDialogBoxes.forEach((box) => {
@@ -188,26 +190,36 @@ deleteDocForm.addEventListener("submit", async function (event) {
   updateNotesTab(folderTree);
 });
 
-docEditIcons.forEach((icon) => {
+docIcons.forEach((icon) => {
   icon.addEventListener('click', async () => {
+
+    if (icon.dataset.context === 'new') {
+      showPopup(icon.dataset.context);
+      return;
+    }
+
+    const selectedDoc = tabContents[1].querySelector('.doc-card.selected');
+    if (!selectedDoc) return;
+
+    if (icon.dataset.context === 'rename' || icon.dataset.context === 'delete') {
+      showPopup(icon.dataset.context);
+      return;
+    }
+
     if (icon.dataset.context === 'edit') {
-      if (!icon.dataset.docid) return;
       pageLoad.style.visibility = 'visible';
-      // console.log(pageLoad);
-      await apiEditDoc(icon.dataset.docid);
+      await apiEditDoc(selectedDoc.dataset.docid);
       const folderTree = await apiFetchFolderTree();
       updateWorkspaceTab(folderTree);
       navbarTabs[0].click();
       pageLoad.style.visibility = 'hidden';
       updateNotesTab(folderTree);
+      return;
     }
-    else if (icon.dataset.context === 'open') {
-      if (!icon.dataset.gdocid) return;
-      docIconClickAndEnter(icon.dataset.gdocid);
-    }
-    else {
-      if ((icon.dataset.context === 'rename' || icon.dataset.context === 'delete') && (!icon.dataset.docid)) return;
-      showPopup(icon.dataset.context);
+
+    if (icon.dataset.context === 'open') {
+      docIconClickAndEnter(selectedDoc.dataset.gdocid);
+      return;
     }
   })
 })
@@ -366,20 +378,20 @@ styleForms.forEach(form => {
 //   })
 // };
 
-document.querySelector('#icon-facebook').addEventListener('click', function () {
-  window.open('https://www.facebook.com', '_blank');
+document.querySelector('#icon-linkedin').addEventListener('click', function () {
+  window.open('https://www.linkedin.com/company/simplify-notes/', '_blank');
 });
 document.querySelector('#icon-youtube').addEventListener('click', function () {
-  window.open('https://www.youtube.com', '_blank');
+  window.open('https://www.youtube.com/channel/UCfvWlKog8_FfmU4KU3Bssgw', '_blank');
 });
 document.querySelector('#icon-mail').addEventListener('click', function () {
-  window.open('https://www.outlook.com', '_blank');
+  window.open('https://mail.google.com/mail/?view=cm&fs=1&to=developer.simplifynote@gmail.com&su=Simplify Note Chrome Extension Feedback', '_blank');
 });
 document.querySelector('#icon-instagram').addEventListener('click', function () {
   window.open('https://www.instagram.com/simplifynote/', '_blank');
 });
-document.querySelector('#icon-twitter').addEventListener('click', function () {
-  window.open('https://www.twitter.com', '_blank');
+document.querySelector('#icon-telegram').addEventListener('click', function () {
+  window.open('https://t.me/simplify_notes', '_blank');
 });
 
 document.querySelector('input[name=toggle-switch-input]').addEventListener('click', async function () {
@@ -947,11 +959,6 @@ function updateNotesTab(folderTree) {
       const selectedDoc = notesTab.querySelector('.doc-card.selected');
       if (selectedDoc) selectedDoc.classList.remove('selected');
       docClone.classList.add('selected');
-      docEditIcons.forEach((icon) => {
-        icon.dataset.folderid = docClone.dataset.folderid;
-        icon.dataset.docid = docClone.dataset.docid;
-        icon.dataset.gdocid = docClone.dataset.gdocid;
-      });
       const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
       openedDialogBoxes.forEach((box) => {
         box.classList.remove('show');
