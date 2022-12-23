@@ -46,7 +46,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       chrome.tabs.create({ url: dataUrl })
     })
   } else if (request.message === 'snip') {
-    chrome.tabs.captureTab(null, {}, (dataUrl) => {
+    chrome.tabs.captureVisibleTab(null, {}, (dataUrl) => {
       chrome.tabs.sendMessage(sender.tab.id, {
         message: 'snip',
         dataUrl: dataUrl,

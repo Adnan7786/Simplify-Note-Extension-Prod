@@ -175,8 +175,8 @@ function captureSnip() {
   document.body.addEventListener('mousemove', (e) => {
     if (!isDown) return
     e.preventDefault()
-    console.log(e.pageX, e.pageY)
-    console.log(startX, startY)
+    // console.log(e.pageX, e.pageY)
+    // console.log(startX, startY)
     const width = e.pageX - startX
     const height = e.pageY - startY
     snipContainer.style.top = Math.min(e.pageY, startY) + 'px'
@@ -223,30 +223,31 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     //   })
     // Take the screenshot of the page and crop it according to the snip dim
     // console.log(JSON.stringify(request))
-    console.log(request.dataUrl)
+    // console.log(request.dataUrl)
+    const dpr = devicePixelRatio
+    console.log(`dpr: ${dpr}`)
+
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const img = new Image()
     img.src = request.dataUrl
-    img.width = parseInt(request.dim.width)
-    img.height = parseInt(request.dim.height)
+    img.width = parseInt(request.dim.width) * dpr
+    img.height = parseInt(request.dim.height) * dpr
     img.onload = () => {
-      canvas.width = parseInt(request.dim.width)
-      canvas.height = parseInt(request.dim.height)
+      canvas.width = parseInt(request.dim.width) * dpr
+      canvas.height = parseInt(request.dim.height) * dpr
       ctx.drawImage(
         img,
-        parseInt(request.dim.left),
-        parseInt(request.dim.top),
-        parseInt(request.dim.width),
-        parseInt(request.dim.height),
+        parseInt(request.dim.left) * dpr,
+        parseInt(request.dim.top) * dpr,
+        parseInt(request.dim.width) * dpr,
+        parseInt(request.dim.height) * dpr,
         0,
         0,
-        parseInt(request.dim.width),
-        parseInt(request.dim.height)
+        parseInt(request.dim.width) * dpr,
+        parseInt(request.dim.height) * dpr
       )
       const dataUrl = canvas.toDataURL()
-      console.log(`canvas width: ${canvas.width}`)
-      console.log(`canvas height: ${canvas.height}`)
       console.log(dataUrl)
     }
 
@@ -454,12 +455,12 @@ tooltipContainer.innerHTML = `<style>
   <div id="tooltipButton" class="tooltipButton">
       <span title="Heading">
           <svg id="iconHeading" class="button" viewBox="0 0 16 16">
-              <path d="M8.637 13V3.669H7.379V7.62H2.758V3.67H1.5V13h1.258V8.728h4.62V13h1.259zm5.329 0V3.669h-1.244L10.5 5.316v1.265l2.16-1.565h.062V13h1.244z" />
+              <path d="M8.637 13V3.669H7.379V7.62H2.758V3.67H1.5V13h1.25V8.728h4.62V13h1.25zm5.329 0V3.669h-1.244L10.5 5.316v1.265l2.16-1.565h.062V13h1.244z" />
           </svg>
       </span>
       <span title="Subheading">
           <svg id="iconSubheading" class="button" viewBox="0 0 16 16">
-              <path d="M7.638 13V3.669H6.38V7.62H1.759V3.67H.5V13h1.258V8.728h4.62V13h1.259zm3.022-6.733v-.048c0-.889.63-1.668 1.716-1.668.957 0 1.675.608 1.675 1.572 0 .855-.554 1.504-1.067 2.085l-3.513 3.999V13H15.5v-1.094h-4.245v-.075l2.481-2.844c.875-.998 1.586-1.784 1.586-2.953 0-1.463-1.155-2.556-2.919-2.556-1.941 0-2.966 1.326-2.966 2.74v.049h1.223z" />
+              <path d="M7.638 13V3.669H6.38V7.62H1.759V3.67H.5V13h1.25V8.728h4.62V13h1.25zm3.022-6.733v-.048c0-.889.63-1.668 1.716-1.668.957 0 1.675.608 1.675 1.572 0 .855-.554 1.504-1.067 2.085l-3.513 3.999V13H15.5v-1.094h-4.245v-.075l2.481-2.844c.875-.998 1.586-1.784 1.586-2.953 0-1.463-1.155-2.556-2.919-2.556-1.941 0-2.966 1.326-2.966 2.74v.049h1.223z" />
           </svg>
       </span>
       <span title="Bullet">
