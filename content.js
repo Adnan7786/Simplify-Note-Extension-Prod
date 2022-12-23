@@ -4,65 +4,278 @@ function isPDF(url) {
 
 // if url is pdf, open pdf using pdf viewer present in src folder
 if (isPDF(window.location.href)) {
-  // alert('Hi')
   if (!window.location.href.startsWith('chrome-extension://')) {
-    window.location.href = chrome.runtime.getURL('src/pdfjs/web/viewer.html') + '?file=' + window.location.href;
+    window.location.href =
+      chrome.runtime.getURL('src/pdfjs/web/viewer.html') +
+      '?file=' +
+      window.location.href
   }
 }
 
 function getTooltipUnchecked() {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get(['tooltipUnchecked'], function (result) {
-      (result.tooltipUnchecked) ? resolve(result.tooltipUnchecked) : resolve(false);
-    });
-  });
+      result.tooltipUnchecked
+        ? resolve(result.tooltipUnchecked)
+        : resolve(false)
+    })
+  })
 }
 
 function getTooltipDisabled() {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get(['tooltipDisabled'], function (result) {
-      (result.tooltipDisabled) ? resolve(result.tooltipDisabled) : resolve(false);
-    });
-  });
+      result.tooltipDisabled ? resolve(result.tooltipDisabled) : resolve(false)
+    })
+  })
 }
 
-chrome.runtime.onMessage.addListener(
-  function (request, sender, sendResponse) {
-    if (request.message === "toggleTooltip") {
-      console.log(request.status);
-      alert(request.status)
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.message === 'toggleTooltip') {
+    console.log(request.status)
+    alert(request.status)
 
-      sendResponse({
-        message: 'successful'
-      })
-    }
+    sendResponse({
+      message: 'successful',
+    })
   }
-);
+})
 
 // function to handle response
 function handleResponse(res) {
   if (res.successful) {
-    alert(res.message);
+    alert(res.message)
   } else {
-    alert(res.message);
+    alert(res.message)
   }
 }
 
-const shadowRootContainer = document.createElement('div');
-shadowRootContainer.id = 'shadowRootContainer';
-shadowRootContainer.style.position = 'absolute';
-shadowRootContainer.style.zIndex = '-1';
-shadowRootContainer.style.top = '0px';
-shadowRootContainer.style.left = '0px';
+// Create a container with the three buttons (screenshot, snip, and ocr) at the bottom left of the screen
+const screenSnipContainer = document.createElement('div')
+screenSnipContainer.id = 'screenSnipContainer'
+screenSnipContainer.style.position = 'fixed'
+screenSnipContainer.style.zIndex = '1000'
+screenSnipContainer.style.bottom = '0px'
+screenSnipContainer.style.left = '0px'
+screenSnipContainer.style.margin = '10px'
+screenSnipContainer.style.display = 'flex'
+screenSnipContainer.style.flexDirection = 'column'
+screenSnipContainer.style.alignItems = 'center'
+screenSnipContainer.style.justifyContent = 'center'
+screenSnipContainer.style.width = '40px'
+screenSnipContainer.style.height = '120px'
+screenSnipContainer.style.backgroundColor = 'white'
+screenSnipContainer.style.borderRadius = '10px'
+screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+screenSnipContainer.style.transition = 'all 0.3s ease-in-out'
+screenSnipContainer.style.cursor = 'pointer'
 
-document.body.appendChild(shadowRootContainer);
+// Create a screenshot button
+const screenshotButton = document.createElement('button')
+screenshotButton.id = 'screenshotButton'
+screenshotButton.style.width = '40px'
+screenshotButton.style.height = '40px'
+screenshotButton.style.borderRadius = '10px'
+screenshotButton.style.backgroundColor = 'white'
+screenshotButton.style.border = 'none'
+screenshotButton.style.outline = 'none'
+screenshotButton.style.marginBottom = '10px'
+screenshotButton.style.cursor = 'pointer'
+screenshotButton.style.transition = 'all 0.3s ease-in-out'
+screenshotButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+screenshotButton.style.backgroundImage =
+  'url(' + chrome.runtime.getURL('src/icons/screenshot.png') + ')'
+screenshotButton.style.backgroundSize = 'cover'
+screenshotButton.style.backgroundPosition = 'center'
 
-var host = document.getElementById('shadowRootContainer');
-var root = host.attachShadow({ mode: 'open' });
-const tooltipContainer = document.createElement('div');
-tooltipContainer.id = 'tooltipContainer';
-tooltipContainer.className = 'tooltipContainer';
+// Create a snip button
+const snipButton = document.createElement('button')
+snipButton.id = 'snipButton'
+snipButton.style.width = '40px'
+snipButton.style.height = '40px'
+snipButton.style.borderRadius = '10px'
+snipButton.style.backgroundColor = 'white'
+snipButton.style.border = 'none'
+snipButton.style.outline = 'none'
+snipButton.style.marginBottom = '10px'
+snipButton.style.cursor = 'pointer'
+snipButton.style.transition = 'all 0.3s ease-in-out'
+snipButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+snipButton.style.backgroundImage =
+  'url(' + chrome.runtime.getURL('src/icons/snip.png') + ')'
+snipButton.style.backgroundSize = 'cover'
+snipButton.style.backgroundPosition = 'center'
+
+// Create a ocr button
+const ocrButton = document.createElement('button')
+ocrButton.id = 'ocrButton'
+ocrButton.style.width = '40px'
+ocrButton.style.height = '40px'
+ocrButton.style.borderRadius = '10px'
+ocrButton.style.backgroundColor = 'white'
+ocrButton.style.border = 'none'
+ocrButton.style.outline = 'none'
+ocrButton.style.marginBottom = '10px'
+ocrButton.style.cursor = 'pointer'
+ocrButton.style.transition = 'all 0.3s ease-in-out'
+ocrButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+ocrButton.style.backgroundImage =
+  'url(' + chrome.runtime.getURL('src/icons/ocr.png') + ')'
+ocrButton.style.backgroundSize = 'cover'
+ocrButton.style.backgroundPosition = 'center'
+
+document.body.appendChild(screenSnipContainer)
+screenSnipContainer.appendChild(screenshotButton)
+screenSnipContainer.appendChild(snipButton)
+screenSnipContainer.appendChild(ocrButton)
+
+// Add event listeners to the buttons
+screenshotButton.addEventListener('click', () => {
+  chrome.runtime.sendMessage({ message: 'screenshot' }, function (response) {
+    console.log(response)
+  })
+})
+
+snipButton.addEventListener('click', (e) => {
+  captureSnip()
+})
+
+// Function to capture the snip
+function captureSnip() {
+  const snipContainer = document.createElement('div')
+  snipContainer.id = 'snipContainer'
+  snipContainer.style.position = 'fixed'
+  snipContainer.style.zIndex = '10000'
+  snipContainer.style.top = '0px'
+  snipContainer.style.left = '0px'
+  snipContainer.style.width = '0px'
+  snipContainer.style.height = '0px'
+  // dim the background of the page
+  document.body.style.cursor = 'crosshair'
+  document.body.appendChild(snipContainer)
+
+  let startX
+  let startY
+  let isDown = false
+
+  document.body.addEventListener('mousedown', (e) => {
+    e.preventDefault()
+    startX = e.pageX
+    startY = e.pageY
+    isDown = true
+    snipContainer.style.top = startY + 'px'
+    snipContainer.style.left = startX + 'px'
+    snipContainer.style.width = '0px'
+    snipContainer.style.height = '0px'
+    // dashed moving border
+    snipContainer.style.border = '1px dashed white'
+    // snipContainer.style.backgroundColor = 'rgba(0,0,0,0.7)'
+  })
+
+  document.body.addEventListener('mousemove', (e) => {
+    if (!isDown) return
+    e.preventDefault()
+    console.log(e.pageX, e.pageY)
+    console.log(startX, startY)
+    const width = e.pageX - startX
+    const height = e.pageY - startY
+    snipContainer.style.top = Math.min(e.pageY, startY) + 'px'
+    snipContainer.style.left = Math.min(e.pageX, startX) + 'px'
+    snipContainer.style.width = Math.abs(width) + 'px'
+    snipContainer.style.height = Math.abs(height) + 'px'
+  })
+
+  document.body.addEventListener('mouseup', (e) => {
+    e.preventDefault()
+    isDown = false
+    console.log(`startX: ${startX}, startY: ${startY}`)
+    console.log(`endX: ${e.pageX}, endY: ${e.pageY}`)
+    document.body.style.cursor = 'default'
+    snipContainer.style.backgroundColor = 'rgba(0,0,0,0)'
+    const width = e.pageX - startX
+    const height = e.pageY - startY
+    snipContainer.style.width = Math.abs(width) + 'px'
+    snipContainer.style.height = Math.abs(height) + 'px'
+
+    // send the snip to the background script
+    chrome.runtime.sendMessage(
+      {
+        message: 'snip',
+        dim: {
+          top: snipContainer.style.top,
+          left: snipContainer.style.left,
+          width: snipContainer.style.width,
+          height: snipContainer.style.height,
+        },
+      },
+      function (response) {}
+    )
+  })
+}
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.message === 'snip') {
+    // chrome.tabs.captureVisibleTab(null, {}, (dataUrl) => {
+    //   chrome.tabs.sendMessage(sender.tab.id, {
+    //     message: 'snip',
+    //     dataUrl: dataUrl,
+    //     dim: request.dim,
+    //   })
+    // Take the screenshot of the page and crop it according to the snip dim
+    // console.log(JSON.stringify(request))
+    console.log(request.dataUrl)
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    const img = new Image()
+    img.src = request.dataUrl
+    img.width = parseInt(request.dim.width)
+    img.height = parseInt(request.dim.height)
+    img.onload = () => {
+      canvas.width = parseInt(request.dim.width)
+      canvas.height = parseInt(request.dim.height)
+      ctx.drawImage(
+        img,
+        parseInt(request.dim.left),
+        parseInt(request.dim.top),
+        parseInt(request.dim.width),
+        parseInt(request.dim.height),
+        0,
+        0,
+        parseInt(request.dim.width),
+        parseInt(request.dim.height)
+      )
+      const dataUrl = canvas.toDataURL()
+      console.log(`canvas width: ${canvas.width}`)
+      console.log(`canvas height: ${canvas.height}`)
+      console.log(dataUrl)
+    }
+
+    // })
+  }
+})
+
+ocrButton.addEventListener('click', () => {
+  chrome.runtime.sendMessage({ message: 'ocr' }, function (response) {
+    console.log(response)
+  })
+})
+
+const shadowRootContainer = document.createElement('div')
+shadowRootContainer.id = 'shadowRootContainer'
+shadowRootContainer.style.position = 'absolute'
+shadowRootContainer.style.zIndex = '-1'
+shadowRootContainer.style.top = '0px'
+shadowRootContainer.style.left = '0px'
+
+document.body.appendChild(shadowRootContainer)
+
+var host = document.getElementById('shadowRootContainer')
+var root = host.attachShadow({ mode: 'open' })
+const tooltipContainer = document.createElement('div')
+tooltipContainer.id = 'tooltipContainer'
+tooltipContainer.className = 'tooltipContainer'
 tooltipContainer.innerHTML = `<style>
+
 
 * {
   font-family: "Poppins", sans-serif;
@@ -268,7 +481,7 @@ tooltipContainer.innerHTML = `<style>
           <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
       </svg>
   </span>
-</div>`;
+</div>`
 
 root.appendChild(tooltipContainer);
 

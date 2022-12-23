@@ -21,24 +21,41 @@ chrome.runtime.onStartup.addListener(async () => {
 });
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-  if (request.message === "insert_text") {
+  if (request.message === 'insert_text') {
     try {
-      const message = await apiInsertText(request.style, request.text);
-      sendNotification('Successful', message);
+      const message = await apiInsertText(request.style, request.text)
+      sendNotification('Successful', message)
     } catch (errorMessage) {
-      sendNotification('Failed', errorMessage);
+      sendNotification('Failed', errorMessage)
     }
-  }
-  else if (request.message === "insert_image") {
+  } else if (request.message === 'insert_image') {
     try {
-      const imageData = request.imageData;
-      const message = await apiInsertImage(imageData.url, imageData.height, imageData.width);
-      sendNotification('Successful', message);
+      const imageData = request.imageData
+      const message = await apiInsertImage(
+        imageData.url,
+        imageData.height,
+        imageData.width
+      )
+      sendNotification('Successful', message)
     } catch (errorMessage) {
-      sendNotification('Failed', errorMessage);
+      sendNotification('Failed', errorMessage)
     }
+  } else if (request.message === 'screenshot') {
+    chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
+      // open a new tab with the image
+      chrome.tabs.create({ url: dataUrl })
+    })
+  } else if (request.message === 'snip') {
+    chrome.tabs.captureTab(null, {}, (dataUrl) => {
+      chrome.tabs.sendMessage(sender.tab.id, {
+        message: 'snip',
+        dataUrl: dataUrl,
+        dim: request.dim,
+      })
+    })
   }
-});
+})
+
 
 chrome.storage.onChanged.addListener(async function (changes, namespace) {
   for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
