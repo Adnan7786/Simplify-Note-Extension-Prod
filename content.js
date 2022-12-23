@@ -215,15 +215,6 @@ function captureSnip() {
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.message === 'snip') {
-    // chrome.tabs.captureVisibleTab(null, {}, (dataUrl) => {
-    //   chrome.tabs.sendMessage(sender.tab.id, {
-    //     message: 'snip',
-    //     dataUrl: dataUrl,
-    //     dim: request.dim,
-    //   })
-    // Take the screenshot of the page and crop it according to the snip dim
-    // console.log(JSON.stringify(request))
-    // console.log(request.dataUrl)
     const dpr = devicePixelRatio
     console.log(`dpr: ${dpr}`)
 
