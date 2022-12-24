@@ -177,12 +177,12 @@ function captureSnip() {
   // create a element to over the screen
   const overScreenSnip = document.createElement('div')
   overScreenSnip.id = 'overScreenSnip'
-  overScreenSnip.style.position = 'absolute'
+  overScreenSnip.style.position = 'fixed'
   overScreenSnip.style.zIndex = '10000'
   overScreenSnip.style.top = '0px'
   overScreenSnip.style.left = '0px'
-  overScreenSnip.style.width = '100%'
-  overScreenSnip.style.height = '100%'
+  overScreenSnip.style.width = '100vw'
+  overScreenSnip.style.height = '100vh'
   overScreenSnip.style.cursor = 'crosshair'
   document.body.appendChild(overScreenSnip)
 
@@ -259,12 +259,12 @@ function captureSnipOcr() {
   // create a element to over the screen
   const overScreenOcr = document.createElement('div')
   overScreenOcr.id = 'overScreenOcr'
-  overScreenOcr.style.position = 'absolute'
+  overScreenOcr.style.position = 'fixed'
   overScreenOcr.style.zIndex = '10000'
   overScreenOcr.style.top = '0px'
   overScreenOcr.style.left = '0px'
-  overScreenOcr.style.width = '100%'
-  overScreenOcr.style.height = '100%'
+  overScreenOcr.style.width = '100vw'
+  overScreenOcr.style.height = '100vh'
   overScreenOcr.style.cursor = 'crosshair'
   document.body.appendChild(overScreenOcr)
 
