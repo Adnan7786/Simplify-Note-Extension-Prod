@@ -178,7 +178,7 @@ function captureSnip() {
   const overScreenSnip = document.createElement('div')
   overScreenSnip.id = 'overScreenSnip'
   overScreenSnip.style.position = 'absolute'
-  overScreenSnip.style.zIndex = '9999'
+  overScreenSnip.style.zIndex = '10000'
   overScreenSnip.style.top = '0px'
   overScreenSnip.style.left = '0px'
   overScreenSnip.style.width = '100%'
@@ -208,8 +208,6 @@ function captureSnip() {
   overScreenSnip.addEventListener('mousemove', (e) => {
     if (!isDown) return
     e.preventDefault()
-    // console.log(e.pageX, e.pageY)
-    // console.log(startX, startY)
     const width = e.pageX - startX
     const height = e.pageY - startY
     snipContainer.style.top = Math.min(e.pageY, startY) + 'px'
@@ -221,10 +219,6 @@ function captureSnip() {
   overScreenSnip.addEventListener('mouseup', (e) => {
     e.preventDefault()
     isDown = false
-    console.log(`startX: ${startX}, startY: ${startY}`)
-    console.log(`endX: ${e.pageX}, endY: ${e.pageY}`)
-    document.body.style.cursor = 'default'
-    snipContainer.style.backgroundColor = 'rgba(0,0,0,0)'
     const width = e.pageX - startX
     const height = e.pageY - startY
     snipContainer.style.width = Math.abs(width) + 'px'
@@ -243,6 +237,7 @@ function captureSnip() {
       },
       function (response) {
         // Removing the elements and the event listeners
+        document.body.removeChild(snipContainer)
         document.body.removeChild(overScreenSnip)
       }
     )
@@ -265,7 +260,7 @@ function captureSnipOcr() {
   const overScreenOcr = document.createElement('div')
   overScreenOcr.id = 'overScreenOcr'
   overScreenOcr.style.position = 'absolute'
-  overScreenOcr.style.zIndex = '9999'
+  overScreenOcr.style.zIndex = '10000'
   overScreenOcr.style.top = '0px'
   overScreenOcr.style.left = '0px'
   overScreenOcr.style.width = '100%'
@@ -331,6 +326,7 @@ function captureSnipOcr() {
       function (response) {
         // Removing the elements and the event listeners
         document.body.removeChild(overScreenOcr)
+        document.body.removeChild(ocrContainer)
       }
     )
   })
@@ -366,7 +362,6 @@ chrome.runtime.onMessage.addListener(async function (
       const dataUrl = canvas.toDataURL()
       console.log(dataUrl)
       document.body.appendChild(screenSnipContainer)
-      document.body.removeChild(snipContainer)
 
       // display the snip in bottom right corner for 3 seconds
       const snip = document.createElement('img')
@@ -411,13 +406,13 @@ chrome.runtime.onMessage.addListener(async function (
       )
       const dataUrl = canvas.toDataURL()
       document.body.appendChild(screenSnipContainer)
-      document.body.removeChild(ocrContainer)
 
       const ocrTextImageContainer = document.createElement('div')
       ocrTextImageContainer.style.position = 'fixed'
       ocrTextImageContainer.style.bottom = '10px'
       ocrTextImageContainer.style.right = '10px'
       ocrTextImageContainer.style.zIndex = '10000'
+      ocrTextImageContainer.style.padding = '20px 10px'
       document.body.appendChild(ocrTextImageContainer)
 
       const snip = document.createElement('img')
@@ -432,8 +427,12 @@ chrome.runtime.onMessage.addListener(async function (
       ocrTextImageContainer.appendChild(snip)
 
       const textContainer = document.createElement('div')
-      textContainer.style.minHeight = '120px'
-      textContainer.style.maxWidth = '150px'
+      textContainer.style.height = '120px'
+      textContainer.style.width = '150px'
+      // textContainer.style.minHeight = '120px'
+      // textContainer.style.maxWidth = '150px'
+      // textContainer.style.maxHeight = '240px'
+      // textContainer.style.maxWidth = '300px'
       textContainer.style.borderRadius = '5px'
       textContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
       textContainer.style.zIndex = '10000'
@@ -442,6 +441,8 @@ chrome.runtime.onMessage.addListener(async function (
       textContainer.style.fontSize = '12px'
       textContainer.style.fontFamily = 'monospace'
       textContainer.style.color = 'black'
+      textContainer.innerText = 'Recognizing text...'
+      textContainer.style.overflow = 'auto'
       ocrTextImageContainer.appendChild(textContainer)
 
       // Close button
@@ -453,6 +454,9 @@ chrome.runtime.onMessage.addListener(async function (
       closeBtn.style.zIndex = '10000'
       closeBtn.style.backgroundColor = 'transparent'
       closeBtn.style.border = 'none'
+      closeBtn.style.color = 'black'
+      closeBtn.style.cursor = 'pointer'
+      closeBtn.style.textShadow = '0px 0px 10px rgba(255,255,255,255.75)'
 
       ocrTextImageContainer.appendChild(closeBtn)
       closeBtn.addEventListener('click', () => {
