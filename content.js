@@ -443,6 +443,22 @@ chrome.runtime.onMessage.addListener(async function (
       textContainer.style.fontFamily = 'monospace'
       textContainer.style.color = 'black'
       ocrTextImageContainer.appendChild(textContainer)
+
+      // Close button
+      const closeBtn = document.createElement('button')
+      closeBtn.innerText = 'X'
+      closeBtn.style.position = 'absolute'
+      closeBtn.style.top = '0px'
+      closeBtn.style.right = '0px'
+      closeBtn.style.zIndex = '10000'
+      closeBtn.style.backgroundColor = 'transparent'
+      closeBtn.style.border = 'none'
+
+      ocrTextImageContainer.appendChild(closeBtn)
+      closeBtn.addEventListener('click', () => {
+        document.body.removeChild(ocrTextImageContainer)
+      })
+
       // OCR using tesseract
       Tesseract.recognize(dataUrl, 'eng', {}).then(({ data: { text } }) => {
         // Show the text in the page
