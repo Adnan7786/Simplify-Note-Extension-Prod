@@ -151,16 +151,16 @@ screenshotButton.addEventListener('click', () => {
 })
 
 snipButton.addEventListener('click', (e) => {
+  // Removing the screenshot container so that it doesn't interfere with the snip
   document.body.removeChild(screenSnipContainer)
   captureSnip()
 })
 
 ocrButton.addEventListener('click', () => {
+  // Removing the screenshot container so that it doesn't interfere with the snip
   document.body.removeChild(screenSnipContainer)
   captureSnipOcr()
 })
-
-
 
 // Function to capture the snip
 function captureSnip() {
@@ -185,7 +185,6 @@ function captureSnip() {
   overScreenSnip.style.height = '100%'
   overScreenSnip.style.cursor = 'crosshair'
   document.body.appendChild(overScreenSnip)
-
 
   let startX
   let startY
@@ -243,13 +242,11 @@ function captureSnip() {
         },
       },
       function (response) {
+        // Removing the elements and the event listeners
         document.body.removeChild(overScreenSnip)
       }
     )
   })
-
-
-
 }
 
 // Function to capture the ocr
@@ -264,17 +261,17 @@ function captureSnipOcr() {
   ocrContainer.style.height = '0px'
   document.body.appendChild(ocrContainer)
 
-    // create a element to over the screen
-    const overScreenOcr = document.createElement('div')
-    overScreenOcr.id = 'overScreenOcr'
-    overScreenOcr.style.position = 'absolute'
-    overScreenOcr.style.zIndex = '9999'
-    overScreenOcr.style.top = '0px'
-    overScreenOcr.style.left = '0px'
-    overScreenOcr.style.width = '100%'
-    overScreenOcr.style.height = '100%'
-    overScreenOcr.style.cursor = 'crosshair'
-    document.body.appendChild(overScreenOcr)
+  // create a element to over the screen
+  const overScreenOcr = document.createElement('div')
+  overScreenOcr.id = 'overScreenOcr'
+  overScreenOcr.style.position = 'absolute'
+  overScreenOcr.style.zIndex = '9999'
+  overScreenOcr.style.top = '0px'
+  overScreenOcr.style.left = '0px'
+  overScreenOcr.style.width = '100%'
+  overScreenOcr.style.height = '100%'
+  overScreenOcr.style.cursor = 'crosshair'
+  document.body.appendChild(overScreenOcr)
 
   let startX
   let startY
@@ -332,6 +329,7 @@ function captureSnipOcr() {
         },
       },
       function (response) {
+        // Removing the elements and the event listeners
         document.body.removeChild(overScreenOcr)
       }
     )
