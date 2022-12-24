@@ -160,82 +160,7 @@ ocrButton.addEventListener('click', () => {
   captureSnipOcr()
 })
 
-// Function to capture the snip
-function captureSnipOcr() {
-  const snipContainer = document.createElement('div')
-  snipContainer.id = 'snipContainer'
-  snipContainer.style.position = 'absolute'
-  snipContainer.style.zIndex = '10000'
-  snipContainer.style.top = '0px'
-  snipContainer.style.left = '0px'
-  snipContainer.style.width = '0px'
-  snipContainer.style.height = '0px'
-  document.body.style.cursor = 'crosshair'
-  document.body.appendChild(snipContainer)
 
-  let startX
-  let startY
-  let isDown = false
-
-  document.body.addEventListener('mousedown', (e) => {
-    e.preventDefault()
-    startX = e.pageX
-    startY = e.pageY
-    isDown = true
-    snipContainer.style.top = startY + 'px'
-    snipContainer.style.left = startX + 'px'
-    snipContainer.style.width = '0px'
-    snipContainer.style.height = '0px'
-    // dashed moving border
-    snipContainer.style.border = '1px dashed #000'
-    snipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
-    // snipContainer.style.backgroundColor = 'rgba(0,0,0,0.7)'
-  })
-
-  document.body.addEventListener('mousemove', (e) => {
-    if (!isDown) return
-    e.preventDefault()
-    // console.log(e.pageX, e.pageY)
-    // console.log(startX, startY)
-    const width = e.pageX - startX
-    const height = e.pageY - startY
-    snipContainer.style.top = Math.min(e.pageY, startY) + 'px'
-    snipContainer.style.left = Math.min(e.pageX, startX) + 'px'
-    snipContainer.style.width = Math.abs(width) + 'px'
-    snipContainer.style.height = Math.abs(height) + 'px'
-  })
-
-  document.body.addEventListener('mouseup', (e) => {
-    e.preventDefault()
-    isDown = false
-    console.log(`startX: ${startX}, startY: ${startY}`)
-    console.log(`endX: ${e.pageX}, endY: ${e.pageY}`)
-    document.body.style.cursor = 'default'
-    snipContainer.style.backgroundColor = 'rgba(0,0,0,0)'
-    const width = e.pageX - startX
-    const height = e.pageY - startY
-    snipContainer.style.width = Math.abs(width) + 'px'
-    snipContainer.style.height = Math.abs(height) + 'px'
-
-    // send the snip to the background script
-    chrome.runtime.sendMessage(
-      {
-        message: 'ocr',
-        dim: {
-          top: snipContainer.style.top,
-          left: snipContainer.style.left,
-          width: snipContainer.style.width,
-          height: snipContainer.style.height,
-        },
-      },
-      function (response) {
-        document.body.removeEventListener('mousedown', () => {})
-        document.body.removeEventListener('mousemove', () => {})
-        document.body.removeEventListener('mouseup', () => {})
-      }
-    )
-  })
-}
 
 // Function to capture the snip
 function captureSnip() {
@@ -247,14 +172,26 @@ function captureSnip() {
   snipContainer.style.left = '0px'
   snipContainer.style.width = '0px'
   snipContainer.style.height = '0px'
-  document.body.style.cursor = 'crosshair'
   document.body.appendChild(snipContainer)
+
+  // create a element to over the screen
+  const overScreenSnip = document.createElement('div')
+  overScreenSnip.id = 'overScreenSnip'
+  overScreenSnip.style.position = 'absolute'
+  overScreenSnip.style.zIndex = '9999'
+  overScreenSnip.style.top = '0px'
+  overScreenSnip.style.left = '0px'
+  overScreenSnip.style.width = '100%'
+  overScreenSnip.style.height = '100%'
+  overScreenSnip.style.cursor = 'crosshair'
+  document.body.appendChild(overScreenSnip)
+
 
   let startX
   let startY
   let isDown = false
 
-  document.body.addEventListener('mousedown', (e) => {
+  overScreenSnip.addEventListener('mousedown', (e) => {
     e.preventDefault()
     startX = e.pageX
     startY = e.pageY
@@ -269,7 +206,7 @@ function captureSnip() {
     // snipContainer.style.backgroundColor = 'rgba(0,0,0,0.7)'
   })
 
-  document.body.addEventListener('mousemove', (e) => {
+  overScreenSnip.addEventListener('mousemove', (e) => {
     if (!isDown) return
     e.preventDefault()
     // console.log(e.pageX, e.pageY)
@@ -282,7 +219,7 @@ function captureSnip() {
     snipContainer.style.height = Math.abs(height) + 'px'
   })
 
-  document.body.addEventListener('mouseup', (e) => {
+  overScreenSnip.addEventListener('mouseup', (e) => {
     e.preventDefault()
     isDown = false
     console.log(`startX: ${startX}, startY: ${startY}`)
@@ -306,10 +243,96 @@ function captureSnip() {
         },
       },
       function (response) {
-        document.body.removeEventListener('mousedown', () => {})
-        console.log('mouse up')
-        document.body.removeEventListener('mousemove', () => {})
-        document.body.removeEventListener('mouseup', () => {})
+        document.body.removeChild(overScreenSnip)
+      }
+    )
+  })
+
+
+
+}
+
+// Function to capture the ocr
+function captureSnipOcr() {
+  const ocrContainer = document.createElement('div')
+  ocrContainer.id = 'ocrContainer'
+  ocrContainer.style.position = 'absolute'
+  ocrContainer.style.zIndex = '10000'
+  ocrContainer.style.top = '0px'
+  ocrContainer.style.left = '0px'
+  ocrContainer.style.width = '0px'
+  ocrContainer.style.height = '0px'
+  document.body.appendChild(ocrContainer)
+
+    // create a element to over the screen
+    const overScreenOcr = document.createElement('div')
+    overScreenOcr.id = 'overScreenOcr'
+    overScreenOcr.style.position = 'absolute'
+    overScreenOcr.style.zIndex = '9999'
+    overScreenOcr.style.top = '0px'
+    overScreenOcr.style.left = '0px'
+    overScreenOcr.style.width = '100%'
+    overScreenOcr.style.height = '100%'
+    overScreenOcr.style.cursor = 'crosshair'
+    document.body.appendChild(overScreenOcr)
+
+  let startX
+  let startY
+  let isDown = false
+
+  overScreenOcr.addEventListener('mousedown', (e) => {
+    e.preventDefault()
+    startX = e.pageX
+    startY = e.pageY
+    isDown = true
+    ocrContainer.style.top = startY + 'px'
+    ocrContainer.style.left = startX + 'px'
+    ocrContainer.style.width = '0px'
+    ocrContainer.style.height = '0px'
+    // dashed moving border
+    ocrContainer.style.border = '1px dashed #000'
+    ocrContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+    // ocrContainer.style.backgroundColor = 'rgba(0,0,0,0.7)'
+  })
+
+  overScreenOcr.addEventListener('mousemove', (e) => {
+    if (!isDown) return
+    e.preventDefault()
+    // console.log(e.pageX, e.pageY)
+    // console.log(startX, startY)
+    const width = e.pageX - startX
+    const height = e.pageY - startY
+    ocrContainer.style.top = Math.min(e.pageY, startY) + 'px'
+    ocrContainer.style.left = Math.min(e.pageX, startX) + 'px'
+    ocrContainer.style.width = Math.abs(width) + 'px'
+    ocrContainer.style.height = Math.abs(height) + 'px'
+  })
+
+  overScreenOcr.addEventListener('mouseup', (e) => {
+    e.preventDefault()
+    isDown = false
+    console.log(`startX: ${startX}, startY: ${startY}`)
+    console.log(`endX: ${e.pageX}, endY: ${e.pageY}`)
+    document.body.style.cursor = 'default'
+    ocrContainer.style.backgroundColor = 'rgba(0,0,0,0)'
+    const width = e.pageX - startX
+    const height = e.pageY - startY
+    ocrContainer.style.width = Math.abs(width) + 'px'
+    ocrContainer.style.height = Math.abs(height) + 'px'
+
+    // send the snip to the background script
+    chrome.runtime.sendMessage(
+      {
+        message: 'ocr',
+        dim: {
+          top: ocrContainer.style.top,
+          left: ocrContainer.style.left,
+          width: ocrContainer.style.width,
+          height: ocrContainer.style.height,
+        },
+      },
+      function (response) {
+        document.body.removeChild(overScreenOcr)
       }
     )
   })
@@ -391,7 +414,7 @@ chrome.runtime.onMessage.addListener(async function (
       const dataUrl = canvas.toDataURL()
       document.body.appendChild(screenSnipContainer)
 
-      document.body.removeChild(snipContainer)
+      document.body.removeChild(ocrContainer)
 
       // console.log('contentjs' + dataUrl)
       // display the snip in bottom right corner for 3 seconds
