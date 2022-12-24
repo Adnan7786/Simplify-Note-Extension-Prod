@@ -1,24 +1,24 @@
 const domain = "https://simplify-note.vercel.app"; //prod
 
 chrome.runtime.onInstalled.addListener(async (details) => {
-  const tooltipUnchecked = await getTooltipUnchecked();
-  const tooltipDisabled = await getTooltipDisabled();
+  const tooltipUnchecked = await getTooltipUnchecked()
+  const tooltipDisabled = await getTooltipDisabled()
   if (tooltipUnchecked || tooltipDisabled) {
-    turnBadgeOff();
+    turnBadgeOff()
   } else {
-    turnBadgeOn();
+    turnBadgeOn()
   }
-});
+})
 
 chrome.runtime.onStartup.addListener(async () => {
-  const tooltipUnchecked = await getTooltipUnchecked();
-  const tooltipDisabled = await getTooltipDisabled();
+  const tooltipUnchecked = await getTooltipUnchecked()
+  const tooltipDisabled = await getTooltipDisabled()
   if (tooltipUnchecked || tooltipDisabled) {
-    turnBadgeOff();
+    turnBadgeOff()
   } else {
-    turnBadgeOn();
+    turnBadgeOn()
   }
-});
+})
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   if (request.message === 'insert_text') {
@@ -53,6 +53,29 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         dim: request.dim,
       })
     })
+  } else if (request.message === 'ocr') {
+    chrome.tabs.captureVisibleTab(null, {}, (dataUrl) => {
+      chrome.tabs.sendMessage(sender.tab.id, {
+        message: 'ocr',
+        dataUrl: dataUrl,
+        dim: request.dim,
+      })
+    })
+  } else if (request.message === 'doOCR') {
+    // doOCR using tesseract
+    console.log('doOCR')
+
+    const { TesseractWorker } = Tesseract
+    const worker = new TesseractWorker()
+    worker
+      .recognize(request.dataUrl, 'eng', { logger: (m) => console.log(m) })
+      .progress((progress) => {
+        console.log('progress', progress)
+      })
+      .then((result) => {
+        console.log('result', result)
+      })
+      .finally(() => worker.terminate())
   }
 })
 

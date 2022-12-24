@@ -140,17 +140,20 @@ snipButton.addEventListener('click', (e) => {
   captureSnip()
 })
 
+ocrButton.addEventListener('click', () => {
+  captureSnipOcr()
+})
+
 // Function to capture the snip
-function captureSnip() {
+function captureSnipOcr() {
   const snipContainer = document.createElement('div')
   snipContainer.id = 'snipContainer'
-  snipContainer.style.position = 'fixed'
+  snipContainer.style.position = 'absolute'
   snipContainer.style.zIndex = '10000'
   snipContainer.style.top = '0px'
   snipContainer.style.left = '0px'
   snipContainer.style.width = '0px'
   snipContainer.style.height = '0px'
-  // dim the background of the page
   document.body.style.cursor = 'crosshair'
   document.body.appendChild(snipContainer)
 
@@ -168,7 +171,81 @@ function captureSnip() {
     snipContainer.style.width = '0px'
     snipContainer.style.height = '0px'
     // dashed moving border
-    snipContainer.style.border = '1px dashed white'
+    snipContainer.style.border = '1px dashed #000'
+    snipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+    // snipContainer.style.backgroundColor = 'rgba(0,0,0,0.7)'
+  })
+
+  document.body.addEventListener('mousemove', (e) => {
+    if (!isDown) return
+    e.preventDefault()
+    // console.log(e.pageX, e.pageY)
+    // console.log(startX, startY)
+    const width = e.pageX - startX
+    const height = e.pageY - startY
+    snipContainer.style.top = Math.min(e.pageY, startY) + 'px'
+    snipContainer.style.left = Math.min(e.pageX, startX) + 'px'
+    snipContainer.style.width = Math.abs(width) + 'px'
+    snipContainer.style.height = Math.abs(height) + 'px'
+  })
+
+  document.body.addEventListener('mouseup', (e) => {
+    e.preventDefault()
+    isDown = false
+    console.log(`startX: ${startX}, startY: ${startY}`)
+    console.log(`endX: ${e.pageX}, endY: ${e.pageY}`)
+    document.body.style.cursor = 'default'
+    snipContainer.style.backgroundColor = 'rgba(0,0,0,0)'
+    const width = e.pageX - startX
+    const height = e.pageY - startY
+    snipContainer.style.width = Math.abs(width) + 'px'
+    snipContainer.style.height = Math.abs(height) + 'px'
+
+    // send the snip to the background script
+    chrome.runtime.sendMessage(
+      {
+        message: 'ocr',
+        dim: {
+          top: snipContainer.style.top,
+          left: snipContainer.style.left,
+          width: snipContainer.style.width,
+          height: snipContainer.style.height,
+        },
+      },
+      function (response) {}
+    )
+  })
+}
+
+// Function to capture the snip
+function captureSnip() {
+  const snipContainer = document.createElement('div')
+  snipContainer.id = 'snipContainer'
+  snipContainer.style.position = 'absolute'
+  snipContainer.style.zIndex = '10000'
+  snipContainer.style.top = '0px'
+  snipContainer.style.left = '0px'
+  snipContainer.style.width = '0px'
+  snipContainer.style.height = '0px'
+  document.body.style.cursor = 'crosshair'
+  document.body.appendChild(snipContainer)
+
+  let startX
+  let startY
+  let isDown = false
+
+  document.body.addEventListener('mousedown', (e) => {
+    e.preventDefault()
+    startX = e.pageX
+    startY = e.pageY
+    isDown = true
+    snipContainer.style.top = startY + 'px'
+    snipContainer.style.left = startX + 'px'
+    snipContainer.style.width = '0px'
+    snipContainer.style.height = '0px'
+    // dashed moving border
+    snipContainer.style.border = '1px dashed #000'
+    snipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
     // snipContainer.style.backgroundColor = 'rgba(0,0,0,0.7)'
   })
 
@@ -213,11 +290,13 @@ function captureSnip() {
   })
 }
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(async function (
+  request,
+  sender,
+  sendResponse
+) {
   if (request.message === 'snip') {
     const dpr = devicePixelRatio
-    console.log(`dpr: ${dpr}`)
-
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
     const img = new Image()
@@ -240,17 +319,89 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       )
       const dataUrl = canvas.toDataURL()
       console.log(dataUrl)
+      // display the snip in bottom right corner for 3 seconds
+      const snip = document.createElement('img')
+      snip.src = dataUrl
+      snip.style.position = 'fixed'
+      snip.style.bottom = '10px'
+      snip.style.right = '10px'
+      snip.style.maxHeight = '120px'
+      snip.style.maxWidth = '150px'
+      snip.style.width = parseInt(request.dim.width) * dpr
+      snip.style.height = parseInt(request.dim.height) * dpr
+      snip.style.borderRadius = '5px'
+      snip.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
+      snip.style.zIndex = '10000'
+      document.body.appendChild(snip)
+      setTimeout(() => {
+        document.body.removeChild(snip)
+      }, 3000)
     }
+  }
+  if (request.message === 'ocr') {
+    const dpr = devicePixelRatio
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    const img = new Image()
+    img.src = request.dataUrl
+    img.width = parseInt(request.dim.width) * dpr
+    img.height = parseInt(request.dim.height) * dpr
+    img.onload = () => {
+      canvas.width = parseInt(request.dim.width) * dpr
+      canvas.height = parseInt(request.dim.height) * dpr
+      ctx.drawImage(
+        img,
+        parseInt(request.dim.left) * dpr,
+        parseInt(request.dim.top) * dpr,
+        parseInt(request.dim.width) * dpr,
+        parseInt(request.dim.height) * dpr,
+        0,
+        0,
+        parseInt(request.dim.width) * dpr,
+        parseInt(request.dim.height) * dpr
+      )
+      const dataUrl = canvas.toDataURL()
+      // console.log('contentjs' + dataUrl)
+      // display the snip in bottom right corner for 3 seconds
+      const snip = document.createElement('img')
+      snip.src = dataUrl
+      snip.style.position = 'fixed'
+      snip.style.bottom = '10px'
+      snip.style.right = '10px'
+      snip.style.maxHeight = '120px'
+      snip.style.maxWidth = '150px'
+      snip.style.width = parseInt(request.dim.width) * dpr
+      snip.style.height = parseInt(request.dim.height) * dpr
+      snip.style.borderRadius = '5px'
+      snip.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
+      snip.style.zIndex = '10000'
+      document.body.appendChild(snip)
+      // OCR using tesseract
+      Tesseract.recognize(dataUrl, 'eng', {
+        logger: (m) => console.log(m),
+      }).then(({ data: { text } }) => {
+        console.log(text)
+      })
+      // setTimeout(() => {
+      //   document.body.removeChild(snip)
+      // }, 3000)
 
-    // })
+      // send the snip to the background script
+      // chrome.runtime.sendMessage({
+      //   message: 'doOCR',
+      //   dim: {
+      //     top: snipContainer.style.top,
+      //     left: snipContainer.style.left,
+      //     width: snipContainer.style.width,
+      //     height: snipContainer.style.height,
+      //   },
+      //   dataUrl: dataUrl,
+      // })
+    }
   }
 })
 
-ocrButton.addEventListener('click', () => {
-  chrome.runtime.sendMessage({ message: 'ocr' }, function (response) {
-    console.log(response)
-  })
-})
+
 
 const shadowRootContainer = document.createElement('div')
 shadowRootContainer.id = 'shadowRootContainer'

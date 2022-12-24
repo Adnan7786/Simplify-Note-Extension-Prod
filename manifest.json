@@ -10,6 +10,7 @@
         "file://*/*.pdf"
       ],
       "js": [
+        "tesseract.min.js",
         "content.js"
       ],
       "run_at": "document_end"
