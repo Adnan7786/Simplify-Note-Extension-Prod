@@ -1,5 +1,5 @@
 function isPDF(url) {
-  return url.split('.').pop() === 'pdf';
+  return url.split('.').pop() === 'pdf'
 }
 
 // if url is pdf, open pdf using pdf viewer present in src folder
@@ -58,6 +58,7 @@ screenSnipContainer.style.zIndex = '1000'
 screenSnipContainer.style.bottom = '0px'
 screenSnipContainer.style.left = '0px'
 screenSnipContainer.style.margin = '10px'
+screenSnipContainer.style.padding = '6px'
 screenSnipContainer.style.display = 'flex'
 screenSnipContainer.style.flexDirection = 'column'
 screenSnipContainer.style.alignItems = 'center'
@@ -75,17 +76,19 @@ const screenshotButton = document.createElement('button')
 screenshotButton.id = 'screenshotButton'
 screenshotButton.style.width = '40px'
 screenshotButton.style.height = '40px'
-screenshotButton.style.borderRadius = '10px'
-screenshotButton.style.backgroundColor = 'white'
+// screenshotButton.style.borderRadius = '10px'
+screenshotButton.style.backgroundColor = 'transparent'
 screenshotButton.style.border = 'none'
 screenshotButton.style.outline = 'none'
-screenshotButton.style.marginBottom = '10px'
+screenshotButton.style.margin = '5px'
 screenshotButton.style.cursor = 'pointer'
 screenshotButton.style.transition = 'all 0.3s ease-in-out'
-screenshotButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+// screenshotButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 screenshotButton.style.backgroundImage =
   'url(' + chrome.runtime.getURL('src/icons/screenshot.png') + ')'
-screenshotButton.style.backgroundSize = 'cover'
+screenshotButton.style.backgroundSize = 'contain'
+screenshotButton.style.padding = '5px'
+screenshotButton.style.backgroundRepeat = 'no-repeat'
 screenshotButton.style.backgroundPosition = 'center'
 
 // Create a snip button
@@ -93,17 +96,19 @@ const snipButton = document.createElement('button')
 snipButton.id = 'snipButton'
 snipButton.style.width = '40px'
 snipButton.style.height = '40px'
-snipButton.style.borderRadius = '10px'
-snipButton.style.backgroundColor = 'white'
+// snipButton.style.borderRadius = '10px'
+snipButton.style.backgroundColor = 'transparent'
 snipButton.style.border = 'none'
 snipButton.style.outline = 'none'
-snipButton.style.marginBottom = '10px'
+snipButton.style.margin = '5px'
 snipButton.style.cursor = 'pointer'
 snipButton.style.transition = 'all 0.3s ease-in-out'
-snipButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+// snipButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 snipButton.style.backgroundImage =
   'url(' + chrome.runtime.getURL('src/icons/snip.png') + ')'
-snipButton.style.backgroundSize = 'cover'
+snipButton.style.backgroundSize = 'contain'
+snipButton.style.padding = '5px'
+snipButton.style.backgroundRepeat = 'no-repeat'
 snipButton.style.backgroundPosition = 'center'
 
 // Create a ocr button
@@ -111,17 +116,19 @@ const ocrButton = document.createElement('button')
 ocrButton.id = 'ocrButton'
 ocrButton.style.width = '40px'
 ocrButton.style.height = '40px'
-ocrButton.style.borderRadius = '10px'
-ocrButton.style.backgroundColor = 'white'
+// ocrButton.style.borderRadius = '10px'
+ocrButton.style.backgroundColor = 'transparent'
 ocrButton.style.border = 'none'
 ocrButton.style.outline = 'none'
-ocrButton.style.marginBottom = '10px'
+ocrButton.style.margin = '5px'
 ocrButton.style.cursor = 'pointer'
 ocrButton.style.transition = 'all 0.3s ease-in-out'
-ocrButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+// ocrButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 ocrButton.style.backgroundImage =
   'url(' + chrome.runtime.getURL('src/icons/ocr.png') + ')'
-ocrButton.style.backgroundSize = 'cover'
+ocrButton.style.backgroundSize = 'contain'
+ocrButton.style.padding = '5px'
+ocrButton.style.backgroundRepeat = 'no-repeat'
 ocrButton.style.backgroundPosition = 'center'
 
 document.body.appendChild(screenSnipContainer)
@@ -131,16 +138,25 @@ screenSnipContainer.appendChild(ocrButton)
 
 // Add event listeners to the buttons
 screenshotButton.addEventListener('click', () => {
-  chrome.runtime.sendMessage({ message: 'screenshot' }, function (response) {
-    console.log(response)
-  })
+  document.body.removeChild(screenSnipContainer)
+  setTimeout(() => {
+    chrome.runtime.sendMessage(
+      { message: 'screenshot' },
+      function (response) {}
+    )
+  }, 300)
+  setTimeout(() => {
+    document.body.appendChild(screenSnipContainer)
+  }, 1500)
 })
 
 snipButton.addEventListener('click', (e) => {
+  document.body.removeChild(screenSnipContainer)
   captureSnip()
 })
 
 ocrButton.addEventListener('click', () => {
+  document.body.removeChild(screenSnipContainer)
   captureSnipOcr()
 })
 
@@ -212,7 +228,11 @@ function captureSnipOcr() {
           height: snipContainer.style.height,
         },
       },
-      function (response) {}
+      function (response) {
+        document.body.removeEventListener('mousedown', () => {})
+        document.body.removeEventListener('mousemove', () => {})
+        document.body.removeEventListener('mouseup', () => {})
+      }
     )
   })
 }
@@ -285,7 +305,12 @@ function captureSnip() {
           height: snipContainer.style.height,
         },
       },
-      function (response) {}
+      function (response) {
+        document.body.removeEventListener('mousedown', () => {})
+        console.log('mouse up')
+        document.body.removeEventListener('mousemove', () => {})
+        document.body.removeEventListener('mouseup', () => {})
+      }
     )
   })
 }
@@ -319,6 +344,9 @@ chrome.runtime.onMessage.addListener(async function (
       )
       const dataUrl = canvas.toDataURL()
       console.log(dataUrl)
+      document.body.appendChild(screenSnipContainer)
+      document.body.removeChild(snipContainer)
+
       // display the snip in bottom right corner for 3 seconds
       const snip = document.createElement('img')
       snip.src = dataUrl
@@ -361,6 +389,10 @@ chrome.runtime.onMessage.addListener(async function (
         parseInt(request.dim.height) * dpr
       )
       const dataUrl = canvas.toDataURL()
+      document.body.appendChild(screenSnipContainer)
+
+      document.body.removeChild(snipContainer)
+
       // console.log('contentjs' + dataUrl)
       // display the snip in bottom right corner for 3 seconds
       const snip = document.createElement('img')
@@ -400,8 +432,6 @@ chrome.runtime.onMessage.addListener(async function (
     }
   }
 })
-
-
 
 const shadowRootContainer = document.createElement('div')
 shadowRootContainer.id = 'shadowRootContainer'
@@ -626,175 +656,178 @@ tooltipContainer.innerHTML = `<style>
   </span>
 </div>`
 
-root.appendChild(tooltipContainer);
+root.appendChild(tooltipContainer)
 
 const cssThemeVariables = {
   '--color-background': {
-    'light': '#f3f6fd',
-    'dark': '#1e1e1e'
+    light: '#f3f6fd',
+    dark: '#1e1e1e',
   },
   '--color-text': {
-    'light': '#7c7c7c',
-    'dark': '#eaeaea'
+    light: '#7c7c7c',
+    dark: '#eaeaea',
   },
   '--color-shadow': {
-    'light': 'rgba(0, 0, 0, 0.2)',
-    'dark': 'rgba(255, 255, 255, 0.2)'
-  }
+    light: 'rgba(0, 0, 0, 0.2)',
+    dark: 'rgba(255, 255, 255, 0.2)',
+  },
 }
 
-const tooltipXoffset = 10;
-const tooltipYoffset = 10;
-let payloadText = null;
+const tooltipXoffset = 10
+const tooltipYoffset = 10
+let payloadText = null
 const payloadImage = {
   url: null,
   width: 0,
   height: 0,
-};
-
-const shadowElem = document.querySelector('#shadowRootContainer').shadowRoot;
-const textTooltip = shadowElem.querySelector('#textTooltip');
-const imageTooltip = shadowElem.querySelector('#imageTooltip');
-const iconLogos = shadowElem.querySelectorAll('.iconLogo');
-const iconHeading = shadowElem.querySelector('#iconHeading');
-const iconSubheading = shadowElem.querySelector('#iconSubheading');
-const iconBullet = shadowElem.querySelector('#iconBullet');
-const iconParagraph = shadowElem.querySelector('#iconParagraph');
-const iconPlus = shadowElem.querySelector('#iconPlus');
-const textTooltipWidth = (40 / 2) + 155;
-const textTooltipHeight = 40;
-
-window.onloadstart = render();
-
-
-for (const logo of iconLogos) {
-  logo.src = chrome.runtime.getURL("images/tooltip-logo.png");
-  logo.addEventListener('click', function () {
-    window.getSelection().empty();  //clear selection - for chrome
-    window.open('https://www.simplifynote.com', '_blank');
-    shadowElem.querySelector('#tooltipButton').classList.remove('expand');
-    setTimeout(() => {
-      imageTooltip.style.visibility = "hidden";
-      textTooltip.style.visibility = "hidden";
-      shadowRootContainer.style.zIndex = '-1';
-    }, 350);
-  });
 }
 
-iconHeading.addEventListener("click", function () {
-  if (!payloadText) {
-    return;
-  }
-  chrome.runtime.sendMessage(
-    { message: "insert_text", style: "heading", text: payloadText },
-    handleResponse
-  );
-});
+const shadowElem = document.querySelector('#shadowRootContainer').shadowRoot
+const textTooltip = shadowElem.querySelector('#textTooltip')
+const imageTooltip = shadowElem.querySelector('#imageTooltip')
+const iconLogos = shadowElem.querySelectorAll('.iconLogo')
+const iconHeading = shadowElem.querySelector('#iconHeading')
+const iconSubheading = shadowElem.querySelector('#iconSubheading')
+const iconBullet = shadowElem.querySelector('#iconBullet')
+const iconParagraph = shadowElem.querySelector('#iconParagraph')
+const iconPlus = shadowElem.querySelector('#iconPlus')
+const textTooltipWidth = 40 / 2 + 155
+const textTooltipHeight = 40
 
-iconSubheading.addEventListener("click", function () {
-  if (!payloadText) {
-    return;
-  }
-  chrome.runtime.sendMessage(
-    { message: "insert_text", style: "subheading", text: payloadText },
-    handleResponse
-  );
-});
+window.onloadstart = render()
 
-iconBullet.addEventListener("click", function () {
-  if (!payloadText) {
-    return;
-  }
-  chrome.runtime.sendMessage(
-    { message: "insert_text", style: "bullet", text: payloadText },
-    handleResponse
-  );
-});
+for (const logo of iconLogos) {
+  logo.src = chrome.runtime.getURL('images/tooltip-logo.png')
+  logo.addEventListener('click', function () {
+    window.getSelection().empty() //clear selection - for chrome
+    window.open('https://www.simplifynote.com', '_blank')
+    shadowElem.querySelector('#tooltipButton').classList.remove('expand')
+    setTimeout(() => {
+      imageTooltip.style.visibility = 'hidden'
+      textTooltip.style.visibility = 'hidden'
+      shadowRootContainer.style.zIndex = '-1'
+    }, 350)
+  })
+}
 
-iconParagraph.addEventListener("click", function () {
+iconHeading.addEventListener('click', function () {
   if (!payloadText) {
-    return;
+    return
   }
   chrome.runtime.sendMessage(
-    { message: "insert_text", style: "paragraph", text: payloadText },
+    { message: 'insert_text', style: 'heading', text: payloadText },
     handleResponse
-  );
-});
+  )
+})
 
-iconPlus.addEventListener("click", function () {
-  console.log('clicked');
-  if (!payloadImage || !payloadImage.url || payloadImage.height <= 0 || payloadImage.width <= 0) {
-    console.log('jaaa');
-    return;
+iconSubheading.addEventListener('click', function () {
+  if (!payloadText) {
+    return
   }
-  console.log('sending');
   chrome.runtime.sendMessage(
-    { message: "insert_image", imageData: payloadImage },
+    { message: 'insert_text', style: 'subheading', text: payloadText },
     handleResponse
-  );
-});
+  )
+})
+
+iconBullet.addEventListener('click', function () {
+  if (!payloadText) {
+    return
+  }
+  chrome.runtime.sendMessage(
+    { message: 'insert_text', style: 'bullet', text: payloadText },
+    handleResponse
+  )
+})
+
+iconParagraph.addEventListener('click', function () {
+  if (!payloadText) {
+    return
+  }
+  chrome.runtime.sendMessage(
+    { message: 'insert_text', style: 'paragraph', text: payloadText },
+    handleResponse
+  )
+})
+
+iconPlus.addEventListener('click', function () {
+  console.log('clicked')
+  if (
+    !payloadImage ||
+    !payloadImage.url ||
+    payloadImage.height <= 0 ||
+    payloadImage.width <= 0
+  ) {
+    console.log('jaaa')
+    return
+  }
+  console.log('sending')
+  chrome.runtime.sendMessage(
+    { message: 'insert_image', imageData: payloadImage },
+    handleResponse
+  )
+})
 
 //Trigger for tooltip
-window.addEventListener("mouseup", async function (event) {
+window.addEventListener('mouseup', async function (event) {
   try {
-    const tooltipUnchecked = await getTooltipUnchecked();
-    const tooltipDisabled = await getTooltipDisabled();
+    const tooltipUnchecked = await getTooltipUnchecked()
+    const tooltipDisabled = await getTooltipDisabled()
 
     // return if tooltip is disabled or turned off
     if (tooltipUnchecked || tooltipDisabled) {
-      return;
+      return
     }
 
-    imageTooltip.style.visibility = "hidden";  //hide imageTooltip
+    imageTooltip.style.visibility = 'hidden' //hide imageTooltip
 
-    const mouseX = event.pageX;
-    const mouseY = event.pageY;
-    const selectedText = getSelectionText().text;
+    const mouseX = event.pageX
+    const mouseY = event.pageY
+    const selectedText = getSelectionText().text
 
     if (selectedText.length > 0) {
-      payloadText = selectedText;
-      shadowRootContainer.style.zIndex = '500';
-      const posX = mouseX + tooltipXoffset;
-      const posY = mouseY + tooltipYoffset;
-      const pageWidth = getWidth();
-      const pageHeight = getHeight();
-
+      payloadText = selectedText
+      shadowRootContainer.style.zIndex = '500'
+      const posX = mouseX + tooltipXoffset
+      const posY = mouseY + tooltipYoffset
+      const pageWidth = getWidth()
+      const pageHeight = getHeight()
 
       if (posX + textTooltipWidth + tooltipXoffset > pageWidth) {
-        textTooltip.style.left = pageWidth - tooltipXoffset - textTooltipWidth + "px";  // if tooltip goes outside pageview
+        textTooltip.style.left =
+          pageWidth - tooltipXoffset - textTooltipWidth + 'px' // if tooltip goes outside pageview
       } else {
-        textTooltip.style.left = mouseX + tooltipXoffset + "px";
+        textTooltip.style.left = mouseX + tooltipXoffset + 'px'
       }
 
       if (posY + textTooltipHeight + tooltipYoffset > pageHeight) {
-        textTooltip.style.top = pageHeight - tooltipYoffset - textTooltipHeight + "px";  // if tooltip goes outside pageview
+        textTooltip.style.top =
+          pageHeight - tooltipYoffset - textTooltipHeight + 'px' // if tooltip goes outside pageview
       } else {
-        textTooltip.style.top = mouseY + tooltipYoffset + "px";
+        textTooltip.style.top = mouseY + tooltipYoffset + 'px'
       }
 
-
-      textTooltip.style.visibility = "visible";
-      shadowElem.querySelector('#tooltipButton').classList.add('expand');
+      textTooltip.style.visibility = 'visible'
+      shadowElem.querySelector('#tooltipButton').classList.add('expand')
     } else {
-      shadowElem.querySelector('#tooltipButton').classList.remove('expand');
+      shadowElem.querySelector('#tooltipButton').classList.remove('expand')
       setTimeout(() => {
-        textTooltip.style.visibility = "hidden";
-        shadowRootContainer.style.zIndex = '-1';
+        textTooltip.style.visibility = 'hidden'
+        shadowRootContainer.style.zIndex = '-1'
       }, 350)
     }
   } catch (error) {
-    sendNotification('failure', error);
+    sendNotification('failure', error)
   }
+})
 
-});
-
-let currentLength = 0;
+let currentLength = 0
 //Display Tootip for image
 // let insideImage = {};
 setInterval(() => {
-  const imageCollection = document.getElementsByTagName("img");
+  const imageCollection = document.getElementsByTagName('img')
   if (imageCollection.length === currentLength) {
-    return;
+    return
   }
   // console.log('laaa');
   // console.log(imageCollection);
@@ -802,79 +835,91 @@ setInterval(() => {
     // insideImage[index] = false;
     // console.log(index);
     try {
-      imageCollection[index].addEventListener("mouseenter", async function (event) {
-        // if (insideImage[index]) return; // return if already inside image - to avoid flickering issue
-        console.log('enter');
-        // insideImage[index] = true;
-        const tooltipUnchecked = await getTooltipUnchecked();
-        const tooltipDisabled = await getTooltipDisabled();
+      imageCollection[index].addEventListener(
+        'mouseenter',
+        async function (event) {
+          // if (insideImage[index]) return; // return if already inside image - to avoid flickering issue
+          console.log('enter')
+          // insideImage[index] = true;
+          const tooltipUnchecked = await getTooltipUnchecked()
+          const tooltipDisabled = await getTooltipDisabled()
 
-        // return if tooltip is disabled or turned off
-        if (tooltipUnchecked || tooltipDisabled) {
-          return;
+          // return if tooltip is disabled or turned off
+          if (tooltipUnchecked || tooltipDisabled) {
+            return
+          }
+
+          const imgRect = this.getBoundingClientRect()
+
+          // return if image smaller that 80*80
+          if (imgRect.height < 80 || imgRect.width < 80) {
+            return
+          }
+
+          // hide textTooltip
+          window.getSelection().empty() //clear selection - for chrome
+          shadowElem.querySelector('#tooltipButton').classList.remove('expand')
+          setTimeout(() => {
+            textTooltip.style.visibility = 'hidden'
+          }, 350)
+
+          payloadImage.url = this.src
+          payloadImage.width = this.width
+          payloadImage.height = this.height
+          const mouseX =
+            window.scrollX +
+            imgRect.left +
+            (imgRect.right - imgRect.left) / 2 -
+            25
+          const mouseY =
+            window.scrollY +
+            imgRect.top +
+            (imgRect.bottom - imgRect.top) / 2 -
+            15
+          imageTooltip.style.left = mouseX + 'px'
+          imageTooltip.style.top = mouseY + 'px'
+          shadowRootContainer.style.zIndex = '500'
+          imageTooltip.style.visibility = 'visible'
         }
+      )
 
-        const imgRect = this.getBoundingClientRect();
-
-        // return if image smaller that 80*80
-        if (imgRect.height < 80 || imgRect.width < 80) {
-          return;
-        }
-
-        // hide textTooltip
-        window.getSelection().empty();  //clear selection - for chrome
-        shadowElem.querySelector('#tooltipButton').classList.remove('expand');
-        setTimeout(() => {
-          textTooltip.style.visibility = "hidden";
-        }, 350)
-
-
-        payloadImage.url = this.src;
-        payloadImage.width = this.width;
-        payloadImage.height = this.height;
-        const mouseX = window.scrollX + imgRect.left + (imgRect.right - imgRect.left) / 2 - 25;
-        const mouseY = window.scrollY + imgRect.top + (imgRect.bottom - imgRect.top) / 2 - 15;
-        imageTooltip.style.left = mouseX + "px";
-        imageTooltip.style.top = mouseY + "px";
-        shadowRootContainer.style.zIndex = '500';
-        imageTooltip.style.visibility = "visible";
-      });
-
-      imageCollection[index].addEventListener("mouseleave", function (event) {
-        let imgRect = this.getBoundingClientRect();
+      imageCollection[index].addEventListener('mouseleave', function (event) {
+        let imgRect = this.getBoundingClientRect()
         // console.log(imgRect);
         // console.log(event.clientX);
         // console.log(event.clientY);
-        if ((imgRect.left <= event.clientX && event.clientX <= imgRect.right) && (imgRect.top <= event.clientY && event.clientY <= imgRect.bottom)) {
-          return;
+        if (
+          imgRect.left <= event.clientX &&
+          event.clientX <= imgRect.right &&
+          imgRect.top <= event.clientY &&
+          event.clientY <= imgRect.bottom
+        ) {
+          return
         }
         console.log('leave')
         // insideImage[index] = false;
-        imageTooltip.style.visibility = "hidden";
-        shadowRootContainer.style.zIndex = '-1';
-      });
-
+        imageTooltip.style.visibility = 'hidden'
+        shadowRootContainer.style.zIndex = '-1'
+      })
     } catch (error) {
-      sendNotification('failure', error);
+      sendNotification('failure', error)
     }
   }
 
-  currentLength = imageCollection.length;
-}, 1000);
-
-
+  currentLength = imageCollection.length
+}, 1000)
 
 function getSelectionText() {
-  var text = "";
-  let selectedRange;
-  let boundingRect;
-  let currentSelection = window.getSelection();
+  var text = ''
+  let selectedRange
+  let boundingRect
+  let currentSelection = window.getSelection()
   if (currentSelection && currentSelection.rangeCount > 0) {
-    text = currentSelection.toString();
-    let selectedRange = currentSelection.getRangeAt(0);
-    let boundingRect = selectedRange.getBoundingClientRect();
+    text = currentSelection.toString()
+    let selectedRange = currentSelection.getRangeAt(0)
+    let boundingRect = selectedRange.getBoundingClientRect()
   }
-  return { text, boundingRect };
+  return { text, boundingRect }
 }
 
 chrome.storage.onChanged.addListener(function (changes, namespace) {
@@ -883,54 +928,55 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     //   `Storage key "${key}" in namespace "${namespace}" changed.`,
     //   `Old value was "${oldValue}", new value is "${newValue}".`
     // );
-    if ((key === 'tooltipUnchecked' || key === 'tooltipDisabled') && newValue === true) {
-
-      imageTooltip.style.visibility = "hidden"; //hide imageTooltip
+    if (
+      (key === 'tooltipUnchecked' || key === 'tooltipDisabled') &&
+      newValue === true
+    ) {
+      imageTooltip.style.visibility = 'hidden' //hide imageTooltip
 
       //hide textTooltip
-      shadowElem.querySelector('#tooltipButton').classList.remove('expand');
+      shadowElem.querySelector('#tooltipButton').classList.remove('expand')
       setTimeout(() => {
-        textTooltip.style.visibility = "hidden";
-        shadowRootContainer.style.zIndex = '-1';
+        textTooltip.style.visibility = 'hidden'
+        shadowRootContainer.style.zIndex = '-1'
       }, 350)
-
-    }
-    else if (key === 'currentTheme') {
-      setTheme(newValue);
+    } else if (key === 'currentTheme') {
+      setTheme(newValue)
     }
   }
-});
-
+})
 
 async function render() {
   try {
-    const theme = await getCurrentTheme();
-    console.log(theme);
-    setTheme(theme);
+    const theme = await getCurrentTheme()
+    console.log(theme)
+    setTheme(theme)
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
 }
 
 function setTheme(theme) {
-  if (theme !== 'light' && theme !== 'dark') return;
+  if (theme !== 'light' && theme !== 'dark') return
   for (const variable in cssThemeVariables) {
-    tooltipContainer.style.setProperty(variable, cssThemeVariables[variable][theme]);
+    tooltipContainer.style.setProperty(
+      variable,
+      cssThemeVariables[variable][theme]
+    )
   }
 }
 
 function getCurrentTheme() {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get(['currentTheme'], function (result) {
-      (result.currentTheme) ? resolve(result.currentTheme) : resolve(null);
-    });
+      result.currentTheme ? resolve(result.currentTheme) : resolve(null)
+    })
   })
 }
 
 function sendNotification(status, error) {
-  console.log(status + error);
+  console.log(status + error)
 }
-
 
 function getWidth() {
   return Math.max(
@@ -939,7 +985,7 @@ function getWidth() {
     document.body.offsetWidth,
     document.documentElement.offsetWidth,
     document.documentElement.clientWidth
-  );
+  )
 }
 
 function getHeight() {
@@ -949,15 +995,13 @@ function getHeight() {
     document.body.offsetHeight,
     document.documentElement.offsetHeight,
     document.documentElement.clientHeight
-  );
+  )
 }
 
-console.log('Width:  ' + getWidth());
-console.log('Height: ' + getHeight());
-
+console.log('Width:  ' + getWidth())
+console.log('Height: ' + getHeight())
 
 // setInterval(() => {
 //   const imageCollection = document.getElementsByTagName("img");
 //   console.log(imageCollection.length);
 // }, 1000)
-
