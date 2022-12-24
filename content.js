@@ -243,8 +243,8 @@ function captureSnip() {
       {
         message: 'snip',
         dim: {
-          top: snipContainer.style.top,
-          left: snipContainer.style.left,
+          top: parseInt(snipContainer.style.top) - window.scrollY,
+          left: parseInt(snipContainer.style.left) - window.scrollX,
           width: snipContainer.style.width,
           height: snipContainer.style.height,
         },
@@ -331,8 +331,8 @@ function captureSnipOcr() {
       {
         message: 'ocr',
         dim: {
-          top: ocrContainer.style.top,
-          left: ocrContainer.style.left,
+          top: parseInt(ocrContainer.style.top) - window.scrollY,
+          left: parseInt(ocrContainer.style.left) - window.scrollX,
           width: ocrContainer.style.width,
           height: ocrContainer.style.height,
         },
