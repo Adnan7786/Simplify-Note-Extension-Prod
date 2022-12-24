@@ -42,11 +42,15 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     }
   } else if (request.message === 'screenshot') {
     chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
-      // open a new tab with the image
-      chrome.tabs.create({ url: dataUrl })
+      // // open a new tab with the image
+      // chrome.tabs.create({ url: dataUrl })
+      chrome.tabs.sendMessage(sender.tab.id, {
+        message: 'screenshot',
+        dataUrl: dataUrl,
+      })
     })
   } else if (request.message === 'snip') {
-    chrome.tabs.captureVisibleTab(null, {}, (dataUrl) => {
+    chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
       chrome.tabs.sendMessage(sender.tab.id, {
         message: 'snip',
         dataUrl: dataUrl,
@@ -54,7 +58,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       })
     })
   } else if (request.message === 'ocr') {
-    chrome.tabs.captureVisibleTab(null, {}, (dataUrl) => {
+    chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
       chrome.tabs.sendMessage(sender.tab.id, {
         message: 'ocr',
         dataUrl: dataUrl,

@@ -139,6 +139,7 @@ screenSnipContainer.appendChild(ocrButton)
 // Add event listeners to the buttons
 screenshotButton.addEventListener('click', () => {
   document.body.removeChild(screenSnipContainer)
+  removeExistingSnip()
   setTimeout(() => {
     chrome.runtime.sendMessage(
       { message: 'screenshot' },
@@ -147,20 +148,33 @@ screenshotButton.addEventListener('click', () => {
   }, 300)
   setTimeout(() => {
     document.body.appendChild(screenSnipContainer)
-  }, 1500)
+  }, 1000)
 })
 
 snipButton.addEventListener('click', (e) => {
   // Removing the screenshot container so that it doesn't interfere with the snip
   document.body.removeChild(screenSnipContainer)
+  removeExistingSnip()
+
   captureSnip()
 })
 
 ocrButton.addEventListener('click', () => {
   // Removing the screenshot container so that it doesn't interfere with the snip
   document.body.removeChild(screenSnipContainer)
+  removeExistingSnip()
+
   captureSnipOcr()
 })
+
+// funciton to remove all existing visible screenshot/ ocr/ snip images
+function removeExistingSnip() {
+  // remove all elements having class 'image-container'
+  const imageContainers = document.getElementsByClassName('image-container')
+  while (imageContainers.length > 0) {
+    imageContainers[0].parentNode.removeChild(imageContainers[0])
+  }
+}
 
 // Function to capture the snip
 function captureSnip() {
@@ -337,7 +351,48 @@ chrome.runtime.onMessage.addListener(async function (
   sender,
   sendResponse
 ) {
+  if (request.message === 'screenshot') {
+    const screenshotContainer = document.createElement('div')
+    screenshotContainer.className = 'image-container'
+    screenshotContainer.style.position = 'fixed'
+    screenshotContainer.style.bottom = '10px'
+    screenshotContainer.style.zIndex = '10000'
+    screenshotContainer.style.padding = '20px 10px'
+    screenshotContainer.style.right = '10px'
+    document.body.appendChild(screenshotContainer)
+
+    // display the snip in bottom right corner for 3 seconds
+    const screenshotPic = document.createElement('img')
+    screenshotPic.src = request.dataUrl
+    screenshotPic.style.maxHeight = '120px'
+    screenshotPic.style.maxWidth = '150px'
+    // screenshotPic.style.width = parseInt(request.dim.width) * dpr
+    // screenshotPic.style.height = parseInt(request.dim.height) * dpr
+    screenshotPic.style.borderRadius = '5px'
+    screenshotPic.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
+    screenshotPic.style.zIndex = '10000'
+    screenshotContainer.appendChild(screenshotPic)
+
+    // Close button
+    const closeBtn = document.createElement('button')
+    closeBtn.innerText = 'X'
+    closeBtn.style.position = 'absolute'
+    closeBtn.style.top = '0px'
+    closeBtn.style.right = '0px'
+    closeBtn.style.backgroundColor = 'transparent'
+    closeBtn.style.border = 'none'
+    closeBtn.style.color = 'black'
+    closeBtn.style.cursor = 'pointer'
+    closeBtn.style.textShadow = '0px 0px 10px rgba(255,255,255,255.75)'
+    closeBtn.style.zIndex = '10000'
+    screenshotContainer.appendChild(closeBtn)
+    closeBtn.addEventListener('click', () => {
+      document.body.removeChild(screenshotContainer)
+    })
+  }
+
   if (request.message === 'snip') {
+    console.log(request.dim, 'request.dataUrl')
     const dpr = devicePixelRatio
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
@@ -363,12 +418,18 @@ chrome.runtime.onMessage.addListener(async function (
       console.log(dataUrl)
       document.body.appendChild(screenSnipContainer)
 
+      const snipImageContainer = document.createElement('div')
+      snipImageContainer.className = 'image-container'
+      snipImageContainer.style.position = 'fixed'
+      snipImageContainer.style.bottom = '10px'
+      snipImageContainer.style.right = '10px'
+      snipImageContainer.style.zIndex = '10000'
+      snipImageContainer.style.padding = '20px 10px'
+      document.body.appendChild(snipImageContainer)
+
       // display the snip in bottom right corner for 3 seconds
       const snip = document.createElement('img')
       snip.src = dataUrl
-      snip.style.position = 'fixed'
-      snip.style.bottom = '10px'
-      snip.style.right = '10px'
       snip.style.maxHeight = '120px'
       snip.style.maxWidth = '150px'
       snip.style.width = parseInt(request.dim.width) * dpr
@@ -376,10 +437,29 @@ chrome.runtime.onMessage.addListener(async function (
       snip.style.borderRadius = '5px'
       snip.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
       snip.style.zIndex = '10000'
-      document.body.appendChild(snip)
-      setTimeout(() => {
-        document.body.removeChild(snip)
-      }, 3000)
+      snipImageContainer.appendChild(snip)
+      // document.body.appendChild(snip)
+      // setTimeout(() => {
+      //   document.body.removeChild(snip)
+      // }, 3000)
+
+      // Close button
+      const closeBtn = document.createElement('button')
+      closeBtn.innerText = 'X'
+      closeBtn.style.position = 'absolute'
+      closeBtn.style.top = '0px'
+      closeBtn.style.right = '0px'
+      closeBtn.style.zIndex = '10000'
+      closeBtn.style.backgroundColor = 'transparent'
+      closeBtn.style.border = 'none'
+      closeBtn.style.color = 'black'
+      closeBtn.style.cursor = 'pointer'
+      closeBtn.style.textShadow = '0px 0px 10px rgba(255,255,255,255.75)'
+
+      snipImageContainer.appendChild(closeBtn)
+      closeBtn.addEventListener('click', () => {
+        document.body.removeChild(snipImageContainer)
+      })
     }
   }
   if (request.message === 'ocr') {
@@ -408,6 +488,7 @@ chrome.runtime.onMessage.addListener(async function (
       document.body.appendChild(screenSnipContainer)
 
       const ocrTextImageContainer = document.createElement('div')
+      ocrTextImageContainer.className = 'image-container'
       ocrTextImageContainer.style.position = 'fixed'
       ocrTextImageContainer.style.bottom = '10px'
       ocrTextImageContainer.style.right = '10px'
@@ -629,7 +710,7 @@ tooltipContainer.innerHTML = `<style>
   position: absolute;
   visibility: hidden;
   opacity: 0;
-  z-index: 2;
+  z-index: 10002;
   border-radius: 50%;
   cursor: pointer;
   background-color: var(--color-primary);
@@ -841,7 +922,7 @@ window.addEventListener('mouseup', async function (event) {
 
     if (selectedText.length > 0) {
       payloadText = selectedText
-      shadowRootContainer.style.zIndex = '500'
+      shadowRootContainer.style.zIndex = '10001'
       const posX = mouseX + tooltipXoffset
       const posY = mouseY + tooltipYoffset
       const pageWidth = getWidth()
@@ -932,7 +1013,7 @@ setInterval(() => {
             15
           imageTooltip.style.left = mouseX + 'px'
           imageTooltip.style.top = mouseY + 'px'
-          shadowRootContainer.style.zIndex = '500'
+          shadowRootContainer.style.zIndex = '10001'
           imageTooltip.style.visibility = 'visible'
         }
       )
