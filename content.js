@@ -411,16 +411,17 @@ chrome.runtime.onMessage.addListener(async function (
       )
       const dataUrl = canvas.toDataURL()
       document.body.appendChild(screenSnipContainer)
-
       document.body.removeChild(ocrContainer)
 
-      // console.log('contentjs' + dataUrl)
-      // display the snip in bottom right corner for 3 seconds
+      const ocrTextImageContainer = document.createElement('div')
+      ocrTextImageContainer.style.position = 'fixed'
+      ocrTextImageContainer.style.bottom = '10px'
+      ocrTextImageContainer.style.right = '10px'
+      ocrTextImageContainer.style.zIndex = '10000'
+      document.body.appendChild(ocrTextImageContainer)
+
       const snip = document.createElement('img')
       snip.src = dataUrl
-      snip.style.position = 'fixed'
-      snip.style.bottom = '10px'
-      snip.style.right = '10px'
       snip.style.maxHeight = '120px'
       snip.style.maxWidth = '150px'
       snip.style.width = parseInt(request.dim.width) * dpr
@@ -428,12 +429,24 @@ chrome.runtime.onMessage.addListener(async function (
       snip.style.borderRadius = '5px'
       snip.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
       snip.style.zIndex = '10000'
-      document.body.appendChild(snip)
+      ocrTextImageContainer.appendChild(snip)
+
+      const textContainer = document.createElement('div')
+      textContainer.style.minHeight = '120px'
+      textContainer.style.maxWidth = '150px'
+      textContainer.style.borderRadius = '5px'
+      textContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
+      textContainer.style.zIndex = '10000'
+      textContainer.style.backgroundColor = 'white'
+      textContainer.style.padding = '10px'
+      textContainer.style.fontSize = '12px'
+      textContainer.style.fontFamily = 'monospace'
+      textContainer.style.color = 'black'
+      ocrTextImageContainer.appendChild(textContainer)
       // OCR using tesseract
-      Tesseract.recognize(dataUrl, 'eng', {
-        logger: (m) => console.log(m),
-      }).then(({ data: { text } }) => {
-        console.log(text)
+      Tesseract.recognize(dataUrl, 'eng', {}).then(({ data: { text } }) => {
+        // Show the text in the page
+        textContainer.innerText = text
       })
       // setTimeout(() => {
       //   document.body.removeChild(snip)
