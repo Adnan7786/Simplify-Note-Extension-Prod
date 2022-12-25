@@ -59,14 +59,19 @@ screenSnipContainer.style.bottom = '0px'
 screenSnipContainer.style.left = '0px'
 screenSnipContainer.style.margin = '10px'
 screenSnipContainer.style.padding = '6px'
+
+// add padding to left anf right of
+screenSnipContainer.style.paddingLeft = '10px'
+screenSnipContainer.style.paddingRight = '10px'
 screenSnipContainer.style.display = 'flex'
-screenSnipContainer.style.flexDirection = 'column'
+screenSnipContainer.style.flexDirection = 'row'
 screenSnipContainer.style.alignItems = 'center'
 screenSnipContainer.style.justifyContent = 'center'
-screenSnipContainer.style.width = '40px'
-screenSnipContainer.style.height = '120px'
-screenSnipContainer.style.backgroundColor = 'white'
-screenSnipContainer.style.borderRadius = '10px'
+screenSnipContainer.style.width = '120px'
+screenSnipContainer.style.height = '40px'
+screenSnipContainer.style.backgroundColor = 'black'
+screenSnipContainer.style.color = 'white'
+screenSnipContainer.style.borderRadius = '30px'
 screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 screenSnipContainer.style.transition = 'all 0.3s ease-in-out'
 screenSnipContainer.style.cursor = 'pointer'
@@ -76,6 +81,7 @@ const screenshotButton = document.createElement('button')
 screenshotButton.id = 'screenshotButton'
 screenshotButton.style.width = '40px'
 screenshotButton.style.height = '40px'
+screenshotButton.title = 'Take a screenshot'
 // screenshotButton.style.borderRadius = '10px'
 screenshotButton.style.backgroundColor = 'transparent'
 screenshotButton.style.border = 'none'
@@ -90,12 +96,32 @@ screenshotButton.style.backgroundSize = 'contain'
 screenshotButton.style.padding = '5px'
 screenshotButton.style.backgroundRepeat = 'no-repeat'
 screenshotButton.style.backgroundPosition = 'center'
+screenSnipContainer.style.justifyContent = 'space-around'
+
+// add entrance animation on hover of container
+screenSnipContainer.addEventListener('mouseenter', () => {
+  screenSnipContainer.style.width = '200px'
+  screenSnipContainer.style.height = '60px'
+  screenSnipContainer.style.borderRadius = '10px'
+  screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+})
+
+// add exit animation on hover of container
+screenSnipContainer.addEventListener('mouseleave', () => {
+  screenSnipContainer.style.width = '120px'
+  screenSnipContainer.style.height = '40px'
+  screenSnipContainer.style.paddingLeft = '10px'
+  screenSnipContainer.style.paddingRight = '10px'
+  screenSnipContainer.style.borderRadius = '30px'
+  screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+})
 
 // Create a snip button
 const snipButton = document.createElement('button')
 snipButton.id = 'snipButton'
 snipButton.style.width = '40px'
 snipButton.style.height = '40px'
+snipButton.title = 'Snip a part of the screen'
 // snipButton.style.borderRadius = '10px'
 snipButton.style.backgroundColor = 'transparent'
 snipButton.style.border = 'none'
@@ -111,11 +137,34 @@ snipButton.style.padding = '5px'
 snipButton.style.backgroundRepeat = 'no-repeat'
 snipButton.style.backgroundPosition = 'center'
 
+// show some animation on hover of snip button
+snipButton.addEventListener('mouseenter', () => {
+  snipButton.style.transform = 'scale(1.2)'
+  snipButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+})
+
+snipButton.addEventListener('mouseleave', () => {
+  snipButton.style.transform = 'scale(1.0)'
+  snipButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+})
+
+// show some animation on hover of screenshot button
+screenshotButton.addEventListener('mouseenter', () => {
+  screenshotButton.style.transform = 'scale(1.2)'
+  screenshotButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+})
+
+screenshotButton.addEventListener('mouseleave', () => {
+  screenshotButton.style.transform = 'scale(1.0)'
+  screenshotButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+})
+
 // Create a ocr button
 const ocrButton = document.createElement('button')
 ocrButton.id = 'ocrButton'
 ocrButton.style.width = '40px'
 ocrButton.style.height = '40px'
+ocrButton.title = 'crop to read text from image'
 // ocrButton.style.borderRadius = '10px'
 ocrButton.style.backgroundColor = 'transparent'
 ocrButton.style.border = 'none'
@@ -130,6 +179,17 @@ ocrButton.style.backgroundSize = 'contain'
 ocrButton.style.padding = '5px'
 ocrButton.style.backgroundRepeat = 'no-repeat'
 ocrButton.style.backgroundPosition = 'center'
+
+// show some animation on hover of snip button
+ocrButton.addEventListener('mouseenter', () => {
+  ocrButton.style.transform = 'scale(1.2)'
+  ocrButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+})
+
+ocrButton.addEventListener('mouseleave', () => {
+  ocrButton.style.transform = 'scale(1.0)'
+  ocrButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+})
 
 document.body.appendChild(screenSnipContainer)
 screenSnipContainer.appendChild(screenshotButton)
@@ -507,13 +567,14 @@ chrome.runtime.onMessage.addListener(async function (
       snip.style.zIndex = '10000'
       ocrTextImageContainer.appendChild(snip)
 
-      const textContainer = document.createElement('div')
+      const textContainer = document.createElement('textarea')
       textContainer.style.height = '120px'
       textContainer.style.width = '150px'
       // textContainer.style.minHeight = '120px'
       // textContainer.style.maxWidth = '150px'
       // textContainer.style.maxHeight = '240px'
       // textContainer.style.maxWidth = '300px'
+      textContainer.style.display = 'block'
       textContainer.style.borderRadius = '5px'
       textContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
       textContainer.style.zIndex = '10000'
