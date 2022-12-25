@@ -54,7 +54,7 @@ function handleResponse(res) {
 const screenSnipContainer = document.createElement('div')
 screenSnipContainer.id = 'screenSnipContainer'
 screenSnipContainer.style.position = 'fixed'
-screenSnipContainer.style.zIndex = '1000'
+screenSnipContainer.style.zIndex = '10000'
 screenSnipContainer.style.bottom = '0px'
 screenSnipContainer.style.left = '0px'
 screenSnipContainer.style.margin = '10px'
@@ -72,7 +72,7 @@ screenSnipContainer.style.height = '40px'
 screenSnipContainer.style.backgroundColor = 'black'
 screenSnipContainer.style.color = 'white'
 screenSnipContainer.style.borderRadius = '30px'
-screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(255,255,255,1)'
 screenSnipContainer.style.transition = 'all 0.3s ease-in-out'
 screenSnipContainer.style.cursor = 'pointer'
 
