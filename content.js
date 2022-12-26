@@ -76,6 +76,14 @@ screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(255,255,255,1)'
 screenSnipContainer.style.transition = 'all 0.3s ease-in-out'
 screenSnipContainer.style.cursor = 'pointer'
 
+// change the theme same as the theme of the tooltipContainer
+chrome.storage.sync.get(['theme'], function (result) {
+  if (result.theme === 'light') {
+    screenSnipContainer.style.backgroundColor = 'white'
+    screenSnipContainer.style.color = 'black'
+  }
+})
+
 // Create a screenshot button
 const screenshotButton = document.createElement('button')
 screenshotButton.id = 'screenshotButton'
@@ -275,7 +283,8 @@ function captureSnip() {
     snipContainer.style.height = '0px'
     // dashed moving border
     snipContainer.style.border = '1px dashed #000'
-    snipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+    // detect background color and change the boxShadow color accordingly
+    snipContainer.style.boxShadow = '0px 0px 10px 0px rgba(255,255,255,0.5)'
     // snipContainer.style.backgroundColor = 'rgba(0,0,0,0.7)'
   })
 
@@ -426,6 +435,8 @@ chrome.runtime.onMessage.addListener(async function (
     screenshotPic.src = request.dataUrl
     screenshotPic.style.maxHeight = '120px'
     screenshotPic.style.maxWidth = '150px'
+    screenshotPic.style.minHeight = '85px'
+    screenshotPic.style.minWidth = '85px'
     // screenshotPic.style.width = parseInt(request.dim.width) * dpr
     // screenshotPic.style.height = parseInt(request.dim.height) * dpr
     screenshotPic.style.borderRadius = '5px'
@@ -492,6 +503,8 @@ chrome.runtime.onMessage.addListener(async function (
       snip.src = dataUrl
       snip.style.maxHeight = '120px'
       snip.style.maxWidth = '150px'
+      snip.style.minHeight = '85px'
+      snip.style.minWidth = '85px'
       snip.style.width = parseInt(request.dim.width) * dpr
       snip.style.height = parseInt(request.dim.height) * dpr
       snip.style.borderRadius = '5px'
@@ -565,6 +578,8 @@ chrome.runtime.onMessage.addListener(async function (
       snip.style.borderRadius = '5px'
       snip.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
       snip.style.zIndex = '10000'
+      // make it contain
+      snip.style.objectFit = 'cover'
       ocrTextImageContainer.appendChild(snip)
 
       const textContainer = document.createElement('textarea')
@@ -1160,6 +1175,21 @@ function setTheme(theme) {
       cssThemeVariables[variable][theme]
     )
   }
+  screenSnipContainer.style.backgroundColor =
+    theme === 'light' ? '#fff' : '#000'
+  screenSnipContainer.style.color = theme === 'light' ? '#000' : '#fff'
+  screenshotButton.style.backgroundImage =
+    theme === 'light'
+      ? 'url(' + chrome.runtime.getURL('src/icons/screenshot1.png') + ')'
+      : 'url(' + chrome.runtime.getURL('src/icons/screenshot.png') + ')'
+  snipButton.style.backgroundImage =
+    theme === 'light'
+      ? 'url(' + chrome.runtime.getURL('src/icons/snip1.png') + ')'
+      : 'url(' + chrome.runtime.getURL('src/icons/snip.png') + ')'
+  ocrButton.style.backgroundImage =
+    theme === 'light'
+      ? 'url(' + chrome.runtime.getURL('src/icons/ocr1.png') + ')'
+      : 'url(' + chrome.runtime.getURL('src/icons/ocr.png') + ')'
 }
 
 function getCurrentTheme() {
