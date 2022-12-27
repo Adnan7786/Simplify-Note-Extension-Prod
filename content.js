@@ -430,6 +430,20 @@ chrome.runtime.onMessage.addListener(async function (
     screenshotContainer.style.right = '10px'
     document.body.appendChild(screenshotContainer)
 
+    var mimeType = request.dataUrl.split(',')[0].split(':')[1].split(';')[0]
+    var binaryString = atob(request.dataUrl.split(',')[1])
+    var arrayBuffer = new ArrayBuffer(binaryString.length)
+    var view = new Uint8Array(arrayBuffer)
+    for (var i = 0; i < binaryString.length; i++) {
+      view[i] = binaryString.charCodeAt(i)
+    }
+    // add image in png formate to clipboard
+    navigator.clipboard.write([
+      new ClipboardItem({
+        'image/png': new Blob([arrayBuffer], { type: mimeType }),
+      }),
+    ])
+
     // display the snip in bottom right corner for 3 seconds
     const screenshotPic = document.createElement('img')
     screenshotPic.src = request.dataUrl
@@ -488,6 +502,20 @@ chrome.runtime.onMessage.addListener(async function (
       const dataUrl = canvas.toDataURL()
       console.log(dataUrl)
       document.body.appendChild(screenSnipContainer)
+
+      var mimeType = dataUrl.split(',')[0].split(':')[1].split(';')[0]
+      var binaryString = atob(dataUrl.split(',')[1])
+      var arrayBuffer = new ArrayBuffer(binaryString.length)
+      var view = new Uint8Array(arrayBuffer)
+      for (var i = 0; i < binaryString.length; i++) {
+        view[i] = binaryString.charCodeAt(i)
+      }
+      // add image in png formate to clipboard
+      navigator.clipboard.write([
+        new ClipboardItem({
+          'image/png': new Blob([arrayBuffer], { type: mimeType }),
+        }),
+      ])
 
       const snipImageContainer = document.createElement('div')
       snipImageContainer.className = 'image-container'
