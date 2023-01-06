@@ -76,13 +76,53 @@ screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(255,255,255,1)'
 screenSnipContainer.style.transition = 'all 0.3s ease-in-out'
 screenSnipContainer.style.cursor = 'pointer'
 
-// change the theme same as the theme of the tooltipContainer
-chrome.storage.sync.get(['theme'], function (result) {
-  if (result.theme === 'light') {
-    screenSnipContainer.style.backgroundColor = 'white'
-    screenSnipContainer.style.color = 'black'
-  }
+// add a small box at right of the screenSnipContainerfor mouse holding with a button
+const mouseHoldContainer = document.createElement('div')
+// set image in background
+mouseHoldContainer.style.backgroundImage =
+  'url(' + chrome.runtime.getURL('src/icons/drag.png') + ')'
+mouseHoldContainer.style.backgroundSize = 'contain'
+// mouseHoldContainer.style.backgroundRepeat = 'no-repeat'
+mouseHoldContainer.id = 'mouseHoldContainer'
+mouseHoldContainer.style.width = '30px'
+mouseHoldContainer.style.height = '30px'
+mouseHoldContainer.title = 'Hold to drag'
+// mouseHoldContainer.style.backgroundColor = 'white'
+// mouseHoldContainer.style.marginRight = '10px'
+mouseHoldContainer.style.cursor = 'pointer'
+
+// when button is pressed it will mkae the screenSnipContainer to be draggable and chage the position of the screenSnipContainer with the mouse position
+mouseHoldContainer.addEventListener('mousedown', () => {
+  // now make the screenSnipContainer to be draggable
+  screenSnipContainer.draggable = true
+  mouseHoldContainer.style.cursor = 'grabbing'
+  console.log('mouse on mouse down')
+
+  // now change the position of the screenSnipContainer with the mouse position
+  screenSnipContainer.addEventListener('dragend', (e) => {
+    // screenSnipContainer.style.left = e.clientX + 'px'
+    screenSnipContainer.style.top = e.clientY + 'px'
+    console.log('mouse', e.clientX, e.clientY)
+  })
 })
+
+// // when button is released it will make the screenSnipContainer to be not draggable and change the cursor to pointer
+// mouseHoldContainer.addEventListener('mouseup', (e) => {
+//   // set the screenSnipContainer top position with mouse position
+//   screenSnipContainer.style.top = e.clientY + 'px'
+//   screenSnipContainer.style.left = e.clientX + 'px'
+//   console.log('mouse on mouse up')
+//   // mouseHoldContainer.draggable = false
+//   mouseHoldContainer.style.cursor = 'pointer'
+// })
+
+// change the theme same as the theme of the tooltipContainer
+// chrome.storage.sync.get(['theme'], function (result) {
+//   if (result.theme === 'light') {
+//     screenSnipContainer.style.backgroundColor = 'white'
+//     screenSnipContainer.style.color = 'black'
+//   }
+// })
 
 // Create a screenshot button
 const screenshotButton = document.createElement('button')
@@ -107,22 +147,22 @@ screenshotButton.style.backgroundPosition = 'center'
 screenSnipContainer.style.justifyContent = 'space-around'
 
 // add entrance animation on hover of container
-screenSnipContainer.addEventListener('mouseenter', () => {
-  screenSnipContainer.style.width = '200px'
-  screenSnipContainer.style.height = '60px'
-  screenSnipContainer.style.borderRadius = '10px'
-  screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
-})
+// screenSnipContainer.addEventListener('mouseenter', () => {
+//   screenSnipContainer.style.width = '200px'
+//   screenSnipContainer.style.height = '60px'
+//   screenSnipContainer.style.borderRadius = '10px'
+//   screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+// })
 
-// add exit animation on hover of container
-screenSnipContainer.addEventListener('mouseleave', () => {
-  screenSnipContainer.style.width = '120px'
-  screenSnipContainer.style.height = '40px'
-  screenSnipContainer.style.paddingLeft = '10px'
-  screenSnipContainer.style.paddingRight = '10px'
-  screenSnipContainer.style.borderRadius = '30px'
-  screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
-})
+// // add exit animation on hover of container
+// screenSnipContainer.addEventListener('mouseleave', () => {
+//   screenSnipContainer.style.width = '120px'
+//   screenSnipContainer.style.height = '40px'
+//   screenSnipContainer.style.paddingLeft = '10px'
+//   screenSnipContainer.style.paddingRight = '10px'
+//   screenSnipContainer.style.borderRadius = '30px'
+//   screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+// })
 
 // Create a snip button
 const snipButton = document.createElement('button')
@@ -203,6 +243,7 @@ document.body.appendChild(screenSnipContainer)
 screenSnipContainer.appendChild(screenshotButton)
 screenSnipContainer.appendChild(snipButton)
 screenSnipContainer.appendChild(ocrButton)
+screenSnipContainer.appendChild(mouseHoldContainer)
 
 // Add event listeners to the buttons
 screenshotButton.addEventListener('click', () => {
@@ -215,6 +256,12 @@ screenshotButton.addEventListener('click', () => {
     )
   }, 300)
   setTimeout(() => {
+    screenSnipContainer.style.width = '120px'
+    screenSnipContainer.style.height = '40px'
+    screenSnipContainer.style.paddingLeft = '10px'
+    screenSnipContainer.style.paddingRight = '10px'
+    screenSnipContainer.style.borderRadius = '30px'
+    screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
     document.body.appendChild(screenSnipContainer)
   }, 1000)
 })
@@ -501,6 +548,12 @@ chrome.runtime.onMessage.addListener(async function (
       )
       const dataUrl = canvas.toDataURL()
       console.log(dataUrl)
+      screenSnipContainer.style.width = '120px'
+      screenSnipContainer.style.height = '40px'
+      screenSnipContainer.style.paddingLeft = '10px'
+      screenSnipContainer.style.paddingRight = '10px'
+      screenSnipContainer.style.borderRadius = '30px'
+      screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
       document.body.appendChild(screenSnipContainer)
 
       var mimeType = dataUrl.split(',')[0].split(':')[1].split(';')[0]
@@ -561,6 +614,14 @@ chrome.runtime.onMessage.addListener(async function (
       closeBtn.addEventListener('click', () => {
         document.body.removeChild(snipImageContainer)
       })
+
+      // ask background to save the image
+      chrome.runtime.sendMessage({
+        message: 'saveImage',
+        dataUrl: dataUrl,
+        width: parseInt(request.dim.width) * dpr,
+        height: parseInt(request.dim.height) * dpr,
+      })
     }
   }
   if (request.message === 'ocr') {
@@ -586,72 +647,268 @@ chrome.runtime.onMessage.addListener(async function (
         parseInt(request.dim.height) * dpr
       )
       const dataUrl = canvas.toDataURL()
+      screenSnipContainer.style.width = '120px'
+      screenSnipContainer.style.height = '40px'
+      screenSnipContainer.style.paddingLeft = '10px'
+      screenSnipContainer.style.paddingRight = '10px'
+      screenSnipContainer.style.borderRadius = '30px'
+      screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
       document.body.appendChild(screenSnipContainer)
 
-      const ocrTextImageContainer = document.createElement('div')
-      ocrTextImageContainer.className = 'image-container'
-      ocrTextImageContainer.style.position = 'fixed'
-      ocrTextImageContainer.style.bottom = '10px'
-      ocrTextImageContainer.style.right = '10px'
-      ocrTextImageContainer.style.zIndex = '10000'
-      ocrTextImageContainer.style.padding = '20px 10px'
-      document.body.appendChild(ocrTextImageContainer)
+      // const ocrTextImageContainer = document.createElement('div')
+      // ocrTextImageContainer.className = 'image-container'
+      // ocrTextImageContainer.style.position = 'fixed'
+      // ocrTextImageContainer.style.bottom = '10px'
+      // ocrTextImageContainer.style.right = '10px'
+      // ocrTextImageContainer.style.zIndex = '10000'
+      // ocrTextImageContainer.style.padding = '20px 10px'
+      // document.body.appendChild(ocrTextImageContainer)
 
-      const snip = document.createElement('img')
-      snip.src = dataUrl
-      snip.style.maxHeight = '120px'
-      snip.style.maxWidth = '150px'
-      snip.style.width = parseInt(request.dim.width) * dpr
-      snip.style.height = parseInt(request.dim.height) * dpr
-      snip.style.borderRadius = '5px'
-      snip.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
-      snip.style.zIndex = '10000'
-      // make it contain
-      snip.style.objectFit = 'cover'
-      ocrTextImageContainer.appendChild(snip)
+      // make a container with header body and footer for ocr text
+      const ocrTextContainer = document.createElement('div')
+      ocrTextContainer.className = 'ocr-text-container'
+      ocrTextContainer.style.position = 'fixed'
+      ocrTextContainer.style.bottom = '10px'
+      ocrTextContainer.style.right = '10px'
+      ocrTextContainer.style.zIndex = '10000'
+      ocrTextContainer.innerHTML =
+        `
+        <style>
+          .ocr-text-container {
+            width: 600px;
+            height: 400px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
+            display: flex;
+            flex-direction: column;
+          }
+          .ocr-text-header {
+            width: 100%;
+            height: 30px;
+            background-color: #f1f1f1;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .ocr-text-header-text-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+          .ocr-text-header-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            padding-left: 10px;
+          }
+          .ocr-text-header-close {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            padding-right: 10px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+          }
+          .ocr-text-body {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .ocr-text-body-textarea {
+            width: 90%;
+            height: 90%;
+            border: none;
+            outline: none;
+            resize: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+          }
+          .ocr-text-footer {
+            width: 100%;
+            height: 30px;
+            background-color: #f1f1f1;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            &:not(:last-child) {
+              margin-right: 10px; 
+            }
+          }
+          .ocr-text-footer-save {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;                       
+          }
+          .ocr-text-footer-save:hover {
+            color: #fff;
+            background-color: #333;
+          }
+        
+      
+        </style>
 
-      const textContainer = document.createElement('textarea')
-      textContainer.style.height = '120px'
-      textContainer.style.width = '150px'
-      // textContainer.style.minHeight = '120px'
-      // textContainer.style.maxWidth = '150px'
-      // textContainer.style.maxHeight = '240px'
-      // textContainer.style.maxWidth = '300px'
-      textContainer.style.display = 'block'
-      textContainer.style.borderRadius = '5px'
-      textContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
-      textContainer.style.zIndex = '10000'
-      textContainer.style.backgroundColor = 'white'
-      textContainer.style.padding = '10px'
-      textContainer.style.fontSize = '12px'
-      textContainer.style.fontFamily = 'monospace'
-      textContainer.style.color = 'black'
-      textContainer.innerText = 'Recognizing text...'
-      textContainer.style.overflow = 'auto'
-      ocrTextImageContainer.appendChild(textContainer)
+        <div class="ocr-text-header">
+          <div class="ocr-text-header-text-container">
+            <div class="ocr-text-header-text">
+              <img src=` +
+        chrome.runtime.getURL('src/icons/tooltip-logo.png') +
+        `
+                alt="logo" width="20px" height="20px" />
+             <span>OCR Text</span>
+            </div>
+            <button class="ocr-text-header-close">X</button>
+          </div>
+        </div>
+        <div class="ocr-text-body">
+          <textarea class="ocr-text-body-textarea" placeholder='Recognizing text...'
+           ></textarea>
+        </div>
+        <div class="ocr-text-footer">
+          <button class="ocr-text-footer-save" id="ocr-text-footer-heading">Heading</button>
+          <button class="ocr-text-footer-save" id="ocr-text-footer-paragraph">Paragraph</button>
+          <button class="ocr-text-footer-save" id="ocr-text-footer-list">List</button>
+          <button class="ocr-text-footer-save" id="ocr-text-footer-quote">Quote</button>          
+        </div>        
+      `
+
+      document.body.appendChild(ocrTextContainer)
+
+      // get textarea class  to change its inner html
+      const ocrTextBodyTextarea = document.querySelector(
+        '.ocr-text-body-textarea'
+      )
+
+      // get close button to close the ocr text container
+      const ocrTextHeaderClose = document.querySelector(
+        '.ocr-text-header-close'
+      )
+
+      // get heading list paragraph quote buttons
+      const ocrTextFooterHeading = document.querySelector(
+        '#ocr-text-footer-heading'
+      )
+      const ocrTextFooterParagraph = document.querySelector(
+        '#ocr-text-footer-paragraph'
+      )
+      const ocrTextFooterList = document.querySelector('#ocr-text-footer-list')
+      const ocrTextFooterQuote = document.querySelector(
+        '#ocr-text-footer-quote'
+      )
+
+      // onpress ocrTextFooterHeading send text to background.js
+      ocrTextFooterHeading.addEventListener('click', () => {
+        // send message to background.js
+        chrome.runtime.sendMessage(
+          {
+            message: 'insert_text',
+            style: 'heading',
+            text: ocrTextBodyTextarea.value,
+          },
+          handleResponse
+        )
+
+        // remove ocr text container
+        document.body.removeChild(ocrTextContainer)
+      })
+
+      // onpress ocrTextFooterParagraph send text to background.js
+      ocrTextFooterParagraph.addEventListener('click', () => {
+        // send message to background.js
+        chrome.runtime.sendMessage(
+          {
+            message: 'insert_text',
+            style: 'paragraph',
+            text: ocrTextBodyTextarea.value,
+          },
+          handleResponse
+        )
+        // remove ocr text container
+        document.body.removeChild(ocrTextContainer)
+      })
+
+      // onpress ocrTextFooterList send text to background.js
+      ocrTextFooterList.addEventListener('click', () => {
+        // send message to background.js
+        chrome.runtime.sendMessage(
+          {
+            message: 'insert_text',
+            style: 'list',
+            text: ocrTextBodyTextarea.value,
+          },
+          handleResponse
+        )
+        // remove ocr text container
+        document.body.removeChild(ocrTextContainer)
+      })
+
+      // const snip = document.createElement('img')
+      // snip.src = dataUrl
+      // snip.style.maxHeight = '120px'
+      // snip.style.maxWidth = '150px'
+      // snip.style.width = parseInt(request.dim.width) * dpr
+      // snip.style.height = parseInt(request.dim.height) * dpr
+      // snip.style.borderRadius = '5px'
+      // snip.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
+      // snip.style.zIndex = '10000'
+      // // make it contain
+      // snip.style.objectFit = 'cover'
+      // ocrTextImageContainer.appendChild(snip)
+
+      // const textContainer = document.createElement('textarea')
+      // textContainer.style.height = '120px'
+      // textContainer.style.width = '150px'
+      // // textContainer.style.minHeight = '120px'
+      // // textContainer.style.maxWidth = '150px'
+      // // textContainer.style.maxHeight = '240px'
+      // // textContainer.style.maxWidth = '300px'
+      // textContainer.style.display = 'block'
+      // textContainer.style.borderRadius = '5px'
+      // textContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
+      // textContainer.style.zIndex = '10000'
+      // textContainer.style.backgroundColor = 'white'
+      // textContainer.style.padding = '10px'
+      // textContainer.style.fontSize = '12px'
+      // textContainer.style.fontFamily = 'monospace'
+      // textContainer.style.color = 'black'
+      // textContainer.innerText = 'Recognizing text...'
+      // textContainer.style.overflow = 'auto'
+      // ocrTextImageContainer.appendChild(textContainer)
 
       // Close button
-      const closeBtn = document.createElement('button')
-      closeBtn.innerText = 'X'
-      closeBtn.style.position = 'absolute'
-      closeBtn.style.top = '0px'
-      closeBtn.style.right = '0px'
-      closeBtn.style.zIndex = '10000'
-      closeBtn.style.backgroundColor = 'transparent'
-      closeBtn.style.border = 'none'
-      closeBtn.style.color = 'black'
-      closeBtn.style.cursor = 'pointer'
-      closeBtn.style.textShadow = '0px 0px 10px rgba(255,255,255,255.75)'
+      // const closeBtn = document.createElement('button')
+      // closeBtn.innerText = 'X'
+      // closeBtn.style.position = 'absolute'
+      // closeBtn.style.top = '0px'
+      // closeBtn.style.right = '0px'
+      // closeBtn.style.zIndex = '10000'
+      // closeBtn.style.backgroundColor = 'transparent'
+      // closeBtn.style.border = 'none'
+      // closeBtn.style.color = 'black'
+      // closeBtn.style.cursor = 'pointer'
+      // closeBtn.style.textShadow = '0px 0px 10px rgba(255,255,255,255.75)'
 
-      ocrTextImageContainer.appendChild(closeBtn)
-      closeBtn.addEventListener('click', () => {
-        document.body.removeChild(ocrTextImageContainer)
+      ocrTextHeaderClose.addEventListener('click', () => {
+        document.body.removeChild(ocrTextContainer)
       })
 
       // OCR using tesseract
       Tesseract.recognize(dataUrl, 'eng', {}).then(({ data: { text } }) => {
         // Show the text in the page
-        textContainer.innerText = text
+        ocrTextBodyTextarea.innerText = text
       })
       // setTimeout(() => {
       //   document.body.removeChild(snip)
@@ -1167,18 +1424,20 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     //   `Storage key "${key}" in namespace "${namespace}" changed.`,
     //   `Old value was "${oldValue}", new value is "${newValue}".`
     // );
-    if (
-      (key === 'tooltipUnchecked' || key === 'tooltipDisabled') &&
-      newValue === true
-    ) {
-      imageTooltip.style.visibility = 'hidden' //hide imageTooltip
+    if (key === 'tooltipUnchecked' || key === 'tooltipDisabled') {
+      if (newValue === true) {
+        imageTooltip.style.visibility = 'hidden' //hide imageTooltip
+        screenSnipContainer.style.display = 'none'
 
-      //hide textTooltip
-      shadowElem.querySelector('#tooltipButton').classList.remove('expand')
-      setTimeout(() => {
-        textTooltip.style.visibility = 'hidden'
-        shadowRootContainer.style.zIndex = '-1'
-      }, 350)
+        //hide textTooltip
+        shadowElem.querySelector('#tooltipButton').classList.remove('expand')
+        setTimeout(() => {
+          textTooltip.style.visibility = 'hidden'
+          shadowRootContainer.style.zIndex = '-1'
+        }, 350)
+      } else {
+        screenSnipContainer.style.display = 'flex'
+      }
     } else if (key === 'currentTheme') {
       setTheme(newValue)
     }

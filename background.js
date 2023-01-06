@@ -41,9 +41,26 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       sendNotification('Failed', errorMessage)
     }
   } else if (request.message === 'screenshot') {
-    chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
+    chrome.tabs.captureVisibleTab(null, { format: 'png' }, async (dataUrl) => {
       // // open a new tab with the image
       // chrome.tabs.create({ url: dataUrl })
+      // send image to server get the page width and height
+
+      console.log('dataUrl=====================', dataUrl)
+      try {
+        // store data url ina an image
+        const img = new Image()
+        const width = img.width
+        const height = img.height
+
+        console.log('width', width)
+        console.log('height', height)
+
+        const message = await apiInsertImage(dataUrl, height, width)
+        sendNotification('Successful', message)
+      } catch (errorMessage) {
+        sendNotification('Failed', errorMessage)
+      }
       chrome.tabs.sendMessage(sender.tab.id, {
         message: 'screenshot',
         dataUrl: dataUrl,
@@ -57,6 +74,18 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         dim: request.dim,
       })
     })
+  } else if (request.message === 'saveImage') {
+    try {
+      console.log('saveImage')
+      const message = await apiInsertImage(
+        request.dataUrl,
+        request.height,
+        request.width
+      )
+      sendNotification('Successful', message)
+    } catch (errorMessage) {
+      sendNotification('Failed', errorMessage)
+    }
   } else if (request.message === 'ocr') {
     chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
       chrome.tabs.sendMessage(sender.tab.id, {
