@@ -1,5 +1,5 @@
-const domain = "https://simplify-note.vercel.app"; //prod
-// const domain = "http://localhost:3000" //dev
+// const domain = "https://simplifynote.app"; //prod
+const domain = "https://simplify-note.vercel.app" //dev
 
 const cssThemeVariables = {
   '--color-secondary': {
@@ -50,7 +50,11 @@ const cssThemeVariables = {
 
 let activeTab = 0;
 let activeStyle = 0;
+let user = null;
+let folderTree = null;
 let userStyle = null;
+let switchToTab = 0;
+let blockedTabList = [];
 const textStyles = ['heading', 'subheading', 'bullet', 'paragraph'];
 const fontColors = [];
 const highlightColors = [];
@@ -67,14 +71,12 @@ const signedOutContainer = document.querySelector('#signed-out');
 const signedInContainer = document.querySelector('#signed-in');
 const navbarTabs = document.querySelectorAll('.navbar-tab');
 const tabContents = document.querySelectorAll('.tab-content');
-// const currentlyEditingDocIcon = document.querySelector('.currently-editing-content #icon-document');
 const addNoteInput = document.querySelector('#addNoteInput');
 const tooltipButtons = document.querySelectorAll('.tooltip-button');
 const addNoteForm = document.querySelector('#addNoteForm');
 const tooltipSubmitMessage = document.querySelector('#tooltipSubmitMessage');
 const loadingMessage = document.querySelector('#tooltipLoadingMessage');
 const responseMessage = document.querySelector('#tooltipResponseMessage');
-// const logoutButton = document.querySelector('.profile-avatar #logout');
 const docIcons = document.querySelectorAll('.tab-content.notes .icon-box');
 const stylesListItems = document.querySelectorAll('.styles-sidebar .list .list-item');
 const createDocForm = tabContents[1].querySelector('#createDocForm')
@@ -101,7 +103,10 @@ addNoteForm.addEventListener("submit", async function (event) {
   loadingMessage.classList.add('show');
   this.elements['addNoteInput'].value = "";
   try {
-    const response = await apiInsertText(style, inputValue);
+    await apiCall(`/api/v1/insert/${style}`,
+      'POST',
+      { text: inputValue }
+    );
     loadingMessage.classList.remove('show');
     responseMessage.classList.add('show');
     for (let i = 0; i < tooltipButtons.length; i++) {
@@ -127,73 +132,90 @@ createDocForm.addEventListener("submit", async function (event) {
   openedDialogBoxes.forEach((box) => {
     box.classList.remove('show');
   });
-  await apiCreateDoc(name, parentFolderId);
-  const folderTree = await apiFetchFolderTree();
-  updateWorkspaceTab(folderTree);
-  navbarTabs[0].click();
-  pageLoad.style.visibility = 'hidden';
-  updateNotesTab(folderTree);
+  try {
+    await apiCall('/api/v1/dashboard/document',
+      'POST',
+      { name, parentFolderId });
+    switchToTab = 0
+    await render();
+  } catch (error) {
+    pageLoad.style.visibility = 'hidden';
+    sendNotification('Failure', error)
+  }
 });
 
 addDocForm.addEventListener("submit", async function (event) {
   event.preventDefault();
   const docURL = this.elements['docURL'].value;
-  const docID = docURL.match(/[-\w]{25,}(?!.*[-\w]{25,})/)[0];
+  const documentId = docURL.match(/[-\w]{25,}(?!.*[-\w]{25,})/)[0];
   const parentFolderId = tabContents[1].querySelector('.notes-container .icon-box[data-context="new"]').dataset.folderid
-  console.log(docURL, docID, parentFolderId);
+  console.log(docURL, documentId, parentFolderId);
   pageLoad.style.visibility = 'visible';
   const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
   openedDialogBoxes.forEach((box) => {
     box.classList.remove('show');
   });
-  await apiAddDoc(docID, parentFolderId);
-  const folderTree = await apiFetchFolderTree();
-  updateWorkspaceTab(folderTree);
-  navbarTabs[0].click();
-  pageLoad.style.visibility = 'hidden';
-  updateNotesTab(folderTree);
+  try {
+    await apiCall('/api/v1/dashboard/document/add',
+      'POST',
+      { documentId, parentFolderId });
+    switchToTab = 0
+    await render();
+  } catch (error) {
+    pageLoad.style.visibility = 'hidden';
+    sendNotification('Failure', error)
+  }
 });
 
 renameDocForm.addEventListener("submit", async function (event) {
   event.preventDefault();
   const name = this.elements['name'].value;
   const selectedDoc = tabContents[1].querySelector('.doc-card.selected');
-  const docID = selectedDoc.dataset.docid
+  const documentId = selectedDoc.dataset.docid
   pageLoad.style.visibility = 'visible';
   const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
   openedDialogBoxes.forEach((box) => {
     box.classList.remove('show');
   });
-  await apiRenameDoc(name, docID);
-  const folderTree = await apiFetchFolderTree();
-  updateWorkspaceTab(folderTree);
-  navbarTabs[0].click();
-  pageLoad.style.visibility = 'hidden';
-  updateNotesTab(folderTree);
+  try {
+    await apiCall('/api/v1/dashboard/document/',
+      'PATCH',
+      { name, documentId });
+    switchToTab = 1
+    await render();
+  } catch (error) {
+    pageLoad.style.visibility = 'hidden';
+    sendNotification('Failure', error)
+  }
 });
 
 
 deleteDocForm.addEventListener("submit", async function (event) {
   event.preventDefault();
   const selectedDoc = tabContents[1].querySelector('.doc-card.selected');
-  const docID = selectedDoc.dataset.docid
+  const documentId = selectedDoc.dataset.docid
   pageLoad.style.visibility = 'visible';
   const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
   openedDialogBoxes.forEach((box) => {
     box.classList.remove('show');
   });
-  await apiDeleteDoc(docID);
-  const folderTree = await apiFetchFolderTree();
-  updateWorkspaceTab(folderTree);
-  navbarTabs[0].click();
-  pageLoad.style.visibility = 'hidden';
-  updateNotesTab(folderTree);
+  try {
+    await apiCall('/api/v1/dashboard/document/',
+      'DELETE',
+      { documentId });
+    switchToTab = 1
+    await render();
+  } catch (error) {
+    pageLoad.style.visibility = 'hidden';
+    sendNotification('Failure', error)
+  }
 });
 
 docIcons.forEach((icon) => {
   icon.addEventListener('click', async () => {
 
     if (icon.dataset.context === 'new') {
+      tabContents[1].querySelector('.icon-box[data-context="new"]').classList.remove('bounce');
       showPopup(icon.dataset.context);
       return;
     }
@@ -208,12 +230,16 @@ docIcons.forEach((icon) => {
 
     if (icon.dataset.context === 'edit') {
       pageLoad.style.visibility = 'visible';
-      await apiEditDoc(selectedDoc.dataset.docid);
-      const folderTree = await apiFetchFolderTree();
-      updateWorkspaceTab(folderTree);
-      navbarTabs[0].click();
-      pageLoad.style.visibility = 'hidden';
-      updateNotesTab(folderTree);
+      try {
+        await apiCall('/api/v1/dashboard/document/edit',
+          'POST',
+          { documentId: selectedDoc.dataset.docid });
+        switchToTab = 0
+        await render();
+      } catch (error) {
+        pageLoad.style.visibility = 'hidden';
+        sendNotification('Failure', error)
+      }
       return;
     }
 
@@ -342,41 +368,37 @@ styleForms.forEach(form => {
     const buttonId = document.activeElement.id;
     console.log(buttonId);
     pageLoad.style.visibility = 'visible';
-    if (buttonId === 'submit') {
-      const style = textStyles[activeStyle]
-      const payload = {}
-      payload["fontFamily"] = styleForms[activeStyle].querySelector('#fontStyles').value;
-      styleForms[activeStyle].querySelectorAll('input[name="color"]').forEach(radioBtn => {
-        if (radioBtn.checked) payload["foregroundColor"] = hexToRgb(radioBtn.value);
-      });
-      styleForms[activeStyle].querySelectorAll('input[name="highlighter"]').forEach(radioBtn => {
-        if (radioBtn.checked) payload["backgroundColor"] = hexToRgb(radioBtn.value);
-      });
-      payload["bold"] = styleForms[activeStyle].querySelector('#bold').checked;
-      payload["italic"] = styleForms[activeStyle].querySelector('#italic').checked;
-      payload["underline"] = styleForms[activeStyle].querySelector('#underline').checked;
-      if (style === 'bullet') {
-        payload["bulletPreset"] = styleForms[activeStyle].querySelector('#bulletStyles').value;
+    try {
+      switchToTab = 2
+      if (buttonId === 'submit') {
+        const style = textStyles[activeStyle]
+        const payload = {}
+        payload["fontFamily"] = styleForms[activeStyle].querySelector('#fontStyles').value;
+        styleForms[activeStyle].querySelectorAll('input[name="color"]').forEach(radioBtn => {
+          if (radioBtn.checked) payload["foregroundColor"] = hexToRgb(radioBtn.value);
+        });
+        styleForms[activeStyle].querySelectorAll('input[name="highlighter"]').forEach(radioBtn => {
+          if (radioBtn.checked) payload["backgroundColor"] = hexToRgb(radioBtn.value);
+        });
+        payload["bold"] = styleForms[activeStyle].querySelector('#bold').checked;
+        payload["italic"] = styleForms[activeStyle].querySelector('#italic').checked;
+        payload["underline"] = styleForms[activeStyle].querySelector('#underline').checked;
+        if (style === 'bullet') {
+          payload["bulletPreset"] = styleForms[activeStyle].querySelector('#bulletStyles').value;
+        }
+        console.log(payload);
+        await apiCall(`/api/v1/style/${style}`, 'POST', payload);
+      } else {
+        const style = textStyles[activeStyle];
+        await apiCall(`/api/v1/style/${style}/reset`, 'POST', {});
       }
-      console.log(payload);
-      await apiUpdateUserStyle(style, payload);
-    } else {
-      const style = textStyles[activeStyle]
-      await apiResetUserStyle(style);
+      await render();
+    } catch (error) {
+      pageLoad.style.visibility = 'hidden';
+      sendNotification('Failure', error)
     }
-    userStyle = await apiFetchUserStyle();
-    updateStylesTab();
-    pageLoad.style.visibility = 'hidden';
   });
 })
-
-
-
-// for (let i = 0; i < tooltipButtons.length; i++) {
-//   tooltipButtons[i].addEventListener('submit', function(){
-
-//   })
-// };
 
 document.querySelector('#icon-linkedin').addEventListener('click', function () {
   window.open('https://www.linkedin.com/company/simplify-notes/', '_blank');
@@ -411,40 +433,54 @@ document.querySelector('input[name=toggle-switch-input]').addEventListener('clic
 
 noAvatar.addEventListener('click', redirectToSignInPage);
 
-// logoutButton.addEventListener('click', async () => {
-//   try {
-//     return await logoutAndRefreshPopup();
-//   } catch (error) {
-//     return sendNotification('failure', error);
-//   }
-// });
-
 document.querySelector('#sign-in-button').addEventListener('click', redirectToSignInPage);
 
 // Functions
 
 async function render() {
   try {
-    await setTheme();
-
+    setTheme();
     const tooltipUnchecked = await getTooltipUnchecked();
     if (tooltipUnchecked) uncheckTooltipSwitch(true);
-
     const userIsSignedIn = await isSignedIn();
-
     if (!userIsSignedIn) {
       pageLoad.style.visibility = 'hidden';
       return;
     }
-
-    const user = await apiFetchUser();
-    const folderTree = await apiFetchFolderTree();
-    userStyle = await apiFetchUserStyle();
-
-
-    await signInAndRefreshPopup(user, folderTree);
+    try {
+      blockedTabList = []
+      user = await apiCall('/api/v1/users/showMe', 'GET', {});
+      folderTree = await apiCall('/api/v1/dashboard/folder-tree', 'GET', {});
+      userStyle = await apiCall('/api/v1/style', 'GET', {});
+      console.log(user);
+      console.log(folderTree);
+      console.log(userStyle);
+      if (!user.googleRefreshToken || user.googleRefreshToken === '') {
+        blockedTabList.push(0);
+        blockedTabList.push(1);
+        switchToTab = 3;
+        tabContents[3].querySelector('#googleDriveAccess').classList.add('bounce');
+      }
+      else if (!user.currentDocID || user.currentDocID === '') {
+        blockedTabList.push(0);
+        switchToTab = 1;
+        tabContents[1].querySelector('.icon-box[data-context="new"]').classList.add('bounce');
+      }
+      if (switchToTab !== 3) tabContents[3].querySelector('#googleDriveAccess').classList.remove('bounce');
+      if (switchToTab !== 1) tabContents[1].querySelector('.icon-box[data-context="new"]').classList.remove('bounce');
+      console.log('switchToTab', switchToTab)
+      if (switchToTab !== -1) navbarTabs[switchToTab].click();
+      updateAvatar(true);
+      updateProfileTab();
+      updateContentBox(true);
+      await updateTooltipSwitch();
+      updateWorkspaceTab();
+      updateNotesTab();
+      updateStylesTab();
+    } catch (errMsg) {
+      sendNotification('Failure', errMsg)
+    }
     pageLoad.style.visibility = 'hidden';
-
   } catch (error) {
     sendNotification('failure', error);
   }
@@ -581,287 +617,305 @@ function isSignedIn() {
   });
 }
 
-
-function apiFetchUser() {
+function apiCall(pathSuffix, method, payload) {
+  const endpoint = `${domain}${pathSuffix}`;
+  const reqObj = {};
+  if (method !== 'GET') {
+    reqObj.method = method;
+    reqObj.headers = {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    };
+    reqObj.body = JSON.stringify(payload);
+  }
   return new Promise((resolve, reject) => {
-    const user = {};
-    fetch(`${domain}/api/v1/users/showMe`, {})
-      .then((res) => {
-        res.json()
-          .then((res) => {
-            resolve(res.user);
-          })
-          .catch((error) => {
-            reject('From apiFetchUser ' + error);
-          });
+    fetch(endpoint, reqObj)
+      .then(async (res) => {
+        if (!res.ok) {
+          console.log(await res.json());
+          throw new Error(`Something went wrong. Please try again later.`)
+        };
+        return res.json();
       })
-      .catch((error) => {
-        reject('From apiFetchUser ' + error);
-      });
+      .then((data) => { resolve(data) })
+      .catch((error) => { reject(error) });
   });
 }
 
-function apiLogoutUser() {
-  return new Promise((resolve, reject) => {
-    fetch(`${domain}/api/v1/auth/logout`, {})
-      .then((res) => {
-        res.json()
-          .then((res) => {
-            resolve();
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      })
-      .catch((error) => {
-        reject('From logout user ' + error);
-      });
-  });
-}
 
-function apiFetchFolderTree() {
-  return new Promise((resolve, reject) => {
-    const user = {};
-    fetch(`${domain}/api/v1/dashboard/folder-tree`, {})
-      .then((res) => {
-        res.json()
-          .then((res) => {
-            resolve(res);
-          })
-          .catch((error) => {
-            reject('From apiFetchFolderTree ' + error);
-          });
-      })
-      .catch((error) => {
-        reject('From apiFetchFolderTree ' + error);
-      });
-  });
-}
+// function apiFetchUser() {
+//   return new Promise((resolve, reject) => {
+//     const user = {};
+//     fetch(`${domain}/api/v1/users/showMe`, {})
+//       .then((res) => {
+//         res.json()
+//           .then((res) => {
+//             resolve(res.user);
+//           })
+//           .catch((error) => {
+//             reject('From apiFetchUser ' + error);
+//           });
+//       })
+//       .catch((error) => {
+//         reject('From apiFetchUser ' + error);
+//       });
+//   });
+// }
 
-function apiFetchUserStyle() {
-  return new Promise((resolve, reject) => {
-    const user = {};
-    fetch(`${domain}/api/v1/style`, {})
-      .then((res) => {
-        res.json()
-          .then((res) => {
-            resolve(res);
-          })
-          .catch((error) => {
-            reject('From apiFetchStyle ' + error);
-          });
-      })
-      .catch((error) => {
-        reject('From apiFetchStyle ' + error);
-      });
-  });
-}
+// function apiLogoutUser() {
+//   return new Promise((resolve, reject) => {
+//     fetch(`${domain}/api/v1/auth/logout`, {})
+//       .then((res) => {
+//         res.json()
+//           .then((res) => {
+//             resolve();
+//           })
+//           .catch((error) => {
+//             reject(error);
+//           });
+//       })
+//       .catch((error) => {
+//         reject('From logout user ' + error);
+//       });
+//   });
+// }
 
-function apiUpdateUserStyle(style, payload) {
-  return new Promise((resolve, reject) => {
-    fetch(`${domain}/api/v1/style/${style}`, {
-      method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    }).then((res) => {
-      res.json().then((res) => {
-        resolve(res);
-      }).catch((error) => {
-        reject(error);
-      });
-    }).catch((error) => {
-      reject(error);
-    });
-  });
-}
+// function apiFetchFolderTree() {
+//   return new Promise((resolve, reject) => {
+//     const user = {};
+//     fetch(`${domain}/api/v1/dashboard/folder-tree`, {})
+//       .then((res) => {
+//         res.json()
+//           .then((res) => {
+//             resolve(res);
+//           })
+//           .catch((error) => {
+//             reject('From apiFetchFolderTree ' + error);
+//           });
+//       })
+//       .catch((error) => {
+//         reject('From apiFetchFolderTree ' + error);
+//       });
+//   });
+// }
 
-function apiResetUserStyle(style) {
-  return new Promise((resolve, reject) => {
-    fetch(`${domain}/api/v1/style/${style}/reset`, {
-      method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({}),
-    }).then((res) => {
-      res.json().then((res) => {
-        resolve(res);
-      }).catch((error) => {
-        reject(error);
-      });
-    }).catch((error) => {
-      reject(error);
-    });
-  });
-}
+// function apiFetchUserStyle() {
+//   return new Promise((resolve, reject) => {
+//     const user = {};
+//     fetch(`${domain}/api/v1/style`, {})
+//       .then((res) => {
+//         res.json()
+//           .then((res) => {
+//             resolve(res);
+//           })
+//           .catch((error) => {
+//             reject('From apiFetchStyle ' + error);
+//           });
+//       })
+//       .catch((error) => {
+//         reject('From apiFetchStyle ' + error);
+//       });
+//   });
+// }
 
-function apiCreateDoc(name, parentFolderId) {
-  return new Promise((resolve, reject) => {
-    fetch(`${domain}/api/v1/dashboard/document`, {
-      method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        parentFolderId
-      }),
-    }).then((res) => {
-      res.json().then((res) => {
-        resolve(res);
-      }).catch((error) => {
-        reject(error);
-      });
-    }).catch((error) => {
-      reject(error);
-    });
-  });
-}
+// function apiUpdateUserStyle(style, payload) {
+//   return new Promise((resolve, reject) => {
+//     fetch(`${domain}/api/v1/style/${style}`, {
+//       method: "POST",
+//       headers: {
+//         "Accept": "application/json",
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(payload),
+//     }).then((res) => {
+//       res.json().then((res) => {
+//         resolve(res);
+//       }).catch((error) => {
+//         reject(error);
+//       });
+//     }).catch((error) => {
+//       reject(error);
+//     });
+//   });
+// }
 
-function apiAddDoc(documentId, parentFolderId) {
-  return new Promise((resolve, reject) => {
-    fetch(`${domain}/api/v1/dashboard/document/add`, {
-      method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        documentId,
-        parentFolderId
-      }),
-    }).then((res) => {
-      res.json().then((res) => {
-        resolve(res);
-      }).catch((error) => {
-        reject(error);
-      });
-    }).catch((error) => {
-      reject(error);
-    });
-  });
-}
+// function apiResetUserStyle(style) {
+//   return new Promise((resolve, reject) => {
+//     fetch(`${domain}/api/v1/style/${style}/reset`, {
+//       method: "POST",
+//       headers: {
+//         "Accept": "application/json",
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({}),
+//     }).then((res) => {
+//       res.json().then((res) => {
+//         resolve(res);
+//       }).catch((error) => {
+//         reject(error);
+//       });
+//     }).catch((error) => {
+//       reject(error);
+//     });
+//   });
+// }
 
-function apiEditDoc(documentId) {
-  return new Promise((resolve, reject) => {
-    fetch(`${domain}/api/v1/dashboard/document/edit`, {
-      method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        documentId
-      }),
-    }).then((res) => {
-      res.json().then((res) => {
-        resolve(res);
-      }).catch((error) => {
-        reject(error);
-      });
-    }).catch((error) => {
-      reject(error);
-    });
-  });
-}
+// function apiCreateDoc(name, parentFolderId) {
+//   return new Promise((resolve, reject) => {
+//     fetch(`${domain}/api/v1/dashboard/document`, {
+//       method: "POST",
+//       headers: {
+//         "Accept": "application/json",
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         name,
+//         parentFolderId
+//       }),
+//     }).then((res) => {
+//       res.json().then((res) => {
+//         resolve(res);
+//       }).catch((error) => {
+//         reject(error);
+//       });
+//     }).catch((error) => {
+//       reject(error);
+//     });
+//   });
+// }
 
-function apiRenameDoc(name, documentId) {
-  return new Promise((resolve, reject) => {
-    fetch(`${domain}/api/v1/dashboard/document`, {
-      method: "PATCH",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        documentId
-      }),
-    }).then((res) => {
-      res.json().then((res) => {
-        resolve(res);
-      }).catch((error) => {
-        reject(error);
-      });
-    }).catch((error) => {
-      reject(error);
-    });
-  });
-}
+// function apiAddDoc(documentId, parentFolderId) {
+//   return new Promise((resolve, reject) => {
+//     fetch(`${domain}/api/v1/dashboard/document/add`, {
+//       method: "POST",
+//       headers: {
+//         "Accept": "application/json",
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         documentId,
+//         parentFolderId
+//       }),
+//     }).then((res) => {
+//       res.json().then((res) => {
+//         resolve(res);
+//       }).catch((error) => {
+//         reject(error);
+//       });
+//     }).catch((error) => {
+//       reject(error);
+//     });
+//   });
+// }
 
-function apiDeleteDoc(documentId) {
-  return new Promise((resolve, reject) => {
-    fetch(`${domain}/api/v1/dashboard/document`, {
-      method: "DELETE",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        documentId
-      }),
-    }).then((res) => {
-      res.json().then((res) => {
-        resolve(res);
-      }).catch((error) => {
-        reject(error);
-      });
-    }).catch((error) => {
-      reject(error);
-    });
-  });
-}
+// function apiEditDoc(documentId) {
+//   return new Promise((resolve, reject) => {
+//     fetch(`${domain}/api/v1/dashboard/document/edit`, {
+//       method: "POST",
+//       headers: {
+//         "Accept": "application/json",
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         documentId
+//       }),
+//     }).then((res) => {
+//       res.json().then((res) => {
+//         resolve(res);
+//       }).catch((error) => {
+//         reject(error);
+//       });
+//     }).catch((error) => {
+//       reject(error);
+//     });
+//   });
+// }
 
-function apiInsertText(style, text) {
-  return new Promise((resolve, reject) => {
-    fetch(`${domain}/api/v1/insert/${style}`, {
-      method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        text
-      }),
-    }).then((res) => {
-      if (res.ok) {
-        resolve(`${toTitleCase(style)} successfully inserted to the document`);
-      }
-      reject(res.statusText);
-    }).catch((error) => {
-      reject(error.message);
-    });
-  });
-}
+// function apiRenameDoc(name, documentId) {
+//   return new Promise((resolve, reject) => {
+//     fetch(`${domain}/api/v1/dashboard/document`, {
+//       method: "PATCH",
+//       headers: {
+//         "Accept": "application/json",
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         name,
+//         documentId
+//       }),
+//     }).then((res) => {
+//       res.json().then((res) => {
+//         resolve(res);
+//       }).catch((error) => {
+//         reject(error);
+//       });
+//     }).catch((error) => {
+//       reject(error);
+//     });
+//   });
+// }
+
+// function apiDeleteDoc(documentId) {
+//   return new Promise((resolve, reject) => {
+//     fetch(`${domain}/api/v1/dashboard/document`, {
+//       method: "DELETE",
+//       headers: {
+//         "Accept": "application/json",
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         documentId
+//       }),
+//     }).then((res) => {
+//       res.json().then((res) => {
+//         resolve(res);
+//       }).catch((error) => {
+//         reject(error);
+//       });
+//     }).catch((error) => {
+//       reject(error);
+//     });
+//   });
+// }
+
+// function apiInsertText(style, text) {
+//   return new Promise((resolve, reject) => {
+//     fetch(`${domain}/api/v1/insert/${style}`, {
+//       method: "POST",
+//       headers: {
+//         "Accept": "application/json",
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         text
+//       }),
+//     }).then((res) => {
+//       if (res.ok) {
+//         resolve(`${toTitleCase(style)} successfully inserted to the document`);
+//       }
+//       reject(res.statusText);
+//     }).catch((error) => {
+//       reject(error.message);
+//     });
+//   });
+// }
 
 function toTitleCase(txt) {
   return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 }
 
 async function signInAndRefreshPopup(user, folderTree) {
-  console.log(user);
-  console.log(folderTree);
-  if (!user.currentDocID || user.currentDocID === '') {
-    pageLoad.style.visibility = 'hidden';
-  }
-  updateAvatar(true, user.image);
-  updateProfileTab(user);
-  updateContentBox(true, user);
-  await updateTooltipSwitch(user.currentDocID);
-  updateWorkspaceTab(folderTree);
-  updateNotesTab(folderTree);
-  updateStylesTab();
+
   return;
 }
 
 async function logoutAndRefreshPopup() {
   pageLoad.style.visibility = 'visible';
-  await apiLogoutUser();
+  try {
+    await apiCall('/api/v1/auth/logout', 'GET', {});
+  } catch (errMsg) {
+    sendNotification('Failure', errMsg)
+  }
   updateAvatar();
   updateContentBox();
   disableTooltipSwitch(true);
@@ -869,16 +923,16 @@ async function logoutAndRefreshPopup() {
   pageLoad.style.visibility = 'hidden';
 }
 
-function updateAvatar(userIsSignedIn = false, imageSrc = null) {
+function updateAvatar(userIsSignedIn = false) {
   if (userIsSignedIn) {
-    userAvatar.src = imageSrc;
+    userAvatar.src = user?.image;
     toggleDisplay(noAvatar, userAvatar, "inline");
     return;
   }
   return toggleDisplay(userAvatar, noAvatar, "inline");
 }
 
-function updateContentBox(userIsSignedIn = false, user = null) {
+function updateContentBox(userIsSignedIn = false) {
   if (userIsSignedIn) {
     toggleDisplay(signedOutContainer, signedInContainer, "flex");
     return;
@@ -886,8 +940,8 @@ function updateContentBox(userIsSignedIn = false, user = null) {
   return toggleDisplay(signedInContainer, signedOutContainer, "flex");
 }
 
-async function updateTooltipSwitch(currentDocID) {
-  if (!currentDocID || currentDocID === "") {
+async function updateTooltipSwitch() {
+  if (!user?.currentDocID || user?.currentDocID === "") {
     disableTooltipSwitch(true);
     await storeTooltipDisabled(true);
   }
@@ -896,7 +950,8 @@ async function updateTooltipSwitch(currentDocID) {
   }
 }
 
-function updateWorkspaceTab(folderTree) {
+function updateWorkspaceTab() {
+  if (!folderTree) return;
   const workspaceTab = tabContents[0];
   const rootId = folderTree.rootId;
   console.log('root ' + rootId);
@@ -928,7 +983,8 @@ function updateWorkspaceTab(folderTree) {
   docModified.innerHTML = dateModified ? dateModified : '';
 }
 
-function updateNotesTab(folderTree) {
+function updateNotesTab() {
+  if (!folderTree) return;
   const notesTab = tabContents[1];
   const rootFolderId = folderTree.rootId;
   const docsContainer = notesTab.querySelector('.notes-container .docs-container');
@@ -977,6 +1033,7 @@ function updateNotesTab(folderTree) {
 }
 
 function updateStylesTab() {
+  if (!userStyle) return;
   const activeStyleButton = stylesListItems[activeStyle];
   activeStyleButton.click();
   for (const index in textStyles) {
@@ -1002,7 +1059,8 @@ function updateStylesTab() {
 }
 
 
-function updateProfileTab(user) {
+function updateProfileTab() {
+  console.log('uswttevh', user.subscription);
   const profileTab = tabContents[3];
   const dateStr = getFormattedDate(user.subscription.expiry_date);
   profileTab.querySelector('#avatar').src = user.image;
@@ -1047,6 +1105,7 @@ function showPopup(context) {
 }
 
 function navTabsClickAndEnter(index) {
+  if (index in blockedTabList) return;
   navbarTabs[activeTab].classList.remove('active');
   navbarTabs[activeTab].tabIndex = 0;
   tabContents[activeTab].classList.remove('active');
