@@ -642,264 +642,6 @@ function apiCall(pathSuffix, method, payload) {
   });
 }
 
-
-// function apiFetchUser() {
-//   return new Promise((resolve, reject) => {
-//     const user = {};
-//     fetch(`${domain}/api/v1/users/showMe`, {})
-//       .then((res) => {
-//         res.json()
-//           .then((res) => {
-//             resolve(res.user);
-//           })
-//           .catch((error) => {
-//             reject('From apiFetchUser ' + error);
-//           });
-//       })
-//       .catch((error) => {
-//         reject('From apiFetchUser ' + error);
-//       });
-//   });
-// }
-
-// function apiLogoutUser() {
-//   return new Promise((resolve, reject) => {
-//     fetch(`${domain}/api/v1/auth/logout`, {})
-//       .then((res) => {
-//         res.json()
-//           .then((res) => {
-//             resolve();
-//           })
-//           .catch((error) => {
-//             reject(error);
-//           });
-//       })
-//       .catch((error) => {
-//         reject('From logout user ' + error);
-//       });
-//   });
-// }
-
-// function apiFetchFolderTree() {
-//   return new Promise((resolve, reject) => {
-//     const user = {};
-//     fetch(`${domain}/api/v1/dashboard/folder-tree`, {})
-//       .then((res) => {
-//         res.json()
-//           .then((res) => {
-//             resolve(res);
-//           })
-//           .catch((error) => {
-//             reject('From apiFetchFolderTree ' + error);
-//           });
-//       })
-//       .catch((error) => {
-//         reject('From apiFetchFolderTree ' + error);
-//       });
-//   });
-// }
-
-// function apiFetchUserStyle() {
-//   return new Promise((resolve, reject) => {
-//     const user = {};
-//     fetch(`${domain}/api/v1/style`, {})
-//       .then((res) => {
-//         res.json()
-//           .then((res) => {
-//             resolve(res);
-//           })
-//           .catch((error) => {
-//             reject('From apiFetchStyle ' + error);
-//           });
-//       })
-//       .catch((error) => {
-//         reject('From apiFetchStyle ' + error);
-//       });
-//   });
-// }
-
-// function apiUpdateUserStyle(style, payload) {
-//   return new Promise((resolve, reject) => {
-//     fetch(`${domain}/api/v1/style/${style}`, {
-//       method: "POST",
-//       headers: {
-//         "Accept": "application/json",
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(payload),
-//     }).then((res) => {
-//       res.json().then((res) => {
-//         resolve(res);
-//       }).catch((error) => {
-//         reject(error);
-//       });
-//     }).catch((error) => {
-//       reject(error);
-//     });
-//   });
-// }
-
-// function apiResetUserStyle(style) {
-//   return new Promise((resolve, reject) => {
-//     fetch(`${domain}/api/v1/style/${style}/reset`, {
-//       method: "POST",
-//       headers: {
-//         "Accept": "application/json",
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({}),
-//     }).then((res) => {
-//       res.json().then((res) => {
-//         resolve(res);
-//       }).catch((error) => {
-//         reject(error);
-//       });
-//     }).catch((error) => {
-//       reject(error);
-//     });
-//   });
-// }
-
-// function apiCreateDoc(name, parentFolderId) {
-//   return new Promise((resolve, reject) => {
-//     fetch(`${domain}/api/v1/dashboard/document`, {
-//       method: "POST",
-//       headers: {
-//         "Accept": "application/json",
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         name,
-//         parentFolderId
-//       }),
-//     }).then((res) => {
-//       res.json().then((res) => {
-//         resolve(res);
-//       }).catch((error) => {
-//         reject(error);
-//       });
-//     }).catch((error) => {
-//       reject(error);
-//     });
-//   });
-// }
-
-// function apiAddDoc(documentId, parentFolderId) {
-//   return new Promise((resolve, reject) => {
-//     fetch(`${domain}/api/v1/dashboard/document/add`, {
-//       method: "POST",
-//       headers: {
-//         "Accept": "application/json",
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         documentId,
-//         parentFolderId
-//       }),
-//     }).then((res) => {
-//       res.json().then((res) => {
-//         resolve(res);
-//       }).catch((error) => {
-//         reject(error);
-//       });
-//     }).catch((error) => {
-//       reject(error);
-//     });
-//   });
-// }
-
-// function apiEditDoc(documentId) {
-//   return new Promise((resolve, reject) => {
-//     fetch(`${domain}/api/v1/dashboard/document/edit`, {
-//       method: "POST",
-//       headers: {
-//         "Accept": "application/json",
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         documentId
-//       }),
-//     }).then((res) => {
-//       res.json().then((res) => {
-//         resolve(res);
-//       }).catch((error) => {
-//         reject(error);
-//       });
-//     }).catch((error) => {
-//       reject(error);
-//     });
-//   });
-// }
-
-// function apiRenameDoc(name, documentId) {
-//   return new Promise((resolve, reject) => {
-//     fetch(`${domain}/api/v1/dashboard/document`, {
-//       method: "PATCH",
-//       headers: {
-//         "Accept": "application/json",
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         name,
-//         documentId
-//       }),
-//     }).then((res) => {
-//       res.json().then((res) => {
-//         resolve(res);
-//       }).catch((error) => {
-//         reject(error);
-//       });
-//     }).catch((error) => {
-//       reject(error);
-//     });
-//   });
-// }
-
-// function apiDeleteDoc(documentId) {
-//   return new Promise((resolve, reject) => {
-//     fetch(`${domain}/api/v1/dashboard/document`, {
-//       method: "DELETE",
-//       headers: {
-//         "Accept": "application/json",
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         documentId
-//       }),
-//     }).then((res) => {
-//       res.json().then((res) => {
-//         resolve(res);
-//       }).catch((error) => {
-//         reject(error);
-//       });
-//     }).catch((error) => {
-//       reject(error);
-//     });
-//   });
-// }
-
-// function apiInsertText(style, text) {
-//   return new Promise((resolve, reject) => {
-//     fetch(`${domain}/api/v1/insert/${style}`, {
-//       method: "POST",
-//       headers: {
-//         "Accept": "application/json",
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         text
-//       }),
-//     }).then((res) => {
-//       if (res.ok) {
-//         resolve(`${toTitleCase(style)} successfully inserted to the document`);
-//       }
-//       reject(res.statusText);
-//     }).catch((error) => {
-//       reject(error.message);
-//     });
-//   });
-// }
-
 function toTitleCase(txt) {
   return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 }
@@ -968,12 +710,6 @@ function updateWorkspaceTab() {
   const docName = workspaceTab.querySelector('.doc-details .doc-name .value');
   const docCreated = workspaceTab.querySelector('.doc-details .doc-created .value');
   const docModified = workspaceTab.querySelector('.doc-details .doc-modified .value');
-
-  // if (!currDocObj) {
-  //   sendNotification('Failure', 'Something went wrong while fetching current document details. Please try again.');
-  //   return;
-  // }
-  console.log('cuu', currDocObj);
   const dateCreated = getFormattedDate(currDocObj?.createdAt);
   const dateModified = getFormattedDate(currDocObj?.updatedAt);
   docIcon.dataset.docid = currDocId ? currDocId : '';
@@ -989,7 +725,7 @@ function updateNotesTab() {
   const rootFolderId = folderTree.rootId;
   const docsContainer = notesTab.querySelector('.notes-container .docs-container');
   docsContainer.innerHTML = ""; //clear doc container before updating
-  const docEditIcons = [...notesTab.querySelectorAll('.icon-box')].splice(1);
+  // const docEditIcons = [...notesTab.querySelectorAll('.icon-box')].splice(1);
   const docNewIcon = notesTab.querySelector('.icon-box[data-context="new"]');
   docNewIcon.dataset.folderid = rootFolderId;
   const docElem = document.createElement('div');
@@ -1020,7 +756,12 @@ function updateNotesTab() {
         box.classList.remove('show');
       });
     })
-    docsContainer.appendChild(docClone);
+    if (folderTree.documents[docId].currentlyEditing) {
+      docClone.classList.add('active');
+      docsContainer.prepend(docClone);
+    } else {
+      docsContainer.append(docClone);
+    }
   }
   docsContainer.addEventListener('click', () => {
     const selectedDoc = docsContainer.querySelector('.doc-card.selected');
