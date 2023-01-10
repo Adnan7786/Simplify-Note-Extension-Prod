@@ -139,10 +139,19 @@ screenSnipContainer.addEventListener('mousedown', () => {
 
   // now change the position of the screenSnipContainer with the mouse position
   screenSnipContainer.addEventListener('dragend', (e) => {
+    sliderContainer.style.display = 'none'
     screenSnipContainer.style.top = e.clientY + 'px'
     sliderContainer.style.top = e.clientY + 'px'
     console.log('mouse', e.clientX, e.clientY)
   })
+})
+
+screenSnipContainer.addEventListener('mouseup', () => {
+  screenSnipContainer.draggable = false
+  sliderContainer.style.display = 'flex'
+
+  screenSnipContainer.style.cursor = 'grab'
+  console.log('mouse on mouse up')
 })
 
 // Create a screenshot button
