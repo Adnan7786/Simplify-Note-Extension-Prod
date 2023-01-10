@@ -48,15 +48,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
       console.log('dataUrl=====================', dataUrl)
       try {
-        // store data url ina an image
-        const img = new Image()
-        const width = img.width
-        const height = img.height
-
-        console.log('width', width)
-        console.log('height', height)
-
-        const message = await apiInsertImage(dataUrl, height, width)
+        const message = await apiInsertImage(dataUrl, 50, 50)
         sendNotification('Successful', message)
       } catch (errorMessage) {
         sendNotification('Failed', errorMessage)

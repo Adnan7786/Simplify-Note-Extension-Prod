@@ -51,139 +51,173 @@ function handleResponse(res) {
 }
 
 // Create a container with the three buttons (screenshot, snip, and ocr) at the bottom left of the screen
+
+const containAllSnips = document.createElement('div')
+containAllSnips.id = 'containAllSnips'
+containAllSnips.style.display = 'flex'
+containAllSnips.style.flexDirection = 'column'
+containAllSnips.style.alignItems = 'center'
+containAllSnips.style.justifyContent = 'center'
+
 const screenSnipContainer = document.createElement('div')
 screenSnipContainer.id = 'screenSnipContainer'
-screenSnipContainer.style.position = 'fixed'
-screenSnipContainer.style.zIndex = '10000'
-screenSnipContainer.style.bottom = '0px'
-screenSnipContainer.style.left = '0px'
-screenSnipContainer.style.margin = '10px'
-screenSnipContainer.style.padding = '6px'
 
-// add padding to left anf right of
-screenSnipContainer.style.paddingLeft = '10px'
-screenSnipContainer.style.paddingRight = '10px'
-screenSnipContainer.style.display = 'flex'
-screenSnipContainer.style.flexDirection = 'row'
-screenSnipContainer.style.alignItems = 'center'
-screenSnipContainer.style.justifyContent = 'center'
-screenSnipContainer.style.width = '120px'
-screenSnipContainer.style.height = '40px'
-screenSnipContainer.style.backgroundColor = 'black'
-screenSnipContainer.style.color = 'white'
-screenSnipContainer.style.borderRadius = '30px'
-screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(255,255,255,1)'
-screenSnipContainer.style.transition = 'all 0.3s ease-in-out'
-screenSnipContainer.style.cursor = 'pointer'
+// on hover make a box slide in from right with three buttons
+screenSnipContainer.innerHTML = `
+<style>
+#screenSnipContainer {
+  position: fixed;
+  z-index: 10002;
+  bottom: 0px;
+  left: 0px;
+  margin: 10px;
+  display: flex;
+  flex-direction: row;
+  padding: 8px;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: grey;
+  color: white;
+  border-radius: 30px;
+  box-shadow: 0px 0px 10px 0px rgba(255,255,255,1);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  border-radius: 50%;
+  background-image: url(${chrome.runtime.getURL('src/icons/tooltip-logo.png')});
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  outline: none;
+  margin: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+}    
+</style>
+`
 
-// add a small box at right of the screenSnipContainerfor mouse holding with a button
-const mouseHoldContainer = document.createElement('div')
-// set image in background
-mouseHoldContainer.style.backgroundImage =
-  'url(' + chrome.runtime.getURL('src/icons/drag.png') + ')'
-mouseHoldContainer.style.backgroundSize = 'contain'
-// mouseHoldContainer.style.backgroundRepeat = 'no-repeat'
-mouseHoldContainer.id = 'mouseHoldContainer'
-mouseHoldContainer.style.width = '30px'
-mouseHoldContainer.style.height = '30px'
-mouseHoldContainer.title = 'Hold to drag'
-// mouseHoldContainer.style.backgroundColor = 'white'
-// mouseHoldContainer.style.marginRight = '10px'
-mouseHoldContainer.style.cursor = 'pointer'
+const sliderContainer = document.createElement('div')
+sliderContainer.id = 'sliderContainer'
+sliderContainer.innerHTML = `
+<style>
+#sliderContainer {
+  position: fixed;
+  z-index: 10000;
+  bottom: 0px;
+  left: 40px;
+  margin: 10px;
+  padding: 6px;
+  padding-left: 15px;
+  padding-right: 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 0px;
+  height: 30px;
+  background-color: black;
+  color: white;
+  border-radius: 0px 30px 30px 0px;
+  box-shadow: 0px 0px 10px 0px rgba(255,255,255,1);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  overflow: hidden;
+  visibility: hidden;
+}
+</style>
+`
 
 // when button is pressed it will mkae the screenSnipContainer to be draggable and chage the position of the screenSnipContainer with the mouse position
-mouseHoldContainer.addEventListener('mousedown', () => {
+screenSnipContainer.addEventListener('mousedown', () => {
   // now make the screenSnipContainer to be draggable
   screenSnipContainer.draggable = true
-  mouseHoldContainer.style.cursor = 'grabbing'
+  screenSnipContainer.style.cursor = 'grabbing'
   console.log('mouse on mouse down')
 
   // now change the position of the screenSnipContainer with the mouse position
   screenSnipContainer.addEventListener('dragend', (e) => {
-    // screenSnipContainer.style.left = e.clientX + 'px'
     screenSnipContainer.style.top = e.clientY + 'px'
+    sliderContainer.style.top = e.clientY + 'px'
     console.log('mouse', e.clientX, e.clientY)
   })
 })
 
-// // when button is released it will make the screenSnipContainer to be not draggable and change the cursor to pointer
-// mouseHoldContainer.addEventListener('mouseup', (e) => {
-//   // set the screenSnipContainer top position with mouse position
-//   screenSnipContainer.style.top = e.clientY + 'px'
-//   screenSnipContainer.style.left = e.clientX + 'px'
-//   console.log('mouse on mouse up')
-//   // mouseHoldContainer.draggable = false
-//   mouseHoldContainer.style.cursor = 'pointer'
-// })
-
-// change the theme same as the theme of the tooltipContainer
-// chrome.storage.sync.get(['theme'], function (result) {
-//   if (result.theme === 'light') {
-//     screenSnipContainer.style.backgroundColor = 'white'
-//     screenSnipContainer.style.color = 'black'
-//   }
-// })
-
 // Create a screenshot button
 const screenshotButton = document.createElement('button')
 screenshotButton.id = 'screenshotButton'
-screenshotButton.style.width = '40px'
-screenshotButton.style.height = '40px'
-screenshotButton.title = 'Take a screenshot'
-// screenshotButton.style.borderRadius = '10px'
-screenshotButton.style.backgroundColor = 'transparent'
-screenshotButton.style.border = 'none'
-screenshotButton.style.outline = 'none'
-screenshotButton.style.margin = '5px'
-screenshotButton.style.cursor = 'pointer'
-screenshotButton.style.transition = 'all 0.3s ease-in-out'
-// screenshotButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
-screenshotButton.style.backgroundImage =
-  'url(' + chrome.runtime.getURL('src/icons/screenshot.png') + ')'
-screenshotButton.style.backgroundSize = 'contain'
-screenshotButton.style.padding = '5px'
-screenshotButton.style.backgroundRepeat = 'no-repeat'
-screenshotButton.style.backgroundPosition = 'center'
-screenSnipContainer.style.justifyContent = 'space-around'
+screenshotButton.innerHTML = `
+<style>
+#screenshotButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  margin: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+  background-image: url(${chrome.runtime.getURL('src/icons/screenshot.png')});
 
-// add entrance animation on hover of container
-// screenSnipContainer.addEventListener('mouseenter', () => {
-//   screenSnipContainer.style.width = '200px'
-//   screenSnipContainer.style.height = '60px'
-//   screenSnipContainer.style.borderRadius = '10px'
-//   screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
-// })
-
-// // add exit animation on hover of container
-// screenSnipContainer.addEventListener('mouseleave', () => {
-//   screenSnipContainer.style.width = '120px'
-//   screenSnipContainer.style.height = '40px'
-//   screenSnipContainer.style.paddingLeft = '10px'
-//   screenSnipContainer.style.paddingRight = '10px'
-//   screenSnipContainer.style.borderRadius = '30px'
-//   screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
-// })
+  background-size: contain;
+  padding: 5px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+</style>
+`
 
 // Create a snip button
 const snipButton = document.createElement('button')
 snipButton.id = 'snipButton'
-snipButton.style.width = '40px'
-snipButton.style.height = '40px'
-snipButton.title = 'Snip a part of the screen'
-// snipButton.style.borderRadius = '10px'
-snipButton.style.backgroundColor = 'transparent'
-snipButton.style.border = 'none'
-snipButton.style.outline = 'none'
-snipButton.style.margin = '5px'
-snipButton.style.cursor = 'pointer'
-snipButton.style.transition = 'all 0.3s ease-in-out'
-// snipButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
-snipButton.style.backgroundImage =
-  'url(' + chrome.runtime.getURL('src/icons/snip.png') + ')'
-snipButton.style.backgroundSize = 'contain'
-snipButton.style.padding = '5px'
-snipButton.style.backgroundRepeat = 'no-repeat'
-snipButton.style.backgroundPosition = 'center'
+snipButton.innerHTML = `
+<style>
+#snipButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  margin: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+  background-image: url(${chrome.runtime.getURL('src/icons/snip.png')});
+  background-size: contain;
+  padding: 5px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+</style>
+`
+// Create a ocr button
+const ocrButton = document.createElement('button')
+ocrButton.id = 'ocrButton'
+ocrButton.innerHTML = `
+<style>
+#ocrButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  margin: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+  background-image: url(${chrome.runtime.getURL('src/icons/ocr.png')});
+  background-size: contain;
+  padding: 5px;
+  background-repeat: no-repeat;
+  background-position: center;}
+</style>
+`
 
 // show some animation on hover of snip button
 snipButton.addEventListener('mouseenter', () => {
@@ -207,27 +241,6 @@ screenshotButton.addEventListener('mouseleave', () => {
   screenshotButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
 
-// Create a ocr button
-const ocrButton = document.createElement('button')
-ocrButton.id = 'ocrButton'
-ocrButton.style.width = '40px'
-ocrButton.style.height = '40px'
-ocrButton.title = 'crop to read text from image'
-// ocrButton.style.borderRadius = '10px'
-ocrButton.style.backgroundColor = 'transparent'
-ocrButton.style.border = 'none'
-ocrButton.style.outline = 'none'
-ocrButton.style.margin = '5px'
-ocrButton.style.cursor = 'pointer'
-ocrButton.style.transition = 'all 0.3s ease-in-out'
-// ocrButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
-ocrButton.style.backgroundImage =
-  'url(' + chrome.runtime.getURL('src/icons/ocr.png') + ')'
-ocrButton.style.backgroundSize = 'contain'
-ocrButton.style.padding = '5px'
-ocrButton.style.backgroundRepeat = 'no-repeat'
-ocrButton.style.backgroundPosition = 'center'
-
 // show some animation on hover of snip button
 ocrButton.addEventListener('mouseenter', () => {
   ocrButton.style.transform = 'scale(1.2)'
@@ -239,16 +252,141 @@ ocrButton.addEventListener('mouseleave', () => {
   ocrButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
 
-document.body.appendChild(screenSnipContainer)
-screenSnipContainer.appendChild(screenshotButton)
-screenSnipContainer.appendChild(snipButton)
-screenSnipContainer.appendChild(ocrButton)
-screenSnipContainer.appendChild(mouseHoldContainer)
+document.body.appendChild(containAllSnips)
+
+containAllSnips.appendChild(screenSnipContainer)
+containAllSnips.appendChild(sliderContainer)
+
+sliderContainer.appendChild(screenshotButton)
+sliderContainer.appendChild(snipButton)
+sliderContainer.appendChild(ocrButton)
+// screenSnipContainer.appendChild(mouseHoldContainer)
+
+containAllSnips.addEventListener('mouseenter', () => {
+  sliderContainer.style.visibility = 'visible'
+  sliderContainer.style.display = 'flex'
+  sliderContainer.style.width = '120px'
+  sliderContainer.style.transition = 'all 0.5s ease-in-out'
+})
+
+containAllSnips.addEventListener('mouseleave', () => {
+  sliderContainer.style.visibility = 'hidden'
+  sliderContainer.style.width = '0px'
+  sliderContainer.style.transition = 'all 0.5s ease-in-out'
+})
+
+// // on hover of the screenSnipContainer make button slide out to the right side of the screenSnipContainer
+// screenSnipContainer.addEventListener('mouseenter', () => {
+//   screenSnipContainer.style.opacity = 1
+//   // make it big with animatinon
+//   sliderContainer.style.width = '120px'
+//   sliderContainer.style.transition = 'all 0.3s ease-in-out'
+//   sliderContainer.style.opacity = 1
+//   screenshotButton.style.display = 'block'
+//   screenshotButton.innerHTML = `
+// <style>
+// #screenshotButton {
+//   width: 40px;
+//   height: 40px;
+//   border-radius: 10px;
+//   background-color: transparent;
+//   border: none;
+//   outline: none;
+//   margin: 5px;
+//   cursor: pointer;
+//   transition: all 0.3s ease-in-out;
+//   box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+//   background-image: url(${chrome.runtime.getURL('src/icons/screenshot.png')});
+//   background-size: contain;
+//   padding: 5px;
+//   background-repeat: no-repeat;
+//   background-position: center;
+// }
+// </style>
+// `
+//   snipButton.style.display = 'block'
+//   snipButton.innerHTML = `
+// <style>
+// #snipButton {
+//   width: 40px;
+//   height: 40px;
+//   border-radius: 10px;
+//   background-color: transparent;
+//   border: none;
+//   outline: none;
+//   margin: 5px;
+//   cursor: pointer;
+//   transition: all 0.3s ease-in-out;
+//   box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+//   background-image: url(${chrome.runtime.getURL('src/icons/snip.png')});
+//   background-size: contain;
+//   padding: 5px;
+//   background-repeat: no-repeat;
+//   background-position: center;
+// }
+// </style>
+// `
+//   ocrButton.style.display = 'block'
+//   ocrButton.innerHTML = `
+// <style>
+// #ocrButton {
+//   width: 40px;
+//   height: 40px;
+//   border-radius: 10px;
+//   background-color: transparent;
+//   border: none;
+//   outline: none;
+//   margin: 5px;
+//   cursor: pointer;
+//   transition: all 0.3s ease-in-out;
+//   box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+//   background-image: url(${chrome.runtime.getURL('src/icons/ocr.png')});
+//   background-size: contain;
+//   padding: 5px;
+//   background-repeat: no-repeat;
+//   background-position: center;
+// }
+// </style>
+// `
+// })
+
+// // on mouse over keep the opacity t 1
+// screenSnipContainer.addEventListener('mouseover', () => {
+//   screenSnipContainer.style.opacity = 1
+//   sliderContainer.style.opacity = 1
+// })
+
+// // on mouse leave of the screenSnipContainer hide the buttons
+// screenSnipContainer.addEventListener('mouseleave', () => {
+//   // make screenshotButton opacity 0.3 after 2 sec
+
+//   sliderContainer.addEventListener('mouseenter', () => {
+//     screenSnipContainer.style.opacity = 1
+//     sliderContainer.style.opacity = 1
+//   })
+
+//   sliderContainer.addEventListener('mouseleave', () => {
+//     screenSnipContainer.style.opacity = 1
+//     sliderContainer.style.opacity = 1
+
+//     setTimeout(() => {
+//       // screenSnipContainer.style.opacity = '0.3'
+//       sliderContainer.style.width = '30px'
+//       sliderContainer.style.transition = 'all 0.3s ease-in-out'
+//       sliderContainer.style.opacity = 0
+
+//       screenshotButton.style.display = 'none'
+//       snipButton.style.display = 'none'
+//       ocrButton.style.display = 'none'
+//     }, 2000)
+//   })
+// })
 
 // Add event listeners to the buttons
+
 screenshotButton.addEventListener('click', () => {
-  document.body.removeChild(screenSnipContainer)
-  removeExistingSnip()
+  containAllSnips.style.display = 'none'
+  screenSnipContainer.style.display = 'none'
   setTimeout(() => {
     chrome.runtime.sendMessage(
       { message: 'screenshot' },
@@ -256,40 +394,29 @@ screenshotButton.addEventListener('click', () => {
     )
   }, 300)
   setTimeout(() => {
-    screenSnipContainer.style.width = '120px'
-    screenSnipContainer.style.height = '40px'
-    screenSnipContainer.style.paddingLeft = '10px'
-    screenSnipContainer.style.paddingRight = '10px'
-    screenSnipContainer.style.borderRadius = '30px'
-    screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
-    document.body.appendChild(screenSnipContainer)
+    containAllSnips.style.display = 'block'
+    screenSnipContainer.style.display = 'block'
   }, 1000)
 })
 
 snipButton.addEventListener('click', (e) => {
-  // Removing the screenshot container so that it doesn't interfere with the snip
-  document.body.removeChild(screenSnipContainer)
-  removeExistingSnip()
+  containAllSnips.style.visibility = 'hidden'
+  screenSnipContainer.style.visibility = 'hidden'
 
   captureSnip()
 })
 
 ocrButton.addEventListener('click', () => {
-  // Removing the screenshot container so that it doesn't interfere with the snip
-  document.body.removeChild(screenSnipContainer)
-  removeExistingSnip()
+  containAllSnips.style.visibility = 'hidden'
+  screenSnipContainer.style.visibility = 'hidden'
 
   captureSnipOcr()
 })
 
 // funciton to remove all existing visible screenshot/ ocr/ snip images
-function removeExistingSnip() {
-  // remove all elements having class 'image-container'
-  const imageContainers = document.getElementsByClassName('image-container')
-  while (imageContainers.length > 0) {
-    imageContainers[0].parentNode.removeChild(imageContainers[0])
-  }
-}
+// function removeExistingSnip() {
+//   // remove visible ocr
+// }
 
 // Function to capture the snip
 function captureSnip() {
@@ -548,13 +675,8 @@ chrome.runtime.onMessage.addListener(async function (
       )
       const dataUrl = canvas.toDataURL()
       console.log(dataUrl)
-      screenSnipContainer.style.width = '120px'
-      screenSnipContainer.style.height = '40px'
-      screenSnipContainer.style.paddingLeft = '10px'
-      screenSnipContainer.style.paddingRight = '10px'
-      screenSnipContainer.style.borderRadius = '30px'
-      screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
-      document.body.appendChild(screenSnipContainer)
+      containAllSnips.style.visibility = 'visible'
+      screenSnipContainer.style.visibility = 'visible'
 
       var mimeType = dataUrl.split(',')[0].split(':')[1].split(';')[0]
       var binaryString = atob(dataUrl.split(',')[1])
@@ -580,40 +702,6 @@ chrome.runtime.onMessage.addListener(async function (
       document.body.appendChild(snipImageContainer)
 
       // display the snip in bottom right corner for 3 seconds
-      const snip = document.createElement('img')
-      snip.src = dataUrl
-      snip.style.maxHeight = '120px'
-      snip.style.maxWidth = '150px'
-      snip.style.minHeight = '85px'
-      snip.style.minWidth = '85px'
-      snip.style.width = parseInt(request.dim.width) * dpr
-      snip.style.height = parseInt(request.dim.height) * dpr
-      snip.style.borderRadius = '5px'
-      snip.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
-      snip.style.zIndex = '10000'
-      snipImageContainer.appendChild(snip)
-      // document.body.appendChild(snip)
-      // setTimeout(() => {
-      //   document.body.removeChild(snip)
-      // }, 3000)
-
-      // Close button
-      const closeBtn = document.createElement('button')
-      closeBtn.innerText = 'X'
-      closeBtn.style.position = 'absolute'
-      closeBtn.style.top = '0px'
-      closeBtn.style.right = '0px'
-      closeBtn.style.zIndex = '10000'
-      closeBtn.style.backgroundColor = 'transparent'
-      closeBtn.style.border = 'none'
-      closeBtn.style.color = 'black'
-      closeBtn.style.cursor = 'pointer'
-      closeBtn.style.textShadow = '0px 0px 10px rgba(255,255,255,255.75)'
-
-      snipImageContainer.appendChild(closeBtn)
-      closeBtn.addEventListener('click', () => {
-        document.body.removeChild(snipImageContainer)
-      })
 
       // ask background to save the image
       chrome.runtime.sendMessage({
@@ -647,22 +735,9 @@ chrome.runtime.onMessage.addListener(async function (
         parseInt(request.dim.height) * dpr
       )
       const dataUrl = canvas.toDataURL()
-      screenSnipContainer.style.width = '120px'
-      screenSnipContainer.style.height = '40px'
-      screenSnipContainer.style.paddingLeft = '10px'
-      screenSnipContainer.style.paddingRight = '10px'
-      screenSnipContainer.style.borderRadius = '30px'
-      screenSnipContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
-      document.body.appendChild(screenSnipContainer)
 
-      // const ocrTextImageContainer = document.createElement('div')
-      // ocrTextImageContainer.className = 'image-container'
-      // ocrTextImageContainer.style.position = 'fixed'
-      // ocrTextImageContainer.style.bottom = '10px'
-      // ocrTextImageContainer.style.right = '10px'
-      // ocrTextImageContainer.style.zIndex = '10000'
-      // ocrTextImageContainer.style.padding = '20px 10px'
-      // document.body.appendChild(ocrTextImageContainer)
+      containAllSnips.style.visibility = 'visible'
+      screenSnipContainer.style.visibility = 'visible'
 
       // make a container with header body and footer for ocr text
       const ocrTextContainer = document.createElement('div')
@@ -855,76 +930,14 @@ chrome.runtime.onMessage.addListener(async function (
         document.body.removeChild(ocrTextContainer)
       })
 
-      // const snip = document.createElement('img')
-      // snip.src = dataUrl
-      // snip.style.maxHeight = '120px'
-      // snip.style.maxWidth = '150px'
-      // snip.style.width = parseInt(request.dim.width) * dpr
-      // snip.style.height = parseInt(request.dim.height) * dpr
-      // snip.style.borderRadius = '5px'
-      // snip.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
-      // snip.style.zIndex = '10000'
-      // // make it contain
-      // snip.style.objectFit = 'cover'
-      // ocrTextImageContainer.appendChild(snip)
-
-      // const textContainer = document.createElement('textarea')
-      // textContainer.style.height = '120px'
-      // textContainer.style.width = '150px'
-      // // textContainer.style.minHeight = '120px'
-      // // textContainer.style.maxWidth = '150px'
-      // // textContainer.style.maxHeight = '240px'
-      // // textContainer.style.maxWidth = '300px'
-      // textContainer.style.display = 'block'
-      // textContainer.style.borderRadius = '5px'
-      // textContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
-      // textContainer.style.zIndex = '10000'
-      // textContainer.style.backgroundColor = 'white'
-      // textContainer.style.padding = '10px'
-      // textContainer.style.fontSize = '12px'
-      // textContainer.style.fontFamily = 'monospace'
-      // textContainer.style.color = 'black'
-      // textContainer.innerText = 'Recognizing text...'
-      // textContainer.style.overflow = 'auto'
-      // ocrTextImageContainer.appendChild(textContainer)
-
-      // Close button
-      // const closeBtn = document.createElement('button')
-      // closeBtn.innerText = 'X'
-      // closeBtn.style.position = 'absolute'
-      // closeBtn.style.top = '0px'
-      // closeBtn.style.right = '0px'
-      // closeBtn.style.zIndex = '10000'
-      // closeBtn.style.backgroundColor = 'transparent'
-      // closeBtn.style.border = 'none'
-      // closeBtn.style.color = 'black'
-      // closeBtn.style.cursor = 'pointer'
-      // closeBtn.style.textShadow = '0px 0px 10px rgba(255,255,255,255.75)'
-
       ocrTextHeaderClose.addEventListener('click', () => {
         document.body.removeChild(ocrTextContainer)
       })
 
       // OCR using tesseract
       Tesseract.recognize(dataUrl, 'eng', {}).then(({ data: { text } }) => {
-        // Show the text in the page
         ocrTextBodyTextarea.innerText = text
       })
-      // setTimeout(() => {
-      //   document.body.removeChild(snip)
-      // }, 3000)
-
-      // send the snip to the background script
-      // chrome.runtime.sendMessage({
-      //   message: 'doOCR',
-      //   dim: {
-      //     top: snipContainer.style.top,
-      //     left: snipContainer.style.left,
-      //     width: snipContainer.style.width,
-      //     height: snipContainer.style.height,
-      //   },
-      //   dataUrl: dataUrl,
-      // })
     }
   }
 })
