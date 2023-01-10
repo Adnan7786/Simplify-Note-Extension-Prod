@@ -1,5 +1,5 @@
-// const domain = "https://simplifynote.app"; //prod
-const domain = "https://simplify-note.vercel.app" //dev
+const domain = "https://simplifynote.app"; //prod
+// const domain = "https://simplify-note.vercel.app" //dev
 
 const cssThemeVariables = {
   '--color-secondary': {
