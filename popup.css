@@ -995,11 +995,11 @@ button.open-in-docs:focus {
   align-items: center;
 }
 
-.submitMessage .responseMessage.success .success-block {
+.submitMessage .responseMessage.show[data-status=success] .success-block {
   visibility: visible;
 }
 
-.submitMessage .responseMessage.failure .failure-block {
+.submitMessage .responseMessage.show[data-status=failure] .failure-block {
   visibility: visible;
 }
 
@@ -1838,6 +1838,8 @@ button.open-in-docs:focus {
   position: absolute;
   bottom: 8px;
   right: -100%;
+  color: var(--color-secondary);
+  font-size: 0.9em;
   padding-left: var(--beforeWidth);
   background-color: var(--color-bgr-secondary);
   transition: right 350ms ease-in-out;
@@ -1853,7 +1855,7 @@ button.open-in-docs:focus {
   border-bottom-left-radius: var(--borderRadius);
 }
 
-.notification[data-status="failed"]::before {
+.notification[data-status="failure"]::before {
   background-color: red;
 }
 

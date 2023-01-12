@@ -87,6 +87,7 @@ const styleForms = tabContents[2].querySelectorAll('.styles-form')
 const styleIconContainer = tabContents[2].querySelector('.icon-container')
 const styleEditIcon = tabContents[2].querySelector('#iconEdit')
 const styleCloseIcon = tabContents[2].querySelector('#iconClose')
+const notificationDiv = document.querySelector('#notification');
 
 window.onload = render;
 
@@ -107,9 +108,10 @@ addNoteForm.addEventListener("submit", async function (event) {
       'POST',
       { text: inputValue }
     );
-    responseMessage.classList.add('success');
+    responseMessage.dataset.status = 'success';
   } catch (error) {
-    responseMessage.classList.add('failure');
+    responseMessage.dataset.status = 'failure';
+    sendNotification('failure', 'Doc might be deleted from drive');
   }
   loadingMessage.classList.remove('show');
   responseMessage.classList.add('show');
@@ -119,8 +121,6 @@ addNoteForm.addEventListener("submit", async function (event) {
   }
   setTimeout(() => {
     responseMessage.classList.remove('show');
-    responseMessage.classList.remove('failure');
-    responseMessage.classList.remove('success');
     tooltipSubmitMessage.classList.remove('extend');
   }, 1500);
 
@@ -142,9 +142,10 @@ createDocForm.addEventListener("submit", async function (event) {
       { name, parentFolderId });
     switchToTab = 0
     await render();
+    sendNotification('success', 'Document created successfully');
   } catch (error) {
     pageLoad.style.visibility = 'hidden';
-    sendNotification('Failure', error)
+    sendNotification('failure', error);
   }
 });
 
@@ -538,8 +539,14 @@ function getTooltipDisabled() {
   });
 }
 
-function sendNotification(status, error) {
-  console.log(status, error);
+function sendNotification(status, message) {
+  // console.log(notificationDiv);
+  notificationDiv.dataset.status = status;
+  notificationDiv.innerText = message;
+  notificationDiv.classList.add('show');
+  setTimeout(() => {
+    notificationDiv.classList.remove('show');
+  }, 2500);
 }
 
 function getCSSVariableValue(variable) {
