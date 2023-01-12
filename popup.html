@@ -129,10 +129,19 @@
                     </svg>
                   </div>
                   <div id="tooltipResponseMessage" class="responseMessage">
-                    <svg id='iconSuccess' class="icon-success" viewBox="0 0 13 11">
-                      <polyline stroke="currentColor" points="1.4,5.8 5.1,9.5 11.6,2.1 " />
-                    </svg>
-                    <span class="response">Success</span>
+                    <div class="success-block">
+                      <svg id='iconSuccess' class="icon-success" viewBox="0 0 13 11">
+                        <polyline stroke="currentColor" points="1.4,5.8 5.1,9.5 11.6,2.1 " />
+                      </svg>
+                      <span class="success-res">Successful</span>
+                    </div>
+                    <div class="failure-block">
+                      <svg id='iconFailure' class="icon-failure" viewBox="0 0 16 16">
+                        <path
+                          d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                      </svg>
+                      <span class="failure-res">Request Failed</span>
+                    </div>
                   </div>
                 </div>
                 <div class="tooltip-button-container">
@@ -492,7 +501,6 @@
       </div>
     </div>
   </div>
-  </div>
 
   <footer>
     <div class="website">
@@ -523,6 +531,8 @@
       </ul>
     </div>
   </footer>
+
+  <div class="notification" data-status="success">Request failed. Please try again later</div>
 </body>
 
 </html>

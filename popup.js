@@ -107,19 +107,23 @@ addNoteForm.addEventListener("submit", async function (event) {
       'POST',
       { text: inputValue }
     );
-    loadingMessage.classList.remove('show');
-    responseMessage.classList.add('show');
-    for (let i = 0; i < tooltipButtons.length; i++) {
-      tooltipButtons[i].classList.remove('submit');
-      tooltipButtons[i].classList.remove('active');
-    }
-    setTimeout(() => {
-      responseMessage.classList.remove('show');
-      tooltipSubmitMessage.classList.remove('extend');
-    }, 1500);
+    responseMessage.classList.add('success');
   } catch (error) {
-    console.log('error' + error);
+    responseMessage.classList.add('failure');
   }
+  loadingMessage.classList.remove('show');
+  responseMessage.classList.add('show');
+  for (let i = 0; i < tooltipButtons.length; i++) {
+    tooltipButtons[i].classList.remove('submit');
+    tooltipButtons[i].classList.remove('active');
+  }
+  setTimeout(() => {
+    responseMessage.classList.remove('show');
+    responseMessage.classList.remove('failure');
+    responseMessage.classList.remove('success');
+    tooltipSubmitMessage.classList.remove('extend');
+  }, 1500);
+
 });
 
 createDocForm.addEventListener("submit", async function (event) {
@@ -646,17 +650,13 @@ function toTitleCase(txt) {
   return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 }
 
-async function signInAndRefreshPopup(user, folderTree) {
-
-  return;
-}
-
 async function logoutAndRefreshPopup() {
   pageLoad.style.visibility = 'visible';
   try {
     await apiCall('/api/v1/auth/logout', 'GET', {});
   } catch (errMsg) {
-    sendNotification('Failure', errMsg)
+    pageLoad.style.visibility = 'hidden';
+    sendNotification('Failure', errMsg);
   }
   updateAvatar();
   updateContentBox();
