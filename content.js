@@ -140,8 +140,19 @@ screenSnipContainer.addEventListener('mousedown', () => {
   // now change the position of the screenSnipContainer with the mouse position
   screenSnipContainer.addEventListener('dragend', (e) => {
     sliderContainer.style.display = 'none'
+
+    // the position of the screenSnipContainer should not go out of the screen
     screenSnipContainer.style.top = e.clientY + 'px'
     sliderContainer.style.top = e.clientY + 'px'
+    if (e.clientY < 0) {
+      screenSnipContainer.style.top = '10px'
+      sliderContainer.style.top = '10px'
+    }
+    if (e.clientY > window.innerHeight - 80) {
+      screenSnipContainer.style.top = window.innerHeight - 80 + 'px'
+      sliderContainer.style.top = window.innerHeight - 80 + 'px'
+    }
+
     console.log('mouse', e.clientX, e.clientY)
   })
 })
@@ -275,13 +286,19 @@ containAllSnips.addEventListener('mouseenter', () => {
   sliderContainer.style.visibility = 'visible'
   sliderContainer.style.display = 'flex'
   sliderContainer.style.width = '120px'
+  snipButton.style.display = 'block'
+  ocrButton.style.display = 'block'
+  screenshotButton.style.display = 'block'
   sliderContainer.style.transition = 'all 0.5s ease-in-out'
 })
 
 containAllSnips.addEventListener('mouseleave', () => {
   sliderContainer.style.visibility = 'hidden'
   sliderContainer.style.width = '0px'
-  sliderContainer.style.transition = 'all 0.5s ease-in-out'
+  sliderContainer.style.transition = 'all 0.3s ease-in-out'
+  snipButton.style.display = 'none'
+  ocrButton.style.display = 'none'
+  screenshotButton.style.display = 'none'
 })
 
 // // on hover of the screenSnipContainer make button slide out to the right side of the screenSnipContainer
@@ -398,7 +415,11 @@ screenshotButton.addEventListener('click', () => {
   screenSnipContainer.style.display = 'none'
   setTimeout(() => {
     chrome.runtime.sendMessage(
-      { message: 'screenshot' },
+      {
+        message: 'screenshot',
+        height: window.innerHeight,
+        width: window.innerWidth,
+      },
       function (response) {}
     )
   }, 300)
@@ -421,11 +442,6 @@ ocrButton.addEventListener('click', () => {
 
   captureSnipOcr()
 })
-
-// funciton to remove all existing visible screenshot/ ocr/ snip images
-// function removeExistingSnip() {
-//   // remove visible ocr
-// }
 
 // Function to capture the snip
 function captureSnip() {
@@ -480,6 +496,12 @@ function captureSnip() {
     snipContainer.style.left = Math.min(e.pageX, startX) + 'px'
     snipContainer.style.width = Math.abs(width) + 'px'
     snipContainer.style.height = Math.abs(height) + 'px'
+
+    if (Math.abs(width) < 10 || Math.abs(height) < 10) {
+      snipContainer.style.backgroundColor = 'rgba(255,0,0,0.7)'
+    } else {
+      snipContainer.style.backgroundColor = 'rgba(0,0,0,0.0)'
+    }
   })
 
   overScreenSnip.addEventListener('mouseup', (e) => {
@@ -489,24 +511,32 @@ function captureSnip() {
     const height = e.pageY - startY
     snipContainer.style.width = Math.abs(width) + 'px'
     snipContainer.style.height = Math.abs(height) + 'px'
+    snipContainer.style.border = 'none'
 
-    // send the snip to the background script
-    chrome.runtime.sendMessage(
-      {
-        message: 'snip',
-        dim: {
-          top: parseInt(snipContainer.style.top) - window.scrollY,
-          left: parseInt(snipContainer.style.left) - window.scrollX,
-          width: snipContainer.style.width,
-          height: snipContainer.style.height,
+    // if the snip is too small, remove it
+    if (Math.abs(width) < 10 || Math.abs(height) < 10) {
+      document.body.removeChild(snipContainer)
+      document.body.removeChild(overScreenSnip)
+      containAllSnips.style.visibility = 'visible'
+      screenSnipContainer.style.visibility = 'visible'
+    } else {
+      chrome.runtime.sendMessage(
+        {
+          message: 'snip',
+          dim: {
+            top: parseInt(snipContainer.style.top) - window.scrollY,
+            left: parseInt(snipContainer.style.left) - window.scrollX,
+            width: snipContainer.style.width,
+            height: snipContainer.style.height,
+          },
         },
-      },
-      function (response) {
-        // Removing the elements and the event listeners
-        document.body.removeChild(snipContainer)
-        document.body.removeChild(overScreenSnip)
-      }
-    )
+        function (response) {
+          // Removing the elements and the event listeners
+          document.body.removeChild(snipContainer)
+          document.body.removeChild(overScreenSnip)
+        }
+      )
+    }
   })
 }
 
@@ -564,6 +594,13 @@ function captureSnipOcr() {
     ocrContainer.style.left = Math.min(e.pageX, startX) + 'px'
     ocrContainer.style.width = Math.abs(width) + 'px'
     ocrContainer.style.height = Math.abs(height) + 'px'
+
+    // if the snip is too small, remove it
+    if (Math.abs(width) < 10 || Math.abs(height) < 10) {
+      ocrContainer.style.backgroundColor = 'rgba(255,0,0,0.7)'
+    } else {
+      ocrContainer.style.backgroundColor = 'rgba(0,0,0,0.0)'
+    }
   })
 
   overScreenOcr.addEventListener('mouseup', (e) => {
@@ -578,23 +615,30 @@ function captureSnipOcr() {
     ocrContainer.style.width = Math.abs(width) + 'px'
     ocrContainer.style.height = Math.abs(height) + 'px'
 
-    // send the snip to the background script
-    chrome.runtime.sendMessage(
-      {
-        message: 'ocr',
-        dim: {
-          top: parseInt(ocrContainer.style.top) - window.scrollY,
-          left: parseInt(ocrContainer.style.left) - window.scrollX,
-          width: ocrContainer.style.width,
-          height: ocrContainer.style.height,
+    // if the snip is too small, remove it
+    if (Math.abs(width) < 10 || Math.abs(height) < 10) {
+      document.body.removeChild(overScreenOcr)
+      document.body.removeChild(ocrContainer)
+      containAllSnips.style.visibility = 'visible'
+      screenSnipContainer.style.visibility = 'visible'
+    } else {
+      chrome.runtime.sendMessage(
+        {
+          message: 'ocr',
+          dim: {
+            top: parseInt(ocrContainer.style.top) - window.scrollY,
+            left: parseInt(ocrContainer.style.left) - window.scrollX,
+            width: ocrContainer.style.width,
+            height: ocrContainer.style.height,
+          },
         },
-      },
-      function (response) {
-        // Removing the elements and the event listeners
-        document.body.removeChild(overScreenOcr)
-        document.body.removeChild(ocrContainer)
-      }
-    )
+        function (response) {
+          // Removing the elements and the event listeners
+          document.body.removeChild(overScreenOcr)
+          document.body.removeChild(ocrContainer)
+        }
+      )
+    }
   })
 }
 
@@ -626,37 +670,6 @@ chrome.runtime.onMessage.addListener(async function (
         'image/png': new Blob([arrayBuffer], { type: mimeType }),
       }),
     ])
-
-    // display the snip in bottom right corner for 3 seconds
-    const screenshotPic = document.createElement('img')
-    screenshotPic.src = request.dataUrl
-    screenshotPic.style.maxHeight = '120px'
-    screenshotPic.style.maxWidth = '150px'
-    screenshotPic.style.minHeight = '85px'
-    screenshotPic.style.minWidth = '85px'
-    // screenshotPic.style.width = parseInt(request.dim.width) * dpr
-    // screenshotPic.style.height = parseInt(request.dim.height) * dpr
-    screenshotPic.style.borderRadius = '5px'
-    screenshotPic.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.75)'
-    screenshotPic.style.zIndex = '10000'
-    screenshotContainer.appendChild(screenshotPic)
-
-    // Close button
-    const closeBtn = document.createElement('button')
-    closeBtn.innerText = 'X'
-    closeBtn.style.position = 'absolute'
-    closeBtn.style.top = '0px'
-    closeBtn.style.right = '0px'
-    closeBtn.style.backgroundColor = 'transparent'
-    closeBtn.style.border = 'none'
-    closeBtn.style.color = 'black'
-    closeBtn.style.cursor = 'pointer'
-    closeBtn.style.textShadow = '0px 0px 10px rgba(255,255,255,255.75)'
-    closeBtn.style.zIndex = '10000'
-    screenshotContainer.appendChild(closeBtn)
-    closeBtn.addEventListener('click', () => {
-      document.body.removeChild(screenshotContainer)
-    })
   }
 
   if (request.message === 'snip') {
@@ -700,17 +713,6 @@ chrome.runtime.onMessage.addListener(async function (
           'image/png': new Blob([arrayBuffer], { type: mimeType }),
         }),
       ])
-
-      const snipImageContainer = document.createElement('div')
-      snipImageContainer.className = 'image-container'
-      snipImageContainer.style.position = 'fixed'
-      snipImageContainer.style.bottom = '10px'
-      snipImageContainer.style.right = '10px'
-      snipImageContainer.style.zIndex = '10000'
-      snipImageContainer.style.padding = '20px 10px'
-      document.body.appendChild(snipImageContainer)
-
-      // display the snip in bottom right corner for 3 seconds
 
       // ask background to save the image
       chrome.runtime.sendMessage({
@@ -769,8 +771,8 @@ chrome.runtime.onMessage.addListener(async function (
           }
           .ocr-text-header {
             width: 100%;
-            height: 30px;
-            background-color: #f1f1f1;
+            height: 50px;
+            background-color: #5cb25d;
             border-top-left-radius: 5px;
             border-top-right-radius: 5px;
             display: flex;
@@ -785,6 +787,8 @@ chrome.runtime.onMessage.addListener(async function (
             justify-content: space-between;
           }
           .ocr-text-header-text {
+            display: flex;
+            align-items: center;
             font-size: 14px;
             font-weight: 600;
             color: #333;
@@ -795,10 +799,15 @@ chrome.runtime.onMessage.addListener(async function (
             font-weight: 600;
             color: #333;
             padding-right: 10px;
+            margin-right: 10px;
             background-color: transparent;
             border: none;
             cursor: pointer;
           }
+          .ocr-text-header-close:hover {
+            color: #fff;
+          }
+          
           .ocr-text-body {
             width: 100%;
             height: 100%;
@@ -818,8 +827,8 @@ chrome.runtime.onMessage.addListener(async function (
           }
           .ocr-text-footer {
             width: 100%;
-            height: 30px;
-            background-color: #f1f1f1;
+            height: 50px;
+            background-color: #484847;
             border-bottom-left-radius: 5px;
             border-bottom-right-radius: 5px;
             display: flex;
@@ -830,16 +839,23 @@ chrome.runtime.onMessage.addListener(async function (
             }
           }
           .ocr-text-footer-save {
+            width: 100px;
+            height: 30px;
             font-size: 14px;
             font-weight: 600;
-            color: #333;
+            color: #fff;
             background-color: transparent;
             border: none;
-            cursor: pointer;                       
+            cursor: pointer;
+            border-radius: 5px;
+            // border blur
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
           }
           .ocr-text-footer-save:hover {
             color: #fff;
             background-color: #333;
+            box-shadow: 0px 0px 10px 0px rgba(255,255,255,0.75);
+              
           }
         
       
@@ -851,7 +867,7 @@ chrome.runtime.onMessage.addListener(async function (
               <img src=` +
         chrome.runtime.getURL('src/icons/tooltip-logo.png') +
         `
-                alt="logo" width="20px" height="20px" />
+                alt="logo" width="50px" height="50px" />
              <span>OCR Text</span>
             </div>
             <button class="ocr-text-header-close">X</button>
@@ -863,9 +879,10 @@ chrome.runtime.onMessage.addListener(async function (
         </div>
         <div class="ocr-text-footer">
           <button class="ocr-text-footer-save" id="ocr-text-footer-heading">Heading</button>
+          <button class="ocr-text-footer-save" id="ocr-text-footer-quote">Sub Heading</button>          
+          <button class="ocr-text-footer-save" id="ocr-text-footer-list">Bullet</button>
           <button class="ocr-text-footer-save" id="ocr-text-footer-paragraph">Paragraph</button>
-          <button class="ocr-text-footer-save" id="ocr-text-footer-list">List</button>
-          <button class="ocr-text-footer-save" id="ocr-text-footer-quote">Quote</button>          
+         
         </div>        
       `
 
@@ -875,12 +892,10 @@ chrome.runtime.onMessage.addListener(async function (
       const ocrTextBodyTextarea = document.querySelector(
         '.ocr-text-body-textarea'
       )
-
       // get close button to close the ocr text container
       const ocrTextHeaderClose = document.querySelector(
         '.ocr-text-header-close'
       )
-
       // get heading list paragraph quote buttons
       const ocrTextFooterHeading = document.querySelector(
         '#ocr-text-footer-heading'
@@ -904,8 +919,6 @@ chrome.runtime.onMessage.addListener(async function (
           },
           handleResponse
         )
-
-        // remove ocr text container
         document.body.removeChild(ocrTextContainer)
       })
 
@@ -920,7 +933,6 @@ chrome.runtime.onMessage.addListener(async function (
           },
           handleResponse
         )
-        // remove ocr text container
         document.body.removeChild(ocrTextContainer)
       })
 
@@ -930,12 +942,25 @@ chrome.runtime.onMessage.addListener(async function (
         chrome.runtime.sendMessage(
           {
             message: 'insert_text',
-            style: 'list',
+            style: 'bullet',
             text: ocrTextBodyTextarea.value,
           },
           handleResponse
         )
-        // remove ocr text container
+        document.body.removeChild(ocrTextContainer)
+      })
+
+      // onpress ocrTextFooterQuote send text to background.js
+      ocrTextFooterQuote.addEventListener('click', () => {
+        // send message to background.js
+        chrome.runtime.sendMessage(
+          {
+            message: 'insert_text',
+            style: 'subheading',
+            text: ocrTextBodyTextarea.value,
+          },
+          handleResponse
+        )
         document.body.removeChild(ocrTextContainer)
       })
 
@@ -944,9 +969,21 @@ chrome.runtime.onMessage.addListener(async function (
       })
 
       // OCR using tesseract
-      Tesseract.recognize(dataUrl, 'eng', {}).then(({ data: { text } }) => {
-        ocrTextBodyTextarea.innerText = text
-      })
+      try {
+        Tesseract.recognize(dataUrl, 'eng', {})
+          .then(({ data: { text } }) => {
+            ocrTextBodyTextarea.innerText = text
+          })
+          .catch((error) => {
+            console.log(error)
+            ocrTextBodyTextarea.innerText = 'Error in recognizing text'
+            ocrTextBodyTextarea.style.color = 'red'
+          })
+      } catch (error) {
+        console.log(error)
+        ocrTextBodyTextarea.innerText = 'Error in recognizing text'
+        ocrTextBodyTextarea.style.color = 'red'
+      }
     }
   }
 })

@@ -42,13 +42,13 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     }
   } else if (request.message === 'screenshot') {
     chrome.tabs.captureVisibleTab(null, { format: 'png' }, async (dataUrl) => {
-      // // open a new tab with the image
-      // chrome.tabs.create({ url: dataUrl })
-      // send image to server get the page width and height
-
       console.log('dataUrl=====================', dataUrl)
       try {
-        const message = await apiInsertImage(dataUrl, 50, 50)
+        const message = await apiInsertImage(
+          dataUrl,
+          request.height,
+          request.width
+        )
         sendNotification('Successful', message)
       } catch (errorMessage) {
         sendNotification('Failed', errorMessage)
