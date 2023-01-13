@@ -43,9 +43,18 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       sendNotification('Failed', errorMessage)
     }
   } else if (request.message === 'screenshot') {
-    chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
-      // // open a new tab with the image
-      // chrome.tabs.create({ url: dataUrl })
+    chrome.tabs.captureVisibleTab(null, { format: 'png' }, async (dataUrl) => {
+      console.log('dataUrl=====================', dataUrl)
+      try {
+        const message = await apiInsertImage(
+          dataUrl,
+          request.height,
+          request.width
+        )
+        sendNotification('Successful', message)
+      } catch (errorMessage) {
+        sendNotification('Failed', errorMessage)
+      }
       chrome.tabs.sendMessage(sender.tab.id, {
         message: 'screenshot',
         dataUrl: dataUrl,
@@ -59,6 +68,18 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         dim: request.dim,
       })
     })
+  } else if (request.message === 'saveImage') {
+    try {
+      console.log('saveImage')
+      const message = await apiInsertImage(
+        request.dataUrl,
+        request.height,
+        request.width
+      )
+      sendNotification('Successful', message)
+    } catch (errorMessage) {
+      sendNotification('Failed', errorMessage)
+    }
   } else if (request.message === 'ocr') {
     chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
       chrome.tabs.sendMessage(sender.tab.id, {
