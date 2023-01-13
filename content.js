@@ -420,7 +420,7 @@ screenshotButton.addEventListener('click', () => {
         height: window.innerHeight,
         width: window.innerWidth,
       },
-      function (response) {}
+      function (response) { }
     )
   }, 300)
   setTimeout(() => {
@@ -511,7 +511,7 @@ function captureSnip() {
     const height = e.pageY - startY
     snipContainer.style.width = Math.abs(width) + 'px'
     snipContainer.style.height = Math.abs(height) + 'px'
-    snipContainer.style.border = 'none'
+    snipContainer.style.visibility = 'hidden'
 
     // if the snip is too small, remove it
     if (Math.abs(width) < 10 || Math.abs(height) < 10) {
