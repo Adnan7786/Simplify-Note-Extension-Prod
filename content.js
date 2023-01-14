@@ -272,7 +272,7 @@ ocrButton.addEventListener('mouseleave', () => {
   ocrButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
 
-document.body.appendChild(containAllSnips)
+// document.body.appendChild(containAllSnips)
 
 containAllSnips.appendChild(screenSnipContainer)
 containAllSnips.appendChild(sliderContainer)
@@ -991,7 +991,7 @@ chrome.runtime.onMessage.addListener(async function (
 const shadowRootContainer = document.createElement('div')
 shadowRootContainer.id = 'shadowRootContainer'
 shadowRootContainer.style.position = 'absolute'
-shadowRootContainer.style.zIndex = '-1'
+shadowRootContainer.style.zIndex = '10001'
 shadowRootContainer.style.top = '0px'
 shadowRootContainer.style.left = '0px'
 
@@ -1213,6 +1213,61 @@ tooltipContainer.innerHTML = `<style>
 
 root.appendChild(tooltipContainer)
 
+const notificationDiv = document.createElement('div')
+notificationDiv.id = 'notification'
+notificationDiv.className = 'notification'
+notificationDiv.innerHTML = `<style>
+:host {
+  --color-primary: #0ed095;
+  --color-background: #f3f6fd;
+  --color-text: #7c7c7c;
+  --color-shadow: rgba(0, 0, 0, 0.2);
+  --beforeWidth: 7px;
+  --borderRadius: 4px;
+}
+
+.notification {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  width: 240px;
+  position: absolute;
+  bottom: 8px;
+  right: -100%;
+  color: var(--color-text);
+  font-size: 0.9em;
+  padding-left: var(--beforeWidth);
+  background-color: var(--color-background);
+  box-shadow: var(--color-shadow) 0px 2px 40px;
+  transition: right 350ms ease-in-out 500ms;
+}
+
+.notification::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  height: 100%;
+  width: 7px;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.notification[data-status="failure"]::before {
+  background-color: red;
+}
+
+.notification[data-status="success"]::before {
+  background-color: #0ed095;
+}
+
+.notification.show {
+  right: 0;
+}</style>`
+
+// root.appendChild(notificationDiv);
+root.appendChild(containAllSnips);
+
 const cssThemeVariables = {
   '--color-background': {
     light: '#f3f6fd',
@@ -1260,7 +1315,6 @@ for (const logo of iconLogos) {
     setTimeout(() => {
       imageTooltip.style.visibility = 'hidden'
       textTooltip.style.visibility = 'hidden'
-      shadowRootContainer.style.zIndex = '-1'
     }, 350)
   })
 }
@@ -1342,7 +1396,6 @@ window.addEventListener('mouseup', async function (event) {
 
     if (selectedText.length > 0) {
       payloadText = selectedText
-      shadowRootContainer.style.zIndex = '10001'
       const posX = mouseX + tooltipXoffset
       const posY = mouseY + tooltipYoffset
       const pageWidth = getWidth()
@@ -1368,7 +1421,6 @@ window.addEventListener('mouseup', async function (event) {
       shadowElem.querySelector('#tooltipButton').classList.remove('expand')
       setTimeout(() => {
         textTooltip.style.visibility = 'hidden'
-        shadowRootContainer.style.zIndex = '-1'
       }, 350)
     }
   } catch (error) {
@@ -1433,7 +1485,6 @@ setInterval(() => {
             15
           imageTooltip.style.left = mouseX + 'px'
           imageTooltip.style.top = mouseY + 'px'
-          shadowRootContainer.style.zIndex = '10001'
           imageTooltip.style.visibility = 'visible'
         }
       )
@@ -1454,7 +1505,6 @@ setInterval(() => {
         console.log('leave')
         // insideImage[index] = false;
         imageTooltip.style.visibility = 'hidden'
-        shadowRootContainer.style.zIndex = '-1'
       })
     } catch (error) {
       sendNotification('failure', error)
@@ -1492,7 +1542,6 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
         shadowElem.querySelector('#tooltipButton').classList.remove('expand')
         setTimeout(() => {
           textTooltip.style.visibility = 'hidden'
-          shadowRootContainer.style.zIndex = '-1'
         }, 350)
       } else {
         screenSnipContainer.style.display = 'flex'
@@ -1520,6 +1569,10 @@ function setTheme(theme) {
       variable,
       cssThemeVariables[variable][theme]
     )
+    // notificationDiv.style.setProperty(
+    //   variable,
+    //   cssThemeVariables[variable][theme]
+    // )
   }
   screenSnipContainer.style.backgroundColor =
     theme === 'light' ? '#fff' : '#000'
@@ -1546,8 +1599,13 @@ function getCurrentTheme() {
   })
 }
 
-function sendNotification(status, error) {
-  console.log(status + error)
+function sendNotification(status, message) {
+  notificationDiv.dataset.status = status;
+  notificationDiv.innerText = message;
+  notificationDiv.classList.add('show');
+  setTimeout(() => {
+    notificationDiv.classList.remove('show');
+  }, 5000);
 }
 
 function getWidth() {
@@ -1572,8 +1630,3 @@ function getHeight() {
 
 console.log('Width:  ' + getWidth())
 console.log('Height: ' + getHeight())
-
-// setInterval(() => {
-//   const imageCollection = document.getElementsByTagName("img");
-//   console.log(imageCollection.length);
-// }, 1000)

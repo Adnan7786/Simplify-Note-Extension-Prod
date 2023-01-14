@@ -143,9 +143,9 @@ createDocForm.addEventListener("submit", async function (event) {
     switchToTab = 0
     await render();
     sendNotification('success', 'Document created successfully');
-  } catch (error) {
+  } catch (errMsg) {
     pageLoad.style.visibility = 'hidden';
-    sendNotification('failure', error);
+    sendNotification('failure', errMsg);
   }
 });
 
@@ -166,9 +166,10 @@ addDocForm.addEventListener("submit", async function (event) {
       { documentId, parentFolderId });
     switchToTab = 0
     await render();
-  } catch (error) {
+    sendNotification('success', 'Document added successfully');
+  } catch (errMsg) {
     pageLoad.style.visibility = 'hidden';
-    sendNotification('Failure', error)
+    sendNotification('failure', errMsg);
   }
 });
 
@@ -188,9 +189,10 @@ renameDocForm.addEventListener("submit", async function (event) {
       { name, documentId });
     switchToTab = 1
     await render();
-  } catch (error) {
+    sendNotification('success', 'Document renamed successfully');
+  } catch (errMsg) {
     pageLoad.style.visibility = 'hidden';
-    sendNotification('Failure', error)
+    sendNotification('failure', errMsg);
   }
 });
 
@@ -210,40 +212,39 @@ deleteDocForm.addEventListener("submit", async function (event) {
       { documentId });
     switchToTab = 1
     await render();
-  } catch (error) {
+    sendNotification('success', 'Document deleted successfully');
+  } catch (errMsg) {
     pageLoad.style.visibility = 'hidden';
-    sendNotification('Failure', error)
+    sendNotification('failure', errMsg);
   }
 });
 
 docIcons.forEach((icon) => {
   icon.addEventListener('click', async () => {
-
     if (icon.dataset.context === 'new') {
       tabContents[1].querySelector('.icon-box[data-context="new"]').classList.remove('bounce');
       showPopup(icon.dataset.context);
       return;
     }
-
     const selectedDoc = tabContents[1].querySelector('.doc-card.selected');
     if (!selectedDoc) return;
-
     if (icon.dataset.context === 'rename' || icon.dataset.context === 'delete') {
       showPopup(icon.dataset.context);
       return;
     }
-
     if (icon.dataset.context === 'edit') {
       pageLoad.style.visibility = 'visible';
+      const docName = selectedDoc.querySelector('.doc-name').innerText;
       try {
         await apiCall('/api/v1/dashboard/document/edit',
           'POST',
           { documentId: selectedDoc.dataset.docid });
         switchToTab = 0
         await render();
-      } catch (error) {
+        sendNotification('success', `Started editing ${docName}`);
+      } catch (errMsg) {
         pageLoad.style.visibility = 'hidden';
-        sendNotification('Failure', error)
+        sendNotification('failure', errMsg);
       }
       return;
     }
@@ -258,16 +259,16 @@ docIcons.forEach((icon) => {
 iconSun.addEventListener("click", async function () {
   try {
     await themeClickEvent('light');
-  } catch (error) {
-    sendNotification('failure', error);
+  } catch (errMsg) {
+    sendNotification('failure', errMsg);
   }
 });
 
 iconMoon.addEventListener("click", async function () {
   try {
     await themeClickEvent('dark');
-  } catch (error) {
-    sendNotification('failure', error);
+  } catch (errMsg) {
+    sendNotification('failure', errMsg);
   }
 });
 
@@ -393,14 +394,16 @@ styleForms.forEach(form => {
         }
         console.log(payload);
         await apiCall(`/api/v1/style/${style}`, 'POST', payload);
+        sendNotification('success', 'Style updated successfully');
       } else {
         const style = textStyles[activeStyle];
         await apiCall(`/api/v1/style/${style}/reset`, 'POST', {});
+        sendNotification('success', 'Style reset successfully');
       }
       await render();
-    } catch (error) {
+    } catch (errMsg) {
       pageLoad.style.visibility = 'hidden';
-      sendNotification('Failure', error)
+      sendNotification('failure', errMsg);
     }
   });
 })
@@ -431,8 +434,8 @@ document.querySelector('input[name=toggle-switch-input]').addEventListener('clic
       console.log('unchecked');
       return await storeTooltipUnchecked(true);
     }
-  } catch (error) {
-    return sendNotification('failure', error);
+  } catch (errMsg) {
+    sendNotification('failure', errMsg);
   }
 });
 
@@ -483,7 +486,7 @@ async function render() {
       updateNotesTab();
       updateStylesTab();
     } catch (errMsg) {
-      sendNotification('Failure', errMsg)
+      sendNotification('failure', errMsg)
     }
     pageLoad.style.visibility = 'hidden';
   } catch (error) {
@@ -540,13 +543,12 @@ function getTooltipDisabled() {
 }
 
 function sendNotification(status, message) {
-  // console.log(notificationDiv);
   notificationDiv.dataset.status = status;
   notificationDiv.innerText = message;
   notificationDiv.classList.add('show');
   setTimeout(() => {
     notificationDiv.classList.remove('show');
-  }, 2500);
+  }, 5000);
 }
 
 function getCSSVariableValue(variable) {
@@ -663,7 +665,7 @@ async function logoutAndRefreshPopup() {
     await apiCall('/api/v1/auth/logout', 'GET', {});
   } catch (errMsg) {
     pageLoad.style.visibility = 'hidden';
-    sendNotification('Failure', errMsg);
+    sendNotification('failure', errMsg);
   }
   updateAvatar();
   updateContentBox();

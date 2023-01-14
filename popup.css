@@ -1842,7 +1842,7 @@ button.open-in-docs:focus {
   font-size: 0.9em;
   padding-left: var(--beforeWidth);
   background-color: var(--color-bgr-secondary);
-  transition: right 350ms ease-in-out;
+  transition: right 350ms ease-in-out 500ms;
 }
 
 .notification::before {
