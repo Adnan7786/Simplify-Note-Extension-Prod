@@ -438,7 +438,7 @@ screenshotButton.addEventListener('click', () => {
         height: window.innerHeight,
         width: window.innerWidth,
       },
-      function (response) {}
+      function (response) { }
     )
   }, 300)
   setTimeout(() => {
@@ -991,23 +991,23 @@ chrome.runtime.onMessage.addListener(async function (
         let isOcrDone = false
         setTimeout(() => {
           if (!isOcrDone) {
-            ocr_textbody_textarea.placeholder = 'Taking longer than expected...'
+            ocrTextBodyTextarea.placeholder = 'Taking longer than expected...'
           }
         }, 5000)
 
         Tesseract.recognize(dataUrl, 'eng', {})
           .then(({ data: { text } }) => {
             isOcrDone = true
-            ocrTextBodyTextarea.innerText = text
+            ocrTextBodyTextarea.innerHTML = text
           })
           .catch((error) => {
             console.log(error)
-            ocrTextBodyTextarea.innerText = 'Error in recognizing text'
+            ocrTextBodyTextarea.innerHTML = 'Error in recognizing text'
             ocrTextBodyTextarea.style.color = 'red'
           })
       } catch (error) {
         console.log(error)
-        ocrTextBodyTextarea.innerText = 'Error in recognizing text'
+        ocrTextBodyTextarea.innerHTML = 'Error in recognizing text'
         ocrTextBodyTextarea.style.color = 'red'
       }
     }
