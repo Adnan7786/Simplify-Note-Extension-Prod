@@ -66,6 +66,7 @@ screenSnipContainer.id = 'screenSnipContainer'
 screenSnipContainer.innerHTML = `
 <style>
 #screenSnipContainer {
+    box-sizing: border-box;
   position: fixed;
   z-index: 10002;
   bottom: 0px;
@@ -76,8 +77,8 @@ screenSnipContainer.innerHTML = `
   padding: 8px;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   background-color: grey;
   color: white;
   border-radius: 30px;
@@ -94,7 +95,7 @@ screenSnipContainer.innerHTML = `
   margin: 5px;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
-  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+  background-size: 32px 32px !important;
 }    
 </style>
 `
@@ -104,20 +105,21 @@ sliderContainer.id = 'sliderContainer'
 sliderContainer.innerHTML = `
 <style>
 #sliderContainer {
+    box-sizing: border-box;
   position: fixed;
   z-index: 10000;
   bottom: 0px;
-  left: 40px;
+  left: 20px;
   margin: 10px;
   padding: 6px;
-  padding-left: 15px;
+  padding-left: 20px;
   padding-right: 8px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   width: 0px;
-  height: 30px;
+  height: 35px;
   background-color: black;
   color: white;
   border-radius: 0px 30px 30px 0px;
@@ -135,11 +137,23 @@ screenSnipContainer.addEventListener('mousedown', () => {
   // now make the screenSnipContainer to be draggable
   screenSnipContainer.draggable = true
   screenSnipContainer.style.cursor = 'grabbing'
+
   console.log('mouse on mouse down')
 
   // now change the position of the screenSnipContainer with the mouse position
+  screenSnipContainer.addEventListener('dragstart', (e) => {
+    sliderContainer.style.visibility = 'hidden'
+    sliderContainer.style.width = '0px'
+    sliderContainer.style.transition = 'all 0.3s ease-in-out'
+    snipButton.style.display = 'none'
+    ocrButton.style.display = 'none'
+    screenshotButton.style.display = 'none'
+    screenSnipContainer.style.cursor = 'grabbing'
+    console.log('mouse on dragstart')
+  })
+
   screenSnipContainer.addEventListener('dragend', (e) => {
-    sliderContainer.style.display = 'none'
+    screenSnipContainer.style.cursor = 'grab'
 
     // the position of the screenSnipContainer should not go out of the screen
     screenSnipContainer.style.top = e.clientY + 'px'
@@ -159,7 +173,7 @@ screenSnipContainer.addEventListener('mousedown', () => {
 
 screenSnipContainer.addEventListener('mouseup', () => {
   screenSnipContainer.draggable = false
-  sliderContainer.style.display = 'flex'
+  // sliderContainer.style.display = 'flex'
 
   screenSnipContainer.style.cursor = 'grab'
   console.log('mouse on mouse up')
@@ -182,8 +196,7 @@ screenshotButton.innerHTML = `
   transition: all 0.3s ease-in-out;
   box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
   background-image: url(${chrome.runtime.getURL('src/icons/screenshot.png')});
-
-  background-size: contain;
+  background-size: 24px 24px !important;
   padding: 5px;
   background-repeat: no-repeat;
   background-position: center;
@@ -208,7 +221,7 @@ snipButton.innerHTML = `
   transition: all 0.3s ease-in-out;
   box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
   background-image: url(${chrome.runtime.getURL('src/icons/snip.png')});
-  background-size: contain;
+  background-size: 24px 24px !important;
   padding: 5px;
   background-repeat: no-repeat;
   background-position: center;
@@ -232,7 +245,7 @@ ocrButton.innerHTML = `
   transition: all 0.3s ease-in-out;
   box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
   background-image: url(${chrome.runtime.getURL('src/icons/ocr.png')});
-  background-size: contain;
+  background-size: 24px 24px !important;
   padding: 5px;
   background-repeat: no-repeat;
   background-position: center;}
@@ -279,13 +292,18 @@ containAllSnips.appendChild(sliderContainer)
 
 sliderContainer.appendChild(screenshotButton)
 sliderContainer.appendChild(snipButton)
-sliderContainer.appendChild(ocrButton)
+// sliderContainer.appendChild(ocrButton)
 // screenSnipContainer.appendChild(mouseHoldContainer)
+
+website_link = window.location.href
+if (!website_link.includes('.pdf')) {
+  sliderContainer.appendChild(ocrButton)
+}
 
 containAllSnips.addEventListener('mouseenter', () => {
   sliderContainer.style.visibility = 'visible'
   sliderContainer.style.display = 'flex'
-  sliderContainer.style.width = '120px'
+  sliderContainer.style.width = '130px'
   snipButton.style.display = 'block'
   ocrButton.style.display = 'block'
   screenshotButton.style.display = 'block'
@@ -420,7 +438,7 @@ screenshotButton.addEventListener('click', () => {
         height: window.innerHeight,
         width: window.innerWidth,
       },
-      function (response) { }
+      function (response) {}
     )
   }, 300)
   setTimeout(() => {
@@ -970,8 +988,16 @@ chrome.runtime.onMessage.addListener(async function (
 
       // OCR using tesseract
       try {
+        let isOcrDone = false
+        setTimeout(() => {
+          if (!isOcrDone) {
+            ocr_textbody_textarea.placeholder = 'Taking longer than expected...'
+          }
+        }, 5000)
+
         Tesseract.recognize(dataUrl, 'eng', {})
           .then(({ data: { text } }) => {
+            isOcrDone = true
             ocrTextBodyTextarea.innerText = text
           })
           .catch((error) => {
@@ -1266,7 +1292,7 @@ notificationDiv.innerHTML = `<style>
 }</style>`
 
 // root.appendChild(notificationDiv);
-root.appendChild(containAllSnips);
+root.appendChild(containAllSnips)
 
 const cssThemeVariables = {
   '--color-background': {
@@ -1574,21 +1600,17 @@ function setTheme(theme) {
     //   cssThemeVariables[variable][theme]
     // )
   }
-  screenSnipContainer.style.backgroundColor =
-    theme === 'light' ? '#fff' : '#000'
-  screenSnipContainer.style.color = theme === 'light' ? '#000' : '#fff'
+  screenSnipContainer.style.backgroundColor = '#fff'
+  // screenSnipContainer.style.color = '#fff'
+  screenSnipContainer.style.boxShadow =
+    'var(--color-logo-shadow1) 0px -10px 25px 0px inset, var(--color-logo-shadow2) 0px -15px 30px 0px inset, var(--color-logo-shadow3) 0px -40px 40px 0px inset'
+
   screenshotButton.style.backgroundImage =
-    theme === 'light'
-      ? 'url(' + chrome.runtime.getURL('src/icons/screenshot1.png') + ')'
-      : 'url(' + chrome.runtime.getURL('src/icons/screenshot.png') + ')'
+    'url(' + chrome.runtime.getURL('src/icons/screenshot.png') + ')'
   snipButton.style.backgroundImage =
-    theme === 'light'
-      ? 'url(' + chrome.runtime.getURL('src/icons/snip1.png') + ')'
-      : 'url(' + chrome.runtime.getURL('src/icons/snip.png') + ')'
+    'url(' + chrome.runtime.getURL('src/icons/snip.png') + ')'
   ocrButton.style.backgroundImage =
-    theme === 'light'
-      ? 'url(' + chrome.runtime.getURL('src/icons/ocr1.png') + ')'
-      : 'url(' + chrome.runtime.getURL('src/icons/ocr.png') + ')'
+    'url(' + chrome.runtime.getURL('src/icons/ocr.png') + ')'
 }
 
 function getCurrentTheme() {
@@ -1600,12 +1622,12 @@ function getCurrentTheme() {
 }
 
 function sendNotification(status, message) {
-  notificationDiv.dataset.status = status;
-  notificationDiv.innerText = message;
-  notificationDiv.classList.add('show');
+  notificationDiv.dataset.status = status
+  notificationDiv.innerText = message
+  notificationDiv.classList.add('show')
   setTimeout(() => {
-    notificationDiv.classList.remove('show');
-  }, 5000);
+    notificationDiv.classList.remove('show')
+  }, 5000)
 }
 
 function getWidth() {
