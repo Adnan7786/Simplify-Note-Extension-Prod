@@ -1291,7 +1291,7 @@ notificationDiv.innerHTML = `<style>
   right: 0;
 }</style>`
 
-// root.appendChild(notificationDiv);
+root.appendChild(notificationDiv);
 root.appendChild(containAllSnips)
 
 const cssThemeVariables = {
@@ -1620,6 +1620,13 @@ function getCurrentTheme() {
     })
   })
 }
+
+// const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
+// const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
+// console.log(vh, vw);
+// notificationDiv.style.left = vw - 100;
+// notificationDiv.style.top = vh - 100;
+// sendNotification('failure', 'Error aa raha bhai')
 
 function sendNotification(status, message) {
   notificationDiv.dataset.status = status
