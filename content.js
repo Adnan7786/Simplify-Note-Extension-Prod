@@ -445,7 +445,7 @@ screenshotButton.addEventListener('click', () => {
         height: window.innerHeight,
         width: window.innerWidth,
       },
-      function (response) { }
+      handleResponse
     )
   }, 300)
   setTimeout(() => {
@@ -740,14 +740,17 @@ chrome.runtime.onMessage.addListener(async function (
       ])
 
       // ask background to save the image
-      chrome.runtime.sendMessage({
-        message: 'insert_image',
-        imageData: {
-          url: dataUrl,
-          width: parseInt(request.dim.width) * dpr,
-          height: parseInt(request.dim.height) * dpr,
-        }
-      })
+      chrome.runtime.sendMessage(
+        {
+          message: 'insert_image',
+          imageData: {
+            url: dataUrl,
+            width: parseInt(request.dim.width) * dpr,
+            height: parseInt(request.dim.height) * dpr,
+          }
+        },
+        handleResponse
+      )
     }
   }
   if (request.message === 'ocr') {
