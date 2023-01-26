@@ -1,6 +1,4 @@
 const domain = 'https://simplifynote.app' //prod
-// const domain = 'https://simplify-note.vercel.app' //dev
-
 
 chrome.runtime.onInstalled.addListener(async (details) => {
   const tooltipUnchecked = await getTooltipUnchecked()
@@ -22,39 +20,59 @@ chrome.runtime.onStartup.addListener(async () => {
   }
 })
 
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.message === 'insert_text') {
-    try {
-      const message = await apiInsertText(request.style, request.text)
-      sendNotification('Successful', message)
-    } catch (errorMessage) {
-      sendNotification('Failed', errorMessage)
-    }
-  } else if (request.message === 'insert_image') {
-    try {
-      const imageData = request.imageData
-      const message = await apiInsertImage(
-        imageData.url,
-        imageData.height,
-        imageData.width
-      )
-      sendNotification('Successful', message)
-    } catch (errorMessage) {
-      sendNotification('Failed', errorMessage)
-    }
-  } else if (request.message === 'screenshot') {
-    chrome.tabs.captureVisibleTab(null, { format: 'png' }, async (dataUrl) => {
-      console.log('dataUrl=====================', dataUrl)
-      try {
-        const message = await apiInsertImage(
-          dataUrl,
-          request.height,
-          request.width
-        )
-        sendNotification('Successful', message)
-      } catch (errorMessage) {
-        sendNotification('Failed', errorMessage)
+    apiCall(`/api/v1/insert/${request.style}`,
+      'POST',
+      { text: request.text }
+    ).then((res) => {
+      console.log(res);
+      sendResponse({
+        status: 'success',
+        message: `${toTitleCase(request.style)} inserted successfully`
+      })
+    }).catch((errMsg) => {
+      sendResponse({ status: 'failure', message: errMsg });
+    })
+  }
+  else if (request.message === 'insert_image') {
+    const imageData = request.imageData
+    apiCall(`/api/v1/insert/image`,
+      'POST',
+      {
+        image: imageData.url,
+        height: imageData.height,
+        width: imageData.width,
       }
+    ).then((res) => {
+      console.log(res);
+      sendResponse({
+        status: 'success',
+        message: 'Image inserted successfully'
+      })
+    }).catch((errMsg) => {
+      sendResponse({ status: 'failure', message: errMsg });
+    })
+  }
+  else if (request.message === 'screenshot') {
+    chrome.tabs.captureVisibleTab(null, { format: 'png' }, async (dataUrl) => {
+      console.log('dataUrl = ', dataUrl)
+      apiCall(`/api/v1/insert/image`,
+        'POST',
+        {
+          image: dataUrl,
+          height: request.height,
+          width: request.width,
+        }
+      ).then((res) => {
+        console.log(res);
+        sendResponse({
+          status: 'success',
+          message: 'Image inserted successfully'
+        })
+      }).catch((errMsg) => {
+        sendResponse({ status: 'failure', message: errMsg });
+      })
       chrome.tabs.sendMessage(sender.tab.id, {
         message: 'screenshot',
         dataUrl: dataUrl,
@@ -69,17 +87,22 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       })
     })
   } else if (request.message === 'saveImage') {
-    try {
-      console.log('saveImage')
-      const message = await apiInsertImage(
-        request.dataUrl,
-        request.height,
-        request.width
-      )
-      sendNotification('Successful', message)
-    } catch (errorMessage) {
-      sendNotification('Failed', errorMessage)
-    }
+    apiCall(`/api/v1/insert/image`,
+      'POST',
+      {
+        image: request.dataUrl,
+        height: request.height,
+        width: request.width,
+      }
+    ).then((res) => {
+      console.log(res);
+      sendResponse({
+        status: 'success',
+        message: 'Image inserted successfully'
+      })
+    }).catch((errMsg) => {
+      sendResponse({ status: 'failure', message: errMsg });
+    })
   } else if (request.message === 'ocr') {
     chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
       chrome.tabs.sendMessage(sender.tab.id, {
@@ -104,6 +127,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       })
       .finally(() => worker.terminate())
   }
+  return true;
 })
 
 chrome.storage.onChanged.addListener(async function (changes, namespace) {
@@ -174,6 +198,31 @@ function apiInsertImage(url, height, width) {
         reject(error.message)
       })
   })
+}
+
+function apiCall(pathSuffix, method, payload) {
+  const endpoint = `${domain}${pathSuffix}`;
+  const reqObj = {};
+  if (method !== 'GET') {
+    reqObj.method = method;
+    reqObj.headers = {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+    };
+    reqObj.body = JSON.stringify(payload);
+  }
+  return new Promise((resolve, reject) => {
+    fetch(endpoint, reqObj)
+      .then(async (res) => {
+        if (!res.ok) {
+          console.log(await res.json());
+          throw new Error(`Something went wrong. Please try again later.`)
+        };
+        return res.json();
+      })
+      .then((data) => { resolve(data) })
+      .catch((error) => { reject(error) });
+  });
 }
 
 function toTitleCase(txt) {

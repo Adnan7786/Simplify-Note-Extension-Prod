@@ -43,11 +43,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 // function to handle response
 function handleResponse(res) {
-  if (res.successful) {
-    alert(res.message)
-  } else {
-    alert(res.message)
-  }
+  console.log(res);
+  sendNotification(res.status, res.message);
 }
 
 // Create a container with the three buttons (screenshot, snip, and ocr) at the bottom left of the screen
@@ -66,7 +63,7 @@ screenSnipContainer.id = 'screenSnipContainer'
 screenSnipContainer.innerHTML = `
 <style>
 #screenSnipContainer {
-    box-sizing: border-box;
+  box-sizing: border-box;
   position: fixed;
   z-index: 10002;
   bottom: 0px;
@@ -734,10 +731,12 @@ chrome.runtime.onMessage.addListener(async function (
 
       // ask background to save the image
       chrome.runtime.sendMessage({
-        message: 'saveImage',
-        dataUrl: dataUrl,
-        width: parseInt(request.dim.width) * dpr,
-        height: parseInt(request.dim.height) * dpr,
+        message: 'insert_image',
+        imageData: {
+          url: dataUrl,
+          width: parseInt(request.dim.width) * dpr,
+          height: parseInt(request.dim.height) * dpr,
+        }
       })
     }
   }
@@ -1025,6 +1024,7 @@ document.body.appendChild(shadowRootContainer)
 
 var host = document.getElementById('shadowRootContainer')
 var root = host.attachShadow({ mode: 'open' })
+
 const tooltipContainer = document.createElement('div')
 tooltipContainer.id = 'tooltipContainer'
 tooltipContainer.className = 'tooltipContainer'
@@ -1239,18 +1239,11 @@ tooltipContainer.innerHTML = `<style>
 
 root.appendChild(tooltipContainer)
 
-const notificationDiv = document.createElement('div')
-notificationDiv.id = 'notification'
-notificationDiv.className = 'notification'
-notificationDiv.innerHTML = `<style>
-:host {
-  --color-primary: #0ed095;
-  --color-background: #f3f6fd;
-  --color-text: #7c7c7c;
-  --color-shadow: rgba(0, 0, 0, 0.2);
-  --beforeWidth: 7px;
-  --borderRadius: 4px;
-}
+const notificationContainer = document.createElement('div')
+notificationContainer.id = 'notificationContainer'
+notificationContainer.className = 'notificationContainer'
+notificationContainer.style.visibility = 'hidden'
+notificationContainer.innerHTML = `<style>
 
 .notification {
   display: flex;
@@ -1258,21 +1251,20 @@ notificationDiv.innerHTML = `<style>
   justify-content: center;
   height: 30px;
   width: 240px;
-  position: absolute;
+  position: fixed;
   bottom: 8px;
-  right: -100%;
   color: var(--color-text);
   font-size: 0.9em;
   padding-left: var(--beforeWidth);
   background-color: var(--color-background);
   box-shadow: var(--color-shadow) 0px 2px 40px;
-  transition: right 350ms ease-in-out 500ms;
+  transition: left 350ms ease-in-out;
 }
 
 .notification::before {
   content: '';
   position: absolute;
-  left: 0;
+  left: -7px;
   height: 100%;
   width: 7px;
   border-top-left-radius: 4px;
@@ -1286,12 +1278,10 @@ notificationDiv.innerHTML = `<style>
 .notification[data-status="success"]::before {
   background-color: #0ed095;
 }
+</style>
+<div id="notification" class="notification">`
 
-.notification.show {
-  right: 0;
-}</style>`
-
-root.appendChild(notificationDiv);
+root.appendChild(notificationContainer);
 root.appendChild(containAllSnips)
 
 const cssThemeVariables = {
@@ -1329,6 +1319,7 @@ const iconParagraph = shadowElem.querySelector('#iconParagraph')
 const iconPlus = shadowElem.querySelector('#iconPlus')
 const textTooltipWidth = 40 / 2 + 155
 const textTooltipHeight = 40
+const notificationDiv = shadowElem.querySelector('#notification')
 
 window.onloadstart = render()
 
@@ -1595,10 +1586,10 @@ function setTheme(theme) {
       variable,
       cssThemeVariables[variable][theme]
     )
-    // notificationDiv.style.setProperty(
-    //   variable,
-    //   cssThemeVariables[variable][theme]
-    // )
+    notificationContainer.style.setProperty(
+      variable,
+      cssThemeVariables[variable][theme]
+    )
   }
   screenSnipContainer.style.backgroundColor = '#fff'
   // screenSnipContainer.style.color = '#fff'
@@ -1621,20 +1612,24 @@ function getCurrentTheme() {
   })
 }
 
-// const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
-// const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
-// console.log(vh, vw);
-// notificationDiv.style.left = vw - 100;
-// notificationDiv.style.top = vh - 100;
-// sendNotification('failure', 'Error aa raha bhai')
-
 function sendNotification(status, message) {
-  notificationDiv.dataset.status = status
-  notificationDiv.innerText = message
-  notificationDiv.classList.add('show')
+  notificationDiv.dataset.status = status;
+  notificationDiv.innerText = message;
+  const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+  const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+  notificationDiv.style.left = vw + 7 + 'px';
+  notificationDiv.style.top = vh - 30 - 20 + 'px';
+  notificationContainer.style.visibility = 'visible';
   setTimeout(() => {
-    notificationDiv.classList.remove('show')
-  }, 5000)
+    notificationDiv.style.left = vw - 240 + 'px';
+  }, 360)
+  console.log(vh, vw);
+  setTimeout(() => {
+    notificationDiv.style.left = vw + 7 + 'px';
+    setTimeout(() => {
+      notificationContainer.style.visibility = 'hidden';
+    }, 360)
+  }, 4000)
 }
 
 function getWidth() {
