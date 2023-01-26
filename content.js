@@ -13,21 +13,31 @@ if (isPDF(window.location.href)) {
 }
 
 function getTooltipUnchecked() {
-  return new Promise((resolve, reject) => {
-    chrome.storage.sync.get(['tooltipUnchecked'], function (result) {
-      result.tooltipUnchecked
-        ? resolve(result.tooltipUnchecked)
-        : resolve(false)
+  try {
+    return new Promise((resolve, reject) => {
+      chrome.storage.sync.get(['tooltipUnchecked'])
+        .then((result) => {
+          result.tooltipUnchecked
+            ? resolve(result.tooltipUnchecked)
+            : resolve(false)
+        })
     })
-  })
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function getTooltipDisabled() {
-  return new Promise((resolve, reject) => {
-    chrome.storage.sync.get(['tooltipDisabled'], function (result) {
-      result.tooltipDisabled ? resolve(result.tooltipDisabled) : resolve(false)
+  try {
+    return new Promise((resolve, reject) => {
+      chrome.storage.sync.get(['tooltipDisabled'])
+        .then((result) => {
+          result.tooltipDisabled ? resolve(result.tooltipDisabled) : resolve(false)
+        })
     })
-  })
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -1619,8 +1629,8 @@ function sendNotification(status, message) {
   const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
   notificationDiv.style.left = vw + 7 + 'px';
   notificationDiv.style.top = vh - 30 - 20 + 'px';
-  notificationContainer.style.visibility = 'visible';
   setTimeout(() => {
+    notificationContainer.style.visibility = 'visible';
     notificationDiv.style.left = vw - 240 + 'px';
   }, 360)
   console.log(vh, vw);

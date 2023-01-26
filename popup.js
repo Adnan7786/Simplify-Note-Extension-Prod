@@ -518,14 +518,6 @@ function storeTooltipUnchecked(value) {
   })
 }
 
-function getTooltipUnchecked() {
-  return new Promise((resolve, reject) => {
-    chrome.storage.sync.get(['tooltipUnchecked'], function (result) {
-      (result.tooltipUnchecked) ? resolve(result.tooltipUnchecked) : resolve(false);
-    });
-  });
-}
-
 function storeTooltipDisabled(value) {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.set({ 'tooltipDisabled': value }, function () {
@@ -534,12 +526,24 @@ function storeTooltipDisabled(value) {
   })
 }
 
+function getTooltipUnchecked() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get(['tooltipUnchecked'])
+      .then((result) => {
+        result.tooltipUnchecked
+          ? resolve(result.tooltipUnchecked)
+          : resolve(false)
+      })
+  })
+}
+
 function getTooltipDisabled() {
   return new Promise((resolve, reject) => {
-    chrome.storage.sync.get(['tooltipDisabled'], function (result) {
-      (result.tooltipDisabled) ? resolve(result.tooltipDisabled) : resolve(false);
-    });
-  });
+    chrome.storage.sync.get(['tooltipDisabled'])
+      .then((result) => {
+        result.tooltipDisabled ? resolve(result.tooltipDisabled) : resolve(false)
+      })
+  })
 }
 
 function sendNotification(status, message) {
