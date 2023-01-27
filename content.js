@@ -532,6 +532,7 @@ function captureSnip() {
   overScreenSnip.addEventListener('mouseup', (e) => {
     e.preventDefault()
     isDown = false
+    document.body.style.cursor = 'default'
     const width = e.pageX - startX
     const height = e.pageY - startY
     snipContainer.style.width = Math.abs(width) + 'px'
@@ -545,6 +546,8 @@ function captureSnip() {
       containAllSnips.style.visibility = 'visible'
       screenSnipContainer.style.visibility = 'visible'
     } else {
+      document.body.removeChild(snipContainer)
+      document.body.removeChild(overScreenSnip)
       chrome.runtime.sendMessage(
         {
           message: 'snip',
@@ -557,8 +560,8 @@ function captureSnip() {
         },
         function (response) {
           // Removing the elements and the event listeners
-          document.body.removeChild(snipContainer)
-          document.body.removeChild(overScreenSnip)
+          // document.body.removeChild(snipContainer)
+          // document.body.removeChild(overScreenSnip)
         }
       )
     }
@@ -631,15 +634,13 @@ function captureSnipOcr() {
   overScreenOcr.addEventListener('mouseup', (e) => {
     e.preventDefault()
     isDown = false
-    console.log(`startX: ${startX}, startY: ${startY}`)
-    console.log(`endX: ${e.pageX}, endY: ${e.pageY}`)
     document.body.style.cursor = 'default'
     ocrContainer.style.backgroundColor = 'rgba(0,0,0,0)'
     const width = e.pageX - startX
     const height = e.pageY - startY
     ocrContainer.style.width = Math.abs(width) + 'px'
     ocrContainer.style.height = Math.abs(height) + 'px'
-
+    ocrContainer.style.visibility = 'hidden'
     // if the snip is too small, remove it
     if (Math.abs(width) < 10 || Math.abs(height) < 10) {
       document.body.removeChild(overScreenOcr)
@@ -647,6 +648,8 @@ function captureSnipOcr() {
       containAllSnips.style.visibility = 'visible'
       screenSnipContainer.style.visibility = 'visible'
     } else {
+      document.body.removeChild(overScreenOcr)
+      document.body.removeChild(ocrContainer)
       chrome.runtime.sendMessage(
         {
           message: 'ocr',
@@ -659,8 +662,8 @@ function captureSnipOcr() {
         },
         function (response) {
           // Removing the elements and the event listeners
-          document.body.removeChild(overScreenOcr)
-          document.body.removeChild(ocrContainer)
+          // document.body.removeChild(overScreenOcr)
+          // document.body.removeChild(ocrContainer)
         }
       )
     }
