@@ -438,7 +438,7 @@ screenshotButton.addEventListener('click', () => {
         height: window.innerHeight,
         width: window.innerWidth,
       },
-      function (response) { }
+      function (response) {}
     )
   }, 300)
   setTimeout(() => {
@@ -597,7 +597,7 @@ function captureSnipOcr() {
     ocrContainer.style.height = '0px'
     // dashed moving border
     ocrContainer.style.border = '1px dashed #000'
-    ocrContainer.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
+    ocrContainer.style.boxShadow = '0px 0px 10px 0px rgba(255,255,255,0.5)'
     // ocrContainer.style.backgroundColor = 'rgba(0,0,0,0.7)'
   })
 
@@ -742,6 +742,11 @@ chrome.runtime.onMessage.addListener(async function (
     }
   }
   if (request.message === 'ocr') {
+    // if ocrTextContainer already oresent then remove it
+    if (document.querySelector('.ocr-text-container')) {
+      document.body.removeChild(document.querySelector('.ocr-text-container'))
+    }
+
     const dpr = devicePixelRatio
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
@@ -1291,7 +1296,7 @@ notificationDiv.innerHTML = `<style>
   right: 0;
 }</style>`
 
-root.appendChild(notificationDiv);
+root.appendChild(notificationDiv)
 root.appendChild(containAllSnips)
 
 const cssThemeVariables = {
