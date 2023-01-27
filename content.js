@@ -673,14 +673,14 @@ chrome.runtime.onMessage.addListener(async function (
   sendResponse
 ) {
   if (request.message === 'screenshot') {
-    const screenshotContainer = document.createElement('div')
-    screenshotContainer.className = 'image-container'
-    screenshotContainer.style.position = 'fixed'
-    screenshotContainer.style.bottom = '10px'
-    screenshotContainer.style.zIndex = '10000'
-    screenshotContainer.style.padding = '20px 10px'
-    screenshotContainer.style.right = '10px'
-    document.body.appendChild(screenshotContainer)
+    // const screenshotContainer = document.createElement('div')
+    // screenshotContainer.className = 'image-container'
+    // screenshotContainer.style.position = 'fixed'
+    // screenshotContainer.style.bottom = '10px'
+    // screenshotContainer.style.zIndex = '10000'
+    // screenshotContainer.style.padding = '20px 10px'
+    // screenshotContainer.style.right = '10px'
+    // document.body.appendChild(screenshotContainer)
 
     var mimeType = request.dataUrl.split(',')[0].split(':')[1].split(';')[0]
     var binaryString = atob(request.dataUrl.split(',')[1])
