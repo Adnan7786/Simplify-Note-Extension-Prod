@@ -83,7 +83,6 @@ screenSnipContainer.innerHTML = `
   color: white;
   border-radius: 30px;
   box-shadow: 0px 0px 10px 0px rgba(255,255,255,1);
-  transition: all 0.3s ease-in-out;
   cursor: pointer;
   border-radius: 50%;
   background-image: url(${chrome.runtime.getURL('src/icons/tooltip-logo.png')});
@@ -94,7 +93,6 @@ screenSnipContainer.innerHTML = `
   outline: none;
   margin: 5px;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
   background-size: 32px 32px !important;
 }    
 </style>
@@ -124,7 +122,7 @@ sliderContainer.innerHTML = `
   color: white;
   border-radius: 0px 30px 30px 0px;
   box-shadow: 0px 0px 10px 0px rgba(255,255,255,1);
-  transition: all 0.3s ease-in-out;
+  transition: width 0.3s ease-in-out;
   cursor: pointer;
   overflow: hidden;
   visibility: hidden;
@@ -307,13 +305,13 @@ containAllSnips.addEventListener('mouseenter', () => {
   snipButton.style.display = 'block'
   ocrButton.style.display = 'block'
   screenshotButton.style.display = 'block'
-  sliderContainer.style.transition = 'all 0.5s ease-in-out'
+  sliderContainer.style.transition = 'width 0.5s ease-in-out'
 })
 
 containAllSnips.addEventListener('mouseleave', () => {
   sliderContainer.style.visibility = 'hidden'
   sliderContainer.style.width = '0px'
-  sliderContainer.style.transition = 'all 0.3s ease-in-out'
+  sliderContainer.style.transition = 'width 0.3s ease-in-out'
   snipButton.style.display = 'none'
   ocrButton.style.display = 'none'
   screenshotButton.style.display = 'none'
@@ -438,7 +436,7 @@ screenshotButton.addEventListener('click', () => {
         height: window.innerHeight,
         width: window.innerWidth,
       },
-      function (response) {}
+      function (response) { }
     )
   }, 300)
   setTimeout(() => {
@@ -448,16 +446,16 @@ screenshotButton.addEventListener('click', () => {
 })
 
 snipButton.addEventListener('click', (e) => {
+  sliderContainer.style.visibility = 'hidden'
   containAllSnips.style.visibility = 'hidden'
   screenSnipContainer.style.visibility = 'hidden'
-
   captureSnip()
 })
 
 ocrButton.addEventListener('click', () => {
+  sliderContainer.style.visibility = 'hidden'
   containAllSnips.style.visibility = 'hidden'
   screenSnipContainer.style.visibility = 'hidden'
-
   captureSnipOcr()
 })
 
