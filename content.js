@@ -1294,7 +1294,7 @@ notificationDiv.innerHTML = `<style>
   right: 0;
 }</style>`
 
-root.appendChild(notificationDiv)
+// root.appendChild(notificationDiv)
 root.appendChild(containAllSnips)
 
 const cssThemeVariables = {

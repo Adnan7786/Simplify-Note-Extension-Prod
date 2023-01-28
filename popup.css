@@ -1685,13 +1685,13 @@ button.open-in-docs:focus {
 }
 
 .account-settings .icon-google {
-  fill: var(--color-secondary);
-  height: 15px;
-  width: 15px;
+  /* fill: var(--color-secondary); */
+  height: 16px;
+  width: 16px;
 }
 
 .account-settings .icon-sign-out {
-  fill: var(--color-secondary);
+  fill: var(--color-black-white);
   height: 16px;
   width: 16px;
 }
