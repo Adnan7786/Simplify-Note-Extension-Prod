@@ -1273,7 +1273,9 @@ notificationContainer.innerHTML = `<style>
   position: fixed;
   bottom: 8px;
   color: var(--color-text);
-  font-size: 0.9em;
+  font-size: 13px;
+  font-weight: 400;
+  text-size-adjust: none;
   padding-left: var(--beforeWidth);
   background-color: var(--color-background);
   box-shadow: var(--color-shadow) 0px 2px 40px;
