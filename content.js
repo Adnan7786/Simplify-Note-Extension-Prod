@@ -23,7 +23,6 @@ function getTooltipUnchecked() {
         })
     })
   } catch (error) {
-    console.log(error);
   }
 }
 
@@ -36,15 +35,12 @@ function getTooltipDisabled() {
         })
     })
   } catch (error) {
-    console.log(error);
   }
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.message === 'toggleTooltip') {
-    console.log(request.status)
-    alert(request.status)
-
+    alert(request.status);
     sendResponse({
       message: 'successful',
     })
@@ -53,7 +49,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 // function to handle response
 function handleResponse(res) {
-  console.log(res);
   sendNotification(res.status, res.message);
 }
 
@@ -143,8 +138,6 @@ screenSnipContainer.addEventListener('mousedown', () => {
   screenSnipContainer.draggable = true
   screenSnipContainer.style.cursor = 'grabbing'
 
-  console.log('mouse on mouse down')
-
   // now change the position of the screenSnipContainer with the mouse position
   screenSnipContainer.addEventListener('dragstart', (e) => {
     sliderContainer.style.visibility = 'hidden'
@@ -154,7 +147,6 @@ screenSnipContainer.addEventListener('mousedown', () => {
     ocrButton.style.display = 'none'
     screenshotButton.style.display = 'none'
     screenSnipContainer.style.cursor = 'grabbing'
-    console.log('mouse on dragstart')
   })
 
   screenSnipContainer.addEventListener('dragend', (e) => {
@@ -171,8 +163,6 @@ screenSnipContainer.addEventListener('mousedown', () => {
       screenSnipContainer.style.top = window.innerHeight - 80 + 'px'
       sliderContainer.style.top = window.innerHeight - 80 + 'px'
     }
-
-    console.log('mouse', e.clientX, e.clientY)
   })
 })
 
@@ -181,7 +171,6 @@ screenSnipContainer.addEventListener('mouseup', () => {
   // sliderContainer.style.display = 'flex'
 
   screenSnipContainer.style.cursor = 'grab'
-  console.log('mouse on mouse up')
 })
 
 // Create a screenshot button
@@ -290,15 +279,11 @@ ocrButton.addEventListener('mouseleave', () => {
   ocrButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
 
-// document.body.appendChild(containAllSnips)
-
 containAllSnips.appendChild(screenSnipContainer)
 containAllSnips.appendChild(sliderContainer)
 
 sliderContainer.appendChild(screenshotButton)
 sliderContainer.appendChild(snipButton)
-// sliderContainer.appendChild(ocrButton)
-// screenSnipContainer.appendChild(mouseHoldContainer)
 
 website_link = window.location.href
 if (!website_link.includes('.pdf')) {
@@ -324,115 +309,7 @@ containAllSnips.addEventListener('mouseleave', () => {
   screenshotButton.style.display = 'none'
 })
 
-// // on hover of the screenSnipContainer make button slide out to the right side of the screenSnipContainer
-// screenSnipContainer.addEventListener('mouseenter', () => {
-//   screenSnipContainer.style.opacity = 1
-//   // make it big with animatinon
-//   sliderContainer.style.width = '120px'
-//   sliderContainer.style.transition = 'all 0.3s ease-in-out'
-//   sliderContainer.style.opacity = 1
-//   screenshotButton.style.display = 'block'
-//   screenshotButton.innerHTML = `
-// <style>
-// #screenshotButton {
-//   width: 40px;
-//   height: 40px;
-//   border-radius: 10px;
-//   background-color: transparent;
-//   border: none;
-//   outline: none;
-//   margin: 5px;
-//   cursor: pointer;
-//   transition: all 0.3s ease-in-out;
-//   box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
-//   background-image: url(${chrome.runtime.getURL('src/icons/screenshot.png')});
-//   background-size: contain;
-//   padding: 5px;
-//   background-repeat: no-repeat;
-//   background-position: center;
-// }
-// </style>
-// `
-//   snipButton.style.display = 'block'
-//   snipButton.innerHTML = `
-// <style>
-// #snipButton {
-//   width: 40px;
-//   height: 40px;
-//   border-radius: 10px;
-//   background-color: transparent;
-//   border: none;
-//   outline: none;
-//   margin: 5px;
-//   cursor: pointer;
-//   transition: all 0.3s ease-in-out;
-//   box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
-//   background-image: url(${chrome.runtime.getURL('src/icons/snip.png')});
-//   background-size: contain;
-//   padding: 5px;
-//   background-repeat: no-repeat;
-//   background-position: center;
-// }
-// </style>
-// `
-//   ocrButton.style.display = 'block'
-//   ocrButton.innerHTML = `
-// <style>
-// #ocrButton {
-//   width: 40px;
-//   height: 40px;
-//   border-radius: 10px;
-//   background-color: transparent;
-//   border: none;
-//   outline: none;
-//   margin: 5px;
-//   cursor: pointer;
-//   transition: all 0.3s ease-in-out;
-//   box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
-//   background-image: url(${chrome.runtime.getURL('src/icons/ocr.png')});
-//   background-size: contain;
-//   padding: 5px;
-//   background-repeat: no-repeat;
-//   background-position: center;
-// }
-// </style>
-// `
-// })
-
-// // on mouse over keep the opacity t 1
-// screenSnipContainer.addEventListener('mouseover', () => {
-//   screenSnipContainer.style.opacity = 1
-//   sliderContainer.style.opacity = 1
-// })
-
-// // on mouse leave of the screenSnipContainer hide the buttons
-// screenSnipContainer.addEventListener('mouseleave', () => {
-//   // make screenshotButton opacity 0.3 after 2 sec
-
-//   sliderContainer.addEventListener('mouseenter', () => {
-//     screenSnipContainer.style.opacity = 1
-//     sliderContainer.style.opacity = 1
-//   })
-
-//   sliderContainer.addEventListener('mouseleave', () => {
-//     screenSnipContainer.style.opacity = 1
-//     sliderContainer.style.opacity = 1
-
-//     setTimeout(() => {
-//       // screenSnipContainer.style.opacity = '0.3'
-//       sliderContainer.style.width = '30px'
-//       sliderContainer.style.transition = 'all 0.3s ease-in-out'
-//       sliderContainer.style.opacity = 0
-
-//       screenshotButton.style.display = 'none'
-//       snipButton.style.display = 'none'
-//       ocrButton.style.display = 'none'
-//     }, 2000)
-//   })
-// })
-
 // Add event listeners to the buttons
-
 screenshotButton.addEventListener('click', () => {
   containAllSnips.style.display = 'none'
   screenSnipContainer.style.display = 'none'
@@ -507,7 +384,6 @@ function captureSnip() {
     snipContainer.style.border = '1px dashed #000'
     // detect background color and change the boxShadow color accordingly
     snipContainer.style.boxShadow = '0px 0px 10px 0px rgba(255,255,255,0.5)'
-    // snipContainer.style.backgroundColor = 'rgba(0,0,0,0.7)'
   })
 
   overScreenSnip.addEventListener('mousemove', (e) => {
@@ -557,9 +433,6 @@ function captureSnip() {
           },
         },
         function (response) {
-          // Removing the elements and the event listeners
-          // document.body.removeChild(snipContainer)
-          // document.body.removeChild(overScreenSnip)
         }
       )
     }
@@ -612,8 +485,6 @@ function captureSnipOcr() {
   overScreenOcr.addEventListener('mousemove', (e) => {
     if (!isDown) return
     e.preventDefault()
-    // console.log(e.pageX, e.pageY)
-    // console.log(startX, startY)
     const width = e.pageX - startX
     const height = e.pageY - startY
     ocrContainer.style.top = Math.min(e.pageY, startY) + 'px'
@@ -674,15 +545,6 @@ chrome.runtime.onMessage.addListener(async function (
   sendResponse
 ) {
   if (request.message === 'screenshot') {
-    // const screenshotContainer = document.createElement('div')
-    // screenshotContainer.className = 'image-container'
-    // screenshotContainer.style.position = 'fixed'
-    // screenshotContainer.style.bottom = '10px'
-    // screenshotContainer.style.zIndex = '10000'
-    // screenshotContainer.style.padding = '20px 10px'
-    // screenshotContainer.style.right = '10px'
-    // document.body.appendChild(screenshotContainer)
-
     var mimeType = request.dataUrl.split(',')[0].split(':')[1].split(';')[0]
     var binaryString = atob(request.dataUrl.split(',')[1])
     var arrayBuffer = new ArrayBuffer(binaryString.length)
@@ -699,7 +561,6 @@ chrome.runtime.onMessage.addListener(async function (
   }
 
   if (request.message === 'snip') {
-    console.log(request.dim, 'request.dataUrl')
     const dpr = devicePixelRatio
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
@@ -722,7 +583,6 @@ chrome.runtime.onMessage.addListener(async function (
         parseInt(request.dim.height) * dpr
       )
       const dataUrl = canvas.toDataURL()
-      console.log(dataUrl)
       containAllSnips.style.visibility = 'visible'
       screenSnipContainer.style.visibility = 'visible'
 
@@ -1019,12 +879,10 @@ chrome.runtime.onMessage.addListener(async function (
             ocrTextBodyTextarea.innerHTML = text
           })
           .catch((error) => {
-            console.log(error)
             ocrTextBodyTextarea.innerHTML = 'Error in recognizing text'
             ocrTextBodyTextarea.style.color = 'red'
           })
       } catch (error) {
-        console.log(error)
         ocrTextBodyTextarea.innerHTML = 'Error in recognizing text'
         ocrTextBodyTextarea.style.color = 'red'
       }
@@ -1398,17 +1256,14 @@ iconParagraph.addEventListener('click', function () {
 })
 
 iconPlus.addEventListener('click', function () {
-  console.log('clicked')
   if (
     !payloadImage ||
     !payloadImage.url ||
     payloadImage.height <= 0 ||
     payloadImage.width <= 0
   ) {
-    console.log('jaaa')
     return
   }
-  console.log('sending')
   chrome.runtime.sendMessage(
     { message: 'insert_image', imageData: payloadImage },
     handleResponse
@@ -1468,24 +1323,16 @@ window.addEventListener('mouseup', async function (event) {
 
 let currentLength = 0
 //Display Tootip for image
-// let insideImage = {};
 setInterval(() => {
   const imageCollection = document.getElementsByTagName('img')
   if (imageCollection.length === currentLength) {
     return
   }
-  // console.log('laaa');
-  // console.log(imageCollection);
   for (let index = currentLength; index < imageCollection.length; index++) {
-    // insideImage[index] = false;
-    // console.log(index);
     try {
       imageCollection[index].addEventListener(
         'mouseenter',
         async function (event) {
-          // if (insideImage[index]) return; // return if already inside image - to avoid flickering issue
-          console.log('enter')
-          // insideImage[index] = true;
           const tooltipUnchecked = await getTooltipUnchecked()
           const tooltipDisabled = await getTooltipDisabled()
 
@@ -1529,9 +1376,6 @@ setInterval(() => {
 
       imageCollection[index].addEventListener('mouseleave', function (event) {
         let imgRect = this.getBoundingClientRect()
-        // console.log(imgRect);
-        // console.log(event.clientX);
-        // console.log(event.clientY);
         if (
           imgRect.left <= event.clientX &&
           event.clientX <= imgRect.right &&
@@ -1540,7 +1384,6 @@ setInterval(() => {
         ) {
           return
         }
-        console.log('leave')
         // insideImage[index] = false;
         imageTooltip.style.visibility = 'hidden'
       })
@@ -1567,10 +1410,6 @@ function getSelectionText() {
 
 chrome.storage.onChanged.addListener(function (changes, namespace) {
   for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
-    // console.log(
-    //   `Storage key "${key}" in namespace "${namespace}" changed.`,
-    //   `Old value was "${oldValue}", new value is "${newValue}".`
-    // );
     if (key === 'tooltipUnchecked' || key === 'tooltipDisabled') {
       if (newValue === true) {
         imageTooltip.style.visibility = 'hidden' //hide imageTooltip
@@ -1593,10 +1432,8 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 async function render() {
   try {
     const theme = await getCurrentTheme()
-    console.log(theme)
     setTheme(theme)
   } catch (error) {
-    console.log(error)
   }
 }
 
@@ -1644,7 +1481,6 @@ function sendNotification(status, message) {
     notificationContainer.style.visibility = 'visible';
     notificationDiv.style.left = vw - 240 + 'px';
   }, 360)
-  console.log(vh, vw);
   setTimeout(() => {
     notificationDiv.style.left = vw + 7 + 'px';
     setTimeout(() => {
@@ -1672,6 +1508,3 @@ function getHeight() {
     document.documentElement.clientHeight
   )
 }
-
-console.log('Width:  ' + getWidth())
-console.log('Height: ' + getHeight())

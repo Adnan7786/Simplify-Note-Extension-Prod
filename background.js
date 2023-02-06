@@ -1,4 +1,4 @@
-const domain = 'https://simplifynote.app' //prod
+const domain = 'https://simplifynote.app'
 
 chrome.runtime.onInstalled.addListener(async (details) => {
   const tooltipUnchecked = await getTooltipUnchecked()
@@ -26,7 +26,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       'POST',
       { text: request.text }
     ).then((res) => {
-      console.log(res);
       sendResponse({
         status: 'success',
         message: `${toTitleCase(request.style)} inserted successfully`
@@ -45,7 +44,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         width: imageData.width,
       }
     ).then((res) => {
-      console.log(res);
       sendResponse({
         status: 'success',
         message: 'Image inserted successfully'
@@ -56,7 +54,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
   else if (request.message === 'screenshot') {
     chrome.tabs.captureVisibleTab(null, { format: 'png' }, async (dataUrl) => {
-      console.log('dataUrl = ', dataUrl)
       apiCall(`/api/v1/insert/image`,
         'POST',
         {
@@ -65,7 +62,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           width: request.width,
         }
       ).then((res) => {
-        console.log(res);
         sendResponse({
           status: 'success',
           message: 'Image inserted successfully'
@@ -95,7 +91,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         width: request.width,
       }
     ).then((res) => {
-      console.log(res);
       sendResponse({
         status: 'success',
         message: 'Image inserted successfully'
@@ -111,21 +106,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         dim: request.dim,
       })
     })
-  } else if (request.message === 'doOCR') {
-    // doOCR using tesseract
-    console.log('doOCR')
-
-    const { TesseractWorker } = Tesseract
-    const worker = new TesseractWorker()
-    worker
-      .recognize(request.dataUrl, 'eng', { logger: (m) => console.log(m) })
-      .progress((progress) => {
-        console.log('progress', progress)
-      })
-      .then((result) => {
-        console.log('result', result)
-      })
-      .finally(() => worker.terminate())
   }
   return true;
 })
@@ -215,7 +195,6 @@ function apiCall(pathSuffix, method, payload) {
     fetch(endpoint, reqObj)
       .then(async (res) => {
         if (!res.ok) {
-          console.log(await res.json());
           throw new Error(`Something went wrong. Please try again later.`)
         };
         return res.json();
@@ -285,7 +264,6 @@ function turnBadgeOn() {
       }
     )
   } catch (error) {
-    console.log(error)
   }
 }
 

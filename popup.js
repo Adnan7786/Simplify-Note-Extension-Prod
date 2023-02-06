@@ -1,5 +1,4 @@
-const domain = "https://simplifynote.app"; //prod
-// const domain = "https://simplify-note.vercel.app" //dev
+const domain = "https://simplifynote.app";
 
 const cssThemeVariables = {
   '--color-secondary': {
@@ -129,8 +128,7 @@ addNoteForm.addEventListener("submit", async function (event) {
 createDocForm.addEventListener("submit", async function (event) {
   event.preventDefault();
   const name = this.elements['name'].value;
-  const parentFolderId = tabContents[1].querySelector('.notes-container .icon-box[data-context="new"]').dataset.folderid
-  console.log(name, parentFolderId);
+  const parentFolderId = tabContents[1].querySelector('.notes-container .icon-box[data-context="new"]').dataset.folderid;
   pageLoad.style.visibility = 'visible';
   const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
   openedDialogBoxes.forEach((box) => {
@@ -153,8 +151,7 @@ addDocForm.addEventListener("submit", async function (event) {
   event.preventDefault();
   const docURL = this.elements['docURL'].value;
   const documentId = docURL.match(/[-\w]{25,}(?!.*[-\w]{25,})/)[0];
-  const parentFolderId = tabContents[1].querySelector('.notes-container .icon-box[data-context="new"]').dataset.folderid
-  console.log(docURL, documentId, parentFolderId);
+  const parentFolderId = tabContents[1].querySelector('.notes-container .icon-box[data-context="new"]').dataset.folderid;
   pageLoad.style.visibility = 'visible';
   const openedDialogBoxes = tabContents[1].querySelectorAll('.toolbar .dialog-box.show')
   openedDialogBoxes.forEach((box) => {
@@ -308,9 +305,7 @@ for (let index = 0; index < stylesListItems.length; index++) {
   stylesListItems[index].addEventListener('click', () => {
     stylesListItems[activeStyle].classList.remove('active');
     styleForms[activeStyle].classList.remove('active');
-    console.log(getComputedStyle(styleCloseIcon, null).display);
     if (getComputedStyle(styleCloseIcon, null).display !== 'none') {
-      console.log('closeon');
       styleIconContainer.click();
     }
     activeStyle = index;
@@ -321,8 +316,6 @@ for (let index = 0; index < stylesListItems.length; index++) {
 
 tabContents[0].querySelector('#icon-document').addEventListener('click', function (event) {
   const target = event.currentTarget;
-  console.log(target);
-  console.log(target.dataset.gdocid);
   docIconClickAndEnter(target.dataset.gdocid);
 });
 tabContents[0].querySelector('#icon-document').addEventListener('keypress', function (event) {
@@ -372,7 +365,6 @@ styleForms.forEach(form => {
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
     const buttonId = document.activeElement.id;
-    console.log(buttonId);
     pageLoad.style.visibility = 'visible';
     try {
       switchToTab = 2
@@ -392,7 +384,6 @@ styleForms.forEach(form => {
         if (style === 'bullet') {
           payload["bulletPreset"] = styleForms[activeStyle].querySelector('#bulletStyles').value;
         }
-        console.log(payload);
         await apiCall(`/api/v1/style/${style}`, 'POST', payload);
         sendNotification('success', 'Style updated successfully');
       } else {
@@ -427,11 +418,9 @@ document.querySelector('#icon-telegram').addEventListener('click', function () {
 document.querySelector('input[name=toggle-switch-input]').addEventListener('click', async function () {
   try {
     if (this.checked === true) {
-      console.log('checked');
       return await storeTooltipUnchecked(false);
     }
     else if (this.checked === false) {
-      console.log('unchecked');
       return await storeTooltipUnchecked(true);
     }
   } catch (errMsg) {
@@ -460,9 +449,6 @@ async function render() {
       user = await apiCall('/api/v1/users/showMe', 'GET', {});
       folderTree = await apiCall('/api/v1/dashboard/folder-tree', 'GET', {});
       userStyle = await apiCall('/api/v1/style', 'GET', {});
-      console.log(user);
-      console.log(folderTree);
-      console.log(userStyle);
       if (!user.googleRefreshToken || user.googleRefreshToken === '') {
         blockedTabList.push(0);
         blockedTabList.push(1);
@@ -476,7 +462,6 @@ async function render() {
       }
       if (switchToTab !== 3) tabContents[3].querySelector('#googleDriveAccess').classList.remove('bounce');
       if (switchToTab !== 1) tabContents[1].querySelector('.icon-box[data-context="new"]').classList.remove('bounce');
-      console.log('switchToTab', switchToTab)
       if (switchToTab !== -1) navbarTabs[switchToTab].click();
       updateAvatar(true);
       updateProfileTab();
@@ -582,7 +567,6 @@ async function toggleTheme(theme) {
 
 function uncheckTooltipSwitch(value) {
   const checked = !value;
-  console.log(checked);
   document.querySelector('input[name=toggle-switch-input]').checked = checked;
 
 }
@@ -606,15 +590,12 @@ async function themeClickEvent(theme) {
 }
 
 function redirectToSignInPage() {
-  window.open(domain + '/auth/login.html', '_blank');
+  window.open(domain + '/onboarding', '_blank');
 }
 
 async function setTheme() {
   const theme = await getCurrentTheme();
-  console.log(!theme);
-  console.log('theme ' + theme);
   if (!theme || (theme !== 'light' && theme !== 'dark')) {
-    console.log('aha');
     return;
   }
   await toggleTheme(theme);
@@ -649,7 +630,6 @@ function apiCall(pathSuffix, method, payload) {
     fetch(endpoint, reqObj)
       .then(async (res) => {
         if (!res.ok) {
-          console.log(await res.json());
           throw new Error(`Something went wrong. Please try again later.`)
         };
         return res.json();
@@ -709,7 +689,6 @@ function updateWorkspaceTab() {
   if (!folderTree) return;
   const workspaceTab = tabContents[0];
   const rootId = folderTree.rootId;
-  console.log('root ' + rootId);
   let currDocObj = null;
   let currDocId = null;
   for (const docId of folderTree.folders[rootId].documents) {
@@ -814,7 +793,6 @@ function updateStylesTab() {
 
 
 function updateProfileTab() {
-  console.log('uswttevh', user.subscription);
   const profileTab = tabContents[3];
   const dateStr = getFormattedDate(user.subscription.expiry_date);
   profileTab.querySelector('#avatar').src = user.image;
@@ -826,21 +804,6 @@ function updateProfileTab() {
   profileTab.querySelector('.account-settings #googleDriveAccess').addEventListener('click', () => {
     window.open(`${domain}/api/v1/google-auth/`, '_blank');
   })
-
-  // profileTab.querySelector('.account-settings #allWebpageAccess').addEventListener('click', () => {
-  //   console.log('adnan');
-  //   chrome.permissions.request({
-  //     permissions: ['tabs'],
-  //     origins: ['https://www.google.com/']
-  //   }, (granted) => {
-  //     // The callback argument will be true if the user granted the permissions.
-  //     if (granted) {
-  //       console.log('Granted');
-  //     } else {
-  //       console.log('Not Granted');
-  //     }
-  //   })
-  // })
 
   profileTab.querySelector('.account-settings #signOut').addEventListener('click', async () => {
     try {
@@ -870,7 +833,28 @@ function navTabsClickAndEnter(index) {
 }
 
 function docIconClickAndEnter(documentId) {
-  window.open('https://docs.google.com/document/d/' + documentId, '_blank', 'location=yes,height=720,width=1000,scrollbars=yes,status=yes');
+  const docUrl = 'https://docs.google.com/document/d/' + documentId;
+  let isFound = false;
+  chrome.windows.getAll({ populate: true }, function (windows) {
+    windows.forEach(function (window) {
+      window.tabs.forEach(function (tab) {
+        if ((tab.url)?.startsWith(docUrl)) {
+          isFound = true;
+          chrome.windows.update(
+            window.id,
+            {
+              drawAttention: true,
+              focused: true
+            }
+          )
+          return;
+        }
+      });
+    });
+    if (!isFound) {
+      window.open('https://docs.google.com/document/d/' + documentId, '_blank', 'location=yes,height=720,width=1000,scrollbars=yes,status=yes');
+    }
+  });
 }
 
 function toTitleCase(txt) {
