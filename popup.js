@@ -44,7 +44,16 @@ const cssThemeVariables = {
   '--color-glass-effect': {
     'light': 'rgba(255, 255, 255, 0.4)',
     'dark': 'rgba(0, 0, 0, 0.4)'
+  },
+  '--color-doc': {
+    'light': 'hsl(208deg 87% 83%)',
+    'dark': 'hsl(0deg 1% 76%)'
+  },
+  '--color-doc-bgr': {
+    'light': 'hsl(203deg 100% 84% / 28%)',
+    'dark': 'hsl(192deg 5% 82% / 25%)'
   }
+
 }
 
 let activeTab = 0;
@@ -446,18 +455,24 @@ async function render() {
     }
     try {
       blockedTabList = []
+      navbarTabs.forEach(tab => {
+        tab.classList.remove('blocked');
+      })
       user = await apiCall('/api/v1/users/showMe', 'GET', {});
       folderTree = await apiCall('/api/v1/dashboard/folder-tree', 'GET', {});
       userStyle = await apiCall('/api/v1/style', 'GET', {});
       if (!user.googleRefreshToken || user.googleRefreshToken === '') {
         blockedTabList.push(0);
         blockedTabList.push(1);
+        navbarTabs[0].classList.add('blocked');
+        navbarTabs[1].classList.add('blocked');
         switchToTab = 3;
         tabContents[3].querySelector('#googleDriveAccess').classList.add('bounce');
       }
       else if (!user.currentDocID || user.currentDocID === '') {
-        blockedTabList.push(0);
         switchToTab = 1;
+        blockedTabList.push(0);
+        navbarTabs[0].classList.add('blocked');
         tabContents[1].querySelector('.icon-box[data-context="new"]').classList.add('bounce');
       }
       if (switchToTab !== 3) tabContents[3].querySelector('#googleDriveAccess').classList.remove('bounce');
@@ -466,7 +481,14 @@ async function render() {
       updateAvatar(true);
       updateProfileTab();
       updateContentBox(true);
-      await updateTooltipSwitch();
+      if (!user?.currentDocID || user?.currentDocID === "") {
+        disableTooltipSwitch(true);
+        await storeTooltipDisabled(true);
+      }
+      else {
+        disableTooltipSwitch(false);
+        await storeTooltipDisabled(false);
+      }
       updateWorkspaceTab();
       updateNotesTab();
       updateStylesTab();
@@ -673,16 +695,6 @@ function updateContentBox(userIsSignedIn = false) {
     return;
   }
   return toggleDisplay(signedInContainer, signedOutContainer, "flex");
-}
-
-async function updateTooltipSwitch() {
-  if (!user?.currentDocID || user?.currentDocID === "") {
-    disableTooltipSwitch(true);
-    await storeTooltipDisabled(true);
-  }
-  else {
-    await storeTooltipDisabled(false);
-  }
 }
 
 function updateWorkspaceTab() {

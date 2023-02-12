@@ -1,6 +1,23 @@
-const domain = 'https://simplifynote.app'
+const protocol = 'https://'
+const domain = 'simplifynote.app'
 
 chrome.runtime.onInstalled.addListener(async (details) => {
+  if (details.reason == 'install') {
+    chrome.tabs.create({
+      url: `${protocol}${domain}/onboarding`
+    });
+  } else if (details.reason == 'update') {
+    chrome.windows.getAll({ populate: true }, function (windows) {
+      windows.forEach(function (window) {
+        window.tabs.forEach((tab) => {
+          chrome.tabs.reload(tab.id);
+        })
+      })
+    })
+    chrome.tabs.create({
+      url: `${protocol}${domain}/onboarding`
+    });
+  }
   const tooltipUnchecked = await getTooltipUnchecked()
   const tooltipDisabled = await getTooltipDisabled()
   if (tooltipUnchecked || tooltipDisabled) {
@@ -132,7 +149,7 @@ chrome.storage.onChanged.addListener(async function (changes, namespace) {
 
 function apiInsertText(style, text) {
   return new Promise((resolve, reject) => {
-    fetch(`${domain}/api/v1/insert/${style}`, {
+    fetch(`${protocol}${domain}/api/v1/insert/${style}`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -156,7 +173,7 @@ function apiInsertText(style, text) {
 
 function apiInsertImage(url, height, width) {
   return new Promise((resolve, reject) => {
-    fetch(`${domain}/api/v1/insert/image`, {
+    fetch(`${protocol}${domain}/api/v1/insert/image`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -181,7 +198,7 @@ function apiInsertImage(url, height, width) {
 }
 
 function apiCall(pathSuffix, method, payload) {
-  const endpoint = `${domain}${pathSuffix}`;
+  const endpoint = `${protocol}${domain}${pathSuffix}`;
   const reqObj = {};
   if (method !== 'GET') {
     reqObj.method = method;
@@ -206,15 +223,6 @@ function apiCall(pathSuffix, method, payload) {
 
 function toTitleCase(txt) {
   return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-}
-
-function sendNotification(status, message) {
-  chrome.notifications.create({
-    type: 'basic',
-    iconUrl: 'images/logo.png',
-    title: `Request ${status}`,
-    message: message,
-  })
 }
 
 function getTooltipUnchecked() {
@@ -253,29 +261,33 @@ function storeTooltipDisabled(value) {
 
 function turnBadgeOn() {
   try {
-    chrome.action.setBadgeBackgroundColor(
-      {
-        color: [14, 208, 149, 1],
-      },
-      () => {
-        chrome.action.setBadgeText({
-          text: ' ',
-        })
-      }
-    )
+    chrome.action.setIcon({ path: "images/logo.png" })
   } catch (error) {
+    console.log(error);
   }
 }
 
 function turnBadgeOff() {
-  chrome.action.setBadgeBackgroundColor(
-    {
-      color: [249, 159, 159, 1],
-    },
-    () => {
-      chrome.action.setBadgeText({
-        text: ' ',
-      })
-    }
-  )
+  try {
+    chrome.action.setIcon({ path: "images/logo-offline.png" });
+  } catch (error) {
+    console.log(error);
+  }
 }
+
+chrome.cookies.onChanged.addListener(async (changeInfo) => {
+  const cookie = changeInfo.cookie;
+  if (cookie.domain === 'simplifynote.app' && cookie.name === 'token') {
+    console.log('changed cookie2', changeInfo);
+    if (changeInfo.removed) {
+      turnBadgeOff()
+    } else {
+      const tooltipUnchecked = await getTooltipUnchecked()
+      if (tooltipUnchecked) {
+        turnBadgeOff()
+      } else {
+        turnBadgeOn()
+      }
+    }
+  }
+})

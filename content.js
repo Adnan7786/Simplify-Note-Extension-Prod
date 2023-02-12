@@ -1,10 +1,12 @@
+const extensionId = chrome.runtime.id;
+
 function isPDF(url) {
   return url.split('.').pop() === 'pdf'
 }
 
 // if url is pdf, open pdf using pdf viewer present in src folder
 if (isPDF(window.location.href)) {
-  if (!window.location.href.startsWith('chrome-extension://')) {
+  if (!window.location.href.startsWith(`chrome-extension://${extensionId}`)) {
     window.location.href =
       chrome.runtime.getURL('src/pdfjs/web/viewer.html') +
       '?file=' +
@@ -81,10 +83,10 @@ screenSnipContainer.innerHTML = `
   justify-content: center;
   width: 44px;
   height: 44px;
-  background-color: grey;
+  background-color: white;
   color: white;
   border-radius: 30px;
-  box-shadow: 0px 0px 10px 0px rgba(255,255,255,1);
+  box-shadow: var(--color-logo-shadow1) 0px -10px 25px 0px inset, var(--color-logo-shadow2) 0px -15px 30px 0px inset, var(--color-logo-shadow3) 0px -40px 40px 0px inset;
   cursor: pointer;
   border-radius: 50%;
   background-image: url(${chrome.runtime.getURL('src/icons/tooltip-logo.png')});
@@ -105,7 +107,7 @@ sliderContainer.id = 'sliderContainer'
 sliderContainer.innerHTML = `
 <style>
 #sliderContainer {
-    box-sizing: border-box;
+  box-sizing: border-box;
   position: fixed;
   z-index: 10000;
   bottom: 0px;
@@ -539,6 +541,139 @@ function captureSnipOcr() {
   })
 }
 
+// make a container with header body and footer for ocr text
+const ocrTextContainer = document.createElement('div')
+ocrTextContainer.className = 'ocr-text-container'
+ocrTextContainer.style.position = 'fixed'
+ocrTextContainer.style.bottom = '10px'
+ocrTextContainer.style.right = '10px'
+ocrTextContainer.style.zIndex = '10000'
+ocrTextContainer.style.visibility = 'hidden'
+ocrTextContainer.innerHTML = `<style>
+    .ocr-text-container {
+      width: 600px;
+      height: 400px;
+      background-color: var(--color-bgr-secondary);
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 75%);
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+    .ocr-text-header {
+      width: 100%;
+      height: 50px;
+      background-color: var(--color-bgr-main);
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ocr-text-header-text-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .ocr-text-header-text {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-primary);
+      padding-left: 10px;
+    }
+    .ocr-text-header-close {
+      font-size: 14px;
+      font-weight: 600;
+      color: #f80303b5;
+      padding-right: 10px;
+      margin-right: 10px;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    .ocr-text-header-close:hover {
+      color: #f00;
+    }
+    .ocr-text-body {
+      width: 100%;
+      height: 70%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--color-bgr-secondary);
+    }
+    .ocr-text-body-textarea {
+      width: 93%;
+      height: 100%;
+      border: none;
+      outline: none;
+      resize: none;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-font);
+      padding: 15px;
+      border-radius: 10px;
+      background-color: var(--color-bgr-main);
+    }
+    .ocr-text-footer {
+      width: 100%;
+      height: 50px;
+      background-color: var(--color-bgr-secondary);
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-evenly;
+      gap: 12px;
+    }
+    .ocr-text-footer-save {
+      width: 115px;
+      height: 30px;
+      font-size: 12px;
+      color: var(--color-font);
+      background-color: var(--color-bgr-main);
+      border: none;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: color 350ms ease-in-out;
+    }
+    .ocr-text-footer-save:hover {
+      color: var(--color-primary);  
+    }
+  
+
+  </style>
+
+  <div class="ocr-text-header">
+    <div class="ocr-text-header-text-container">
+      <div class="ocr-text-header-text">
+        <img src=` +
+  chrome.runtime.getURL('src/icons/tooltip-logo.png') +
+  `
+          alt="logo" width="50px" height="50px" />
+       <span>OCR Text</span>
+      </div>
+      <button class="ocr-text-header-close">X</button>
+    </div>
+  </div>
+  <div class="ocr-text-body">
+    <textarea class="ocr-text-body-textarea" placeholder='Recognizing text...'
+     ></textarea>
+  </div>
+  <div class="ocr-text-footer">
+    <button class="ocr-text-footer-save" id="ocr-text-footer-heading">Heading</button>
+    <button class="ocr-text-footer-save" id="ocr-text-footer-quote">Subheading</button>          
+    <button class="ocr-text-footer-save" id="ocr-text-footer-list">Bullet</button>
+    <button class="ocr-text-footer-save" id="ocr-text-footer-paragraph">Paragraph</button>
+   
+  </div>        
+`
+document.body.appendChild(ocrTextContainer);
+
 chrome.runtime.onMessage.addListener(async function (
   request,
   sender,
@@ -615,11 +750,6 @@ chrome.runtime.onMessage.addListener(async function (
     }
   }
   if (request.message === 'ocr') {
-    // if ocrTextContainer already oresent then remove it
-    if (document.querySelector('.ocr-text-container')) {
-      document.body.removeChild(document.querySelector('.ocr-text-container'))
-    }
-
     const dpr = devicePixelRatio
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
@@ -645,144 +775,6 @@ chrome.runtime.onMessage.addListener(async function (
 
       containAllSnips.style.visibility = 'visible'
       screenSnipContainer.style.visibility = 'visible'
-
-      // make a container with header body and footer for ocr text
-      const ocrTextContainer = document.createElement('div')
-      ocrTextContainer.className = 'ocr-text-container'
-      ocrTextContainer.style.position = 'fixed'
-      ocrTextContainer.style.bottom = '10px'
-      ocrTextContainer.style.right = '10px'
-      ocrTextContainer.style.zIndex = '10000'
-      ocrTextContainer.innerHTML =
-        `
-        <style>
-          .ocr-text-container {
-            width: 600px;
-            height: 400px;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
-            display: flex;
-            flex-direction: column;
-          }
-          .ocr-text-header {
-            width: 100%;
-            height: 50px;
-            background-color: #5cb25d;
-            border-top-left-radius: 5px;
-            border-top-right-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-          .ocr-text-header-text-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-          }
-          .ocr-text-header-text {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-            padding-left: 10px;
-          }
-          .ocr-text-header-close {
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-            padding-right: 10px;
-            margin-right: 10px;
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-          }
-          .ocr-text-header-close:hover {
-            color: #fff;
-          }
-          
-          .ocr-text-body {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-          .ocr-text-body-textarea {
-            width: 90%;
-            height: 90%;
-            border: none;
-            outline: none;
-            resize: none;
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-          }
-          .ocr-text-footer {
-            width: 100%;
-            height: 50px;
-            background-color: #484847;
-            border-bottom-left-radius: 5px;
-            border-bottom-right-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: space-evenly;
-            &:not(:last-child) {
-              margin-right: 10px; 
-            }
-          }
-          .ocr-text-footer-save {
-            width: 100px;
-            height: 30px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #fff;
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            // border blur
-            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
-          }
-          .ocr-text-footer-save:hover {
-            color: #fff;
-            background-color: #333;
-            box-shadow: 0px 0px 10px 0px rgba(255,255,255,0.75);
-              
-          }
-        
-      
-        </style>
-
-        <div class="ocr-text-header">
-          <div class="ocr-text-header-text-container">
-            <div class="ocr-text-header-text">
-              <img src=` +
-        chrome.runtime.getURL('src/icons/tooltip-logo.png') +
-        `
-                alt="logo" width="50px" height="50px" />
-             <span>OCR Text</span>
-            </div>
-            <button class="ocr-text-header-close">X</button>
-          </div>
-        </div>
-        <div class="ocr-text-body">
-          <textarea class="ocr-text-body-textarea" placeholder='Recognizing text...'
-           ></textarea>
-        </div>
-        <div class="ocr-text-footer">
-          <button class="ocr-text-footer-save" id="ocr-text-footer-heading">Heading</button>
-          <button class="ocr-text-footer-save" id="ocr-text-footer-quote">Sub Heading</button>          
-          <button class="ocr-text-footer-save" id="ocr-text-footer-list">Bullet</button>
-          <button class="ocr-text-footer-save" id="ocr-text-footer-paragraph">Paragraph</button>
-         
-        </div>        
-      `
-
-      document.body.appendChild(ocrTextContainer)
 
       // get textarea class  to change its inner html
       const ocrTextBodyTextarea = document.querySelector(
@@ -815,7 +807,7 @@ chrome.runtime.onMessage.addListener(async function (
           },
           handleResponse
         )
-        document.body.removeChild(ocrTextContainer)
+        ocrTextContainer.style.visibility = 'hidden';
       })
 
       // onpress ocrTextFooterParagraph send text to background.js
@@ -829,7 +821,7 @@ chrome.runtime.onMessage.addListener(async function (
           },
           handleResponse
         )
-        document.body.removeChild(ocrTextContainer)
+        ocrTextContainer.style.visibility = 'hidden';
       })
 
       // onpress ocrTextFooterList send text to background.js
@@ -843,7 +835,7 @@ chrome.runtime.onMessage.addListener(async function (
           },
           handleResponse
         )
-        document.body.removeChild(ocrTextContainer)
+        ocrTextContainer.style.visibility = 'hidden'
       })
 
       // onpress ocrTextFooterQuote send text to background.js
@@ -857,13 +849,15 @@ chrome.runtime.onMessage.addListener(async function (
           },
           handleResponse
         )
-        document.body.removeChild(ocrTextContainer)
+        ocrTextContainer.style.visibility = 'hidden'
       })
 
       ocrTextHeaderClose.addEventListener('click', () => {
-        document.body.removeChild(ocrTextContainer)
+        ocrTextContainer.style.visibility = 'hidden';
       })
-
+      ocrTextBodyTextarea.innerHTML = '';
+      ocrTextBodyTextarea.placeholder = 'Recognizing text...';
+      ocrTextContainer.style.visibility = 'visible';
       // OCR using tesseract
       try {
         let isOcrDone = false
@@ -1317,7 +1311,7 @@ window.addEventListener('mouseup', async function (event) {
       }, 350)
     }
   } catch (error) {
-    sendNotification('failure', error)
+    sendNotification('failure', error.message)
   }
 })
 
@@ -1388,7 +1382,7 @@ setInterval(() => {
         imageTooltip.style.visibility = 'hidden'
       })
     } catch (error) {
-      sendNotification('failure', error)
+      sendNotification('failure', error.message)
     }
   }
 
@@ -1449,17 +1443,27 @@ function setTheme(theme) {
       cssThemeVariables[variable][theme]
     )
   }
-  screenSnipContainer.style.backgroundColor = '#fff'
-  // screenSnipContainer.style.color = '#fff'
-  screenSnipContainer.style.boxShadow =
-    'var(--color-logo-shadow1) 0px -10px 25px 0px inset, var(--color-logo-shadow2) 0px -15px 30px 0px inset, var(--color-logo-shadow3) 0px -40px 40px 0px inset'
 
-  screenshotButton.style.backgroundImage =
-    'url(' + chrome.runtime.getURL('src/icons/screenshot.png') + ')'
-  snipButton.style.backgroundImage =
-    'url(' + chrome.runtime.getURL('src/icons/snip.png') + ')'
-  ocrButton.style.backgroundImage =
-    'url(' + chrome.runtime.getURL('src/icons/ocr.png') + ')'
+  const clrPrimary = '#0ed095';
+  const clrBgrMain = (theme === 'light') ? '#f3f6fd' : '#1e1e1e';
+  const clrBgrSec = (theme === 'light') ? '#fff' : '#000';
+  const clrFont = (theme === 'light') ? 'rgb(69 69 69)' : 'rgb(165 165 165)';
+
+  ocrTextContainer.style.setProperty('--color-primary', clrPrimary);
+  ocrTextContainer.style.setProperty('--color-bgr-main', clrBgrMain);
+  ocrTextContainer.style.setProperty('--color-bgr-secondary', clrBgrSec);
+  ocrTextContainer.style.setProperty('--color-font', clrFont);
+  // screenSnipContainer.style.backgroundColor = '#fff'
+  // // screenSnipContainer.style.color = '#fff'
+  // screenSnipContainer.style.boxShadow =
+  //   'var(--color-logo-shadow1) 0px -10px 25px 0px inset, var(--color-logo-shadow2) 0px -15px 30px 0px inset, var(--color-logo-shadow3) 0px -40px 40px 0px inset'
+
+  // screenshotButton.style.backgroundImage =
+  //   'url(' + chrome.runtime.getURL('src/icons/screenshot.png') + ')'
+  // snipButton.style.backgroundImage =
+  //   'url(' + chrome.runtime.getURL('src/icons/snip.png') + ')'
+  // ocrButton.style.backgroundImage =
+  //   'url(' + chrome.runtime.getURL('src/icons/ocr.png') + ')'
 }
 
 function getCurrentTheme() {
@@ -1470,7 +1474,15 @@ function getCurrentTheme() {
   })
 }
 
+let errorCount = 0
 function sendNotification(status, message) {
+  console.log(typeof message);
+  if (status === 'failure' && message === 'Extension context invalidated.') {
+    console.log('ad');
+    if (errorCount > 0) return;
+    errorCount += 1;
+    message = 'Please reload tab to continue'
+  }
   notificationDiv.dataset.status = status;
   notificationDiv.innerText = message;
   const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
