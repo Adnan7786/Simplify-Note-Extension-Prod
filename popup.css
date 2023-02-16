@@ -126,8 +126,9 @@
   --permission-switch-height: 13px;
   --permission-switch-margin: 2.4px;
   --color-glass-effect: rgba(255, 255, 255, 0.4);
-  --color-doc: hsl(208deg 87% 83%);
-  --color-doc-bgr: hsl(203deg 100% 84% / 28%);
+  --color-doc: hsl(208deg 34% 67% / 78%);
+  --color-doc-bgr: hsla(203, 100%, 84%, 0.553);
+  --color-doc-name: hsl(0deg 0% 0%);
 }
 
 body {
@@ -1313,9 +1314,10 @@ button.open-in-docs:focus {
   white-space: nowrap;
   overflow: hidden;
   font-size: smaller;
+  font-weight: 500;
   text-align: center;
   cursor: pointer;
-  color: var(--color-doc);
+  color: var(--color-doc-name);
 }
 
 .docs-container .doc-card.active .doc-name {
@@ -1731,8 +1733,9 @@ button.open-in-docs:focus {
     --color-box-shadow: rgba(195, 191, 188, 0.3);
     --color-box-shadow2: rgba(255, 255, 255, 0.35);
     --color-glass-effect: rgba(0, 0, 0, 0.4);
-    --color-doc: hsl(0deg 0% 73%);
-    --color-doc-bgr: hsl(0deg 0% 88% / 60%);
+    --color-doc: hsl(0deg 4% 87% / 63%);
+    --color-doc-bgr: hsl(192deg 5% 82% / 25%);
+    --color-doc-name: hsl(0deg 5% 81%);
   }
 
   .icon-moon {

@@ -588,7 +588,7 @@ ocrTextContainer.innerHTML = `<style>
     .ocr-text-header-close {
       font-size: 14px;
       font-weight: 600;
-      color: #f80303b5;
+      color: var(--color-font);
       padding-right: 10px;
       margin-right: 10px;
       background-color: transparent;
@@ -616,6 +616,7 @@ ocrTextContainer.innerHTML = `<style>
       font-weight: 400;
       color: var(--color-font);
       padding: 15px;
+      box-sizing: border-box;
       border-radius: 10px;
       background-color: var(--color-bgr-main);
     }
@@ -1453,17 +1454,6 @@ function setTheme(theme) {
   ocrTextContainer.style.setProperty('--color-bgr-main', clrBgrMain);
   ocrTextContainer.style.setProperty('--color-bgr-secondary', clrBgrSec);
   ocrTextContainer.style.setProperty('--color-font', clrFont);
-  // screenSnipContainer.style.backgroundColor = '#fff'
-  // // screenSnipContainer.style.color = '#fff'
-  // screenSnipContainer.style.boxShadow =
-  //   'var(--color-logo-shadow1) 0px -10px 25px 0px inset, var(--color-logo-shadow2) 0px -15px 30px 0px inset, var(--color-logo-shadow3) 0px -40px 40px 0px inset'
-
-  // screenshotButton.style.backgroundImage =
-  //   'url(' + chrome.runtime.getURL('src/icons/screenshot.png') + ')'
-  // snipButton.style.backgroundImage =
-  //   'url(' + chrome.runtime.getURL('src/icons/snip.png') + ')'
-  // ocrButton.style.backgroundImage =
-  //   'url(' + chrome.runtime.getURL('src/icons/ocr.png') + ')'
 }
 
 function getCurrentTheme() {
@@ -1476,9 +1466,7 @@ function getCurrentTheme() {
 
 let errorCount = 0
 function sendNotification(status, message) {
-  console.log(typeof message);
   if (status === 'failure' && message === 'Extension context invalidated.') {
-    console.log('ad');
     if (errorCount > 0) return;
     errorCount += 1;
     message = 'Please reload tab to continue'

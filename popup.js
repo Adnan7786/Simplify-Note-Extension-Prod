@@ -46,14 +46,17 @@ const cssThemeVariables = {
     'dark': 'rgba(0, 0, 0, 0.4)'
   },
   '--color-doc': {
-    'light': 'hsl(208deg 87% 83%)',
-    'dark': 'hsl(0deg 1% 76%)'
+    'light': 'hsl(208deg 34% 67% / 78%)',
+    'dark': 'hsl(0deg 4% 87% / 63%)'
   },
   '--color-doc-bgr': {
-    'light': 'hsl(203deg 100% 84% / 28%)',
+    'light': 'hsla(203, 100%, 84%, 0.553)',
     'dark': 'hsl(192deg 5% 82% / 25%)'
+  },
+  '--color-doc-name': {
+    'light': 'hsl(0deg 0% 0%)',
+    'dark': 'hsl(0deg 5% 81%)'
   }
-
 }
 
 let activeTab = 0;
