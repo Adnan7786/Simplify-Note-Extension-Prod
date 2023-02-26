@@ -1134,6 +1134,17 @@ button.open-in-docs:focus {
   background-color: var(--color-bgr-secondary);
 }
 
+.notes-container:has(.doc-card.selected.active) .icon-box[data-context="edit"] {
+  opacity: 0.2;
+  cursor: default;
+}
+
+.notes-container:has(.doc-card.selected.active) .icon-box:not([data-context="edit"]):hover,
+.notes-container:has(.doc-card.selected.active) .icon-box:not([data-context="edit"]):focus {
+  transform: none;
+  background-color: none;
+}
+
 .notes-container .icon-box[data-context="new"] {
   opacity: 1;
   cursor: pointer;

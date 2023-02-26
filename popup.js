@@ -242,8 +242,9 @@ docIcons.forEach((icon) => {
       return;
     }
     if (icon.dataset.context === 'edit') {
-      pageLoad.style.visibility = 'visible';
       const docName = selectedDoc.querySelector('.doc-name').innerText;
+      if (user.currentDocID === selectedDoc.dataset.gdocid) return;
+      pageLoad.style.visibility = 'visible';
       try {
         await apiCall('/api/v1/dashboard/document/edit',
           'POST',

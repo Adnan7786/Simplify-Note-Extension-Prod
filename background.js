@@ -3,10 +3,29 @@ const domain = 'simplifynote.app'
 
 chrome.runtime.onInstalled.addListener(async (details) => {
   if (details.reason == 'install') {
+    let onbLink = `${protocol}${domain}/onboarding`;
+    chrome.tabs.query({
+      url: 'https://chrome.google.com/webstore/detail/simplifynote-your-note-ta/mjhigpcgpfiaadanipnacbalgaaleclc?*'
+    }).then((result) => {
+      const qKey = 'ref_code';
+      let qValue = null;
+      const url = result[0]?.url;
+      if (!url || url === '') return;
+      const queryParams = (url.split('?')[1]).split('&');
+      for (query of queryParams) {
+        const [key, value] = query.split('=');
+        if (key === qKey) {
+          qValue = value;
+          break;
+        }
+      }
+      if (qValue) onbLink += `?${qKey}=${qValue}`;
+    }).catch((error) => console.log(error))
     chrome.tabs.create({
-      url: `${protocol}${domain}/onboarding`
+      url: onbLink
     });
-  } else if (details.reason == 'update') {
+  }
+  if (details.reason == 'install' || details.reason == 'update') {
     chrome.windows.getAll({ populate: true }, function (windows) {
       windows.forEach(function (window) {
         window.tabs.forEach((tab) => {
@@ -14,9 +33,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
         })
       })
     })
-    chrome.tabs.create({
-      url: `${protocol}${domain}/onboarding`
-    });
   }
   const tooltipUnchecked = await getTooltipUnchecked()
   const tooltipDisabled = await getTooltipDisabled()
@@ -47,8 +63,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         status: 'success',
         message: `${toTitleCase(request.style)} inserted successfully`
       })
-    }).catch((errMsg) => {
-      sendResponse({ status: 'failure', message: errMsg });
+    }).catch((error) => {
+      sendResponse({ status: 'failure', message: error.message });
     })
   }
   else if (request.message === 'insert_image') {
@@ -65,8 +81,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         status: 'success',
         message: 'Image inserted successfully'
       })
-    }).catch((errMsg) => {
-      sendResponse({ status: 'failure', message: errMsg });
+    }).catch((error) => {
+      sendResponse({ status: 'failure', message: error.message });
     })
   }
   else if (request.message === 'screenshot') {
@@ -83,8 +99,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           status: 'success',
           message: 'Image inserted successfully'
         })
-      }).catch((errMsg) => {
-        sendResponse({ status: 'failure', message: errMsg });
+      }).catch((error) => {
+        sendResponse({ status: 'failure', message: error.message });
       })
       chrome.tabs.sendMessage(sender.tab.id, {
         message: 'screenshot',
@@ -112,8 +128,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         status: 'success',
         message: 'Image inserted successfully'
       })
-    }).catch((errMsg) => {
-      sendResponse({ status: 'failure', message: errMsg });
+    }).catch((error) => {
+      sendResponse({ status: 'failure', message: error.message });
     })
   } else if (request.message === 'ocr') {
     chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
@@ -147,56 +163,6 @@ chrome.storage.onChanged.addListener(async function (changes, namespace) {
   }
 })
 
-function apiInsertText(style, text) {
-  return new Promise((resolve, reject) => {
-    fetch(`${protocol}${domain}/api/v1/insert/${style}`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        text,
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          resolve(`${toTitleCase(style)} successfully inserted to the document`)
-        }
-        reject(res.statusText)
-      })
-      .catch((error) => {
-        reject(error.message)
-      })
-  })
-}
-
-function apiInsertImage(url, height, width) {
-  return new Promise((resolve, reject) => {
-    fetch(`${protocol}${domain}/api/v1/insert/image`, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        image: url,
-        height,
-        width,
-      }),
-    })
-      .then((res) => {
-        if (res.ok) {
-          resolve('Image successfully inserted to the document')
-        }
-        reject(res.statusText)
-      })
-      .catch((error) => {
-        reject(error.message)
-      })
-  })
-}
-
 function apiCall(pathSuffix, method, payload) {
   const endpoint = `${protocol}${domain}${pathSuffix}`;
   const reqObj = {};
@@ -212,7 +178,7 @@ function apiCall(pathSuffix, method, payload) {
     fetch(endpoint, reqObj)
       .then(async (res) => {
         if (!res.ok) {
-          throw new Error(`Something went wrong. Please try again later.`)
+          throw new Error(`Request Failed. Please try again.`)
         };
         return res.json();
       })
@@ -278,7 +244,6 @@ function turnBadgeOff() {
 chrome.cookies.onChanged.addListener(async (changeInfo) => {
   const cookie = changeInfo.cookie;
   if (cookie.domain === 'simplifynote.app' && cookie.name === 'token') {
-    console.log('changed cookie2', changeInfo);
     if (changeInfo.removed) {
       turnBadgeOff()
     } else {

@@ -135,7 +135,7 @@ sliderContainer.innerHTML = `
 `
 
 // when button is pressed it will mkae the screenSnipContainer to be draggable and chage the position of the screenSnipContainer with the mouse position
-screenSnipContainer.addEventListener('mousedown', () => {
+screenSnipContainer.addEventListener('pointerdown', () => {
   // now make the screenSnipContainer to be draggable
   screenSnipContainer.draggable = true
   screenSnipContainer.style.cursor = 'grabbing'
@@ -168,7 +168,7 @@ screenSnipContainer.addEventListener('mousedown', () => {
   })
 })
 
-screenSnipContainer.addEventListener('mouseup', () => {
+screenSnipContainer.addEventListener('pointerup', () => {
   screenSnipContainer.draggable = false
   // sliderContainer.style.display = 'flex'
 
@@ -249,34 +249,34 @@ ocrButton.innerHTML = `
 `
 
 // show some animation on hover of snip button
-snipButton.addEventListener('mouseenter', () => {
+snipButton.addEventListener('pointerenter', () => {
   snipButton.style.transform = 'scale(1.2)'
   snipButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
 
-snipButton.addEventListener('mouseleave', () => {
+snipButton.addEventListener('pointerleave', () => {
   snipButton.style.transform = 'scale(1.0)'
   snipButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
 
 // show some animation on hover of screenshot button
-screenshotButton.addEventListener('mouseenter', () => {
+screenshotButton.addEventListener('pointerenter', () => {
   screenshotButton.style.transform = 'scale(1.2)'
   screenshotButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
 
-screenshotButton.addEventListener('mouseleave', () => {
+screenshotButton.addEventListener('pointerleave', () => {
   screenshotButton.style.transform = 'scale(1.0)'
   screenshotButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
 
 // show some animation on hover of snip button
-ocrButton.addEventListener('mouseenter', () => {
+ocrButton.addEventListener('pointerenter', () => {
   ocrButton.style.transform = 'scale(1.2)'
   ocrButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
 
-ocrButton.addEventListener('mouseleave', () => {
+ocrButton.addEventListener('pointerleave', () => {
   ocrButton.style.transform = 'scale(1.0)'
   ocrButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
@@ -292,7 +292,7 @@ if (!website_link.includes('.pdf')) {
   sliderContainer.appendChild(ocrButton)
 }
 
-containAllSnips.addEventListener('mouseenter', () => {
+containAllSnips.addEventListener('pointerenter', () => {
   sliderContainer.style.visibility = 'visible'
   sliderContainer.style.display = 'flex'
   sliderContainer.style.width = '130px'
@@ -302,7 +302,7 @@ containAllSnips.addEventListener('mouseenter', () => {
   sliderContainer.style.transition = 'width 0.5s ease-in-out'
 })
 
-containAllSnips.addEventListener('mouseleave', () => {
+containAllSnips.addEventListener('pointerleave', () => {
   sliderContainer.style.visibility = 'hidden'
   sliderContainer.style.width = '0px'
   sliderContainer.style.transition = 'width 0.3s ease-in-out'
@@ -373,7 +373,7 @@ function captureSnip() {
   let startY
   let isDown = false
 
-  overScreenSnip.addEventListener('mousedown', (e) => {
+  overScreenSnip.addEventListener('pointerdown', (e) => {
     e.preventDefault()
     startX = e.pageX
     startY = e.pageY
@@ -382,13 +382,11 @@ function captureSnip() {
     snipContainer.style.left = startX + 'px'
     snipContainer.style.width = '0px'
     snipContainer.style.height = '0px'
-    // dashed moving border
     snipContainer.style.border = '1px dashed #000'
-    // detect background color and change the boxShadow color accordingly
     snipContainer.style.boxShadow = '0px 0px 10px 0px rgba(255,255,255,0.5)'
   })
 
-  overScreenSnip.addEventListener('mousemove', (e) => {
+  overScreenSnip.addEventListener('pointermove', (e) => {
     if (!isDown) return
     e.preventDefault()
     const width = e.pageX - startX
@@ -399,13 +397,13 @@ function captureSnip() {
     snipContainer.style.height = Math.abs(height) + 'px'
 
     if (Math.abs(width) < 10 || Math.abs(height) < 10) {
-      snipContainer.style.backgroundColor = 'rgba(255,0,0,0.7)'
+      snipContainer.style.backgroundColor = 'rgba(255,0,0,0.5)'
     } else {
-      snipContainer.style.backgroundColor = 'rgba(0,0,0,0.0)'
+      snipContainer.style.backgroundColor = 'rgb(0,0,255,0.2)'
     }
   })
 
-  overScreenSnip.addEventListener('mouseup', (e) => {
+  overScreenSnip.addEventListener('pointerup', (e) => {
     e.preventDefault()
     isDown = false
     document.body.style.cursor = 'default'
@@ -469,7 +467,7 @@ function captureSnipOcr() {
   let startY
   let isDown = false
 
-  overScreenOcr.addEventListener('mousedown', (e) => {
+  overScreenOcr.addEventListener('pointerdown', (e) => {
     e.preventDefault()
     startX = e.pageX
     startY = e.pageY
@@ -484,7 +482,7 @@ function captureSnipOcr() {
     // ocrContainer.style.backgroundColor = 'rgba(0,0,0,0.7)'
   })
 
-  overScreenOcr.addEventListener('mousemove', (e) => {
+  overScreenOcr.addEventListener('pointermove', (e) => {
     if (!isDown) return
     e.preventDefault()
     const width = e.pageX - startX
@@ -502,7 +500,7 @@ function captureSnipOcr() {
     }
   })
 
-  overScreenOcr.addEventListener('mouseup', (e) => {
+  overScreenOcr.addEventListener('pointerup', (e) => {
     e.preventDefault()
     isDown = false
     document.body.style.cursor = 'default'
@@ -550,6 +548,13 @@ ocrTextContainer.style.right = '10px'
 ocrTextContainer.style.zIndex = '10000'
 ocrTextContainer.style.visibility = 'hidden'
 ocrTextContainer.innerHTML = `<style>
+
+    :host{
+      --color-primary: #0ed095;
+      --color-bgr-main: #f3f6fd;
+      --color-bgr-secondary: #fff;
+      --color-font: rgb(69 69 69);
+    }
     .ocr-text-container {
       width: 600px;
       height: 400px;
@@ -1265,8 +1270,16 @@ iconPlus.addEventListener('click', function () {
   )
 })
 
+
+// document.addEventListener("selectionchange", function (e) {
+//   //do something, e.g. document.getSelection()        
+//   console.log("selectionchange")
+//   console.log(getSelectionText().text);
+// });
+
+
 //Trigger for tooltip
-window.addEventListener('mouseup', async function (event) {
+window.addEventListener('pointerup', async function (event) {
   try {
     const tooltipUnchecked = await getTooltipUnchecked()
     const tooltipDisabled = await getTooltipDisabled()
@@ -1326,7 +1339,7 @@ setInterval(() => {
   for (let index = currentLength; index < imageCollection.length; index++) {
     try {
       imageCollection[index].addEventListener(
-        'mouseenter',
+        'pointerenter',
         async function (event) {
           const tooltipUnchecked = await getTooltipUnchecked()
           const tooltipDisabled = await getTooltipDisabled()
@@ -1369,7 +1382,7 @@ setInterval(() => {
         }
       )
 
-      imageCollection[index].addEventListener('mouseleave', function (event) {
+      imageCollection[index].addEventListener('pointerleave', function (event) {
         let imgRect = this.getBoundingClientRect()
         if (
           imgRect.left <= event.clientX &&
@@ -1433,7 +1446,7 @@ async function render() {
 }
 
 function setTheme(theme) {
-  if (theme !== 'light' && theme !== 'dark') return
+  if (theme !== 'light' && theme !== 'dark') theme = 'light';
   for (const variable in cssThemeVariables) {
     tooltipContainer.style.setProperty(
       variable,
