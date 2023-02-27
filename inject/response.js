@@ -137,9 +137,9 @@ function apiCall(pathSuffix, method, payload) {
             const e = r.lang.startsWith(ln)
               ? r.lang
               : em.dataset.languages
-                  .split(', ')
-                  .filter((s) => s.startsWith(ln))
-                  .shift()
+                .split(', ')
+                .filter((s) => s.startsWith(ln))
+                .shift()
 
             if (e) {
               if (a.some((o) => o.lang === e)) {
@@ -236,18 +236,13 @@ function apiCall(pathSuffix, method, payload) {
   em.addEventListener('ocr-text-footer-heading-clicked', async (e) => {
     console.log(e.detail, 'e.detail')
     // const { message, style, text } = e.detail
-    apiCall(`/api/v1/insert/${e.detail.accuracy}`, 'POST', {
-      text: e.detail.result,
-    })
-      .then((res) => {
-        sendResponse({
-          status: 'success',
-          message: `${toTitleCase(e.detail.accuracy)} inserted successfully`,
-        })
-      })
-      .catch((errMsg) => {
-        sendResponse({ status: 'failure', message: errMsg })
-      })
+    chrome.runtime.sendMessage(
+      {
+        message: 'insert_text',
+        style: 'heading',
+        text: e.detail.result,
+      }
+    )
   })
 
   em.addEventListener('language-changed', () => run())
