@@ -397,9 +397,9 @@ function captureSnip() {
     snipContainer.style.height = Math.abs(height) + 'px'
 
     if (Math.abs(width) < 10 || Math.abs(height) < 10) {
-      snipContainer.style.backgroundColor = 'rgba(255,0,0,0.5)'
+      snipContainer.style.backgroundColor = 'rgba(255,0,0,0.15)'
     } else {
-      snipContainer.style.backgroundColor = 'rgb(0,0,255,0.2)'
+      snipContainer.style.backgroundColor = 'rgb(178,241,212,0.15)'
     }
   })
 
@@ -494,9 +494,9 @@ function captureSnipOcr() {
 
     // if the snip is too small, remove it
     if (Math.abs(width) < 10 || Math.abs(height) < 10) {
-      ocrContainer.style.backgroundColor = 'rgba(255,0,0,0.7)'
+      ocrContainer.style.backgroundColor = 'rgba(255,0,0,0.15)'
     } else {
-      ocrContainer.style.backgroundColor = 'rgba(0,0,0,0.0)'
+      ocrContainer.style.backgroundColor = 'rgb(178,241,212,0.15)'
     }
   })
 
