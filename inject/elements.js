@@ -1,6 +1,7 @@
 // tests
 // https://www.youtube.com/
 // https://www.google.com/search?q=english+text&tbm=isch
+
 {
   const HTMLElement = HTMLDivElement.__proto__
   const get = CustomElementRegistry.prototype.get.bind(customElements)
@@ -25,7 +26,7 @@
               position: fixed;
               bottom: 10px;
               right: 30px;
-              padding: 5px;
+              // padding: 5px;
               z-index: 10000000000;
               box-shadow: 0 0 2px #ccc;
               display: flex;
@@ -35,6 +36,8 @@
               max-height: calc(100vh - 20px);
               color-scheme: light;
               overflow: auto;
+              border-radius: 5px;
+              box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 75%);
             }
           </style>
           <div id="body">
@@ -96,10 +99,14 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               --fg: #444;
               --bg: #0ed095;
               --bg-result: #fff9ed;
-              --accent: #907a4e;
-              --width: 400px;
-              --height: 200px;
+              --accent: #7af049;
+              --width: 600px;
+              --height: 400px;
               --gap: 10px;
+              --color-primary: #0ed095;
+              --color-bgr-main : #f3f6fd;
+              --color-bgr-secondary: #fff;
+              -color-font:rgb(69 69 69);
             }
             :host([data-mode='expand']) {
               --height: 70vh;
@@ -107,7 +114,7 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
             #body {
               font-size: 13px;
               font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-              padding: 10px;
+              // padding: 10px 25px;
               display: flex;
               flex-direction: column;
               height: var(--height);
@@ -116,36 +123,76 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               background-color: var(--bg);
               color-scheme: light;
               accent-color: var(--accent);
+              border-radius: 5px;
+              box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 75%);
+            }
+            #close {
+              position: relative;
+             
+              padding: 5px 5px;
+              font-size: 1.2rem;
+              margin: 5px 5px;
+              cursor: pointer;
+              font-weight: bold;
+              color: var(--fg);
+              text-shadow: 0 1px 0 #fff;
+              opacity: 0.6;
+              width: 2.0rem;
+              height: 2.0rem;
+              text-align: center;
+              background-color: transparent;
+              border: none;
+            }
+            #close:hover {
+              opacity: 0.9;
+              color: red;
+            }
+            #close:focus {
+              outline: none;
+
+            }
+            #close:active {
+              opacity: 1;
+              color: red;
+            }
+            #close::before {
+              content: '*';
             }
             progress {
+              color: var(--accent);
+              background-color: white;
+              border: none;
               width: 100%;
+              height: 7px;
+              margin: 0 0 10px 0;
+              border-radius: 0;
             }
-            img {
-              display: none;
-            }
-            button,
-            input[type=submit],
-            input[type=button] {
-              padding: calc(var(--gap) / 2) var(--gap);
-              color: var(--fg);
-              background-image: linear-gradient(rgb(237, 237, 237), rgb(237, 237, 237) 38%, rgb(222, 222, 222));
-              box-shadow: rgba(0, 0, 0, 0.08) 0 1px 0, rgba(255, 255, 255, 0.75) 0 1px 2px inset;
-              text-shadow: rgb(240, 240, 240) 0 1px 0;
-              border: solid 1px rgba(0, 0, 0, 0.25);
-              cursor: pointer;
-              font-size: inherit;
-            }
+            // img {
+            //   display: none;
+            // }
+            // button,
+            // input[type=submit],
+            // input[type=button] {
+            //   padding: calc(var(--gap) / 2) var(--gap);
+            //   color: var(--fg);
+            //   background-image: linear-gradient(rgb(237, 237, 237), rgb(237, 237, 237) 38%, rgb(222, 222, 222));
+            //   box-shadow: rgba(0, 0, 0, 0.08) 0 1px 0, rgba(255, 255, 255, 0.75) 0 1px 2px inset;
+            //   text-shadow: rgb(240, 240, 240) 0 1px 0;
+            //   border: solid 1px rgba(0, 0, 0, 0.25);
+            //   cursor: pointer;
+            //   font-size: inherit;
+            // }
             input[type=button]:disabled {
               opacity: 0.5;
             }
             #result {
               min-height: 40px;
               background-color: var(--bg-result);
-              margin: 10px 0;
+              margin: 10px 20px 0 20px;
               overflow: auto;
               flex: 1;
               padding: var(--gap);
-            }
+            }           
             #result:empty::before {
               content: attr(data-msg);
             }
@@ -167,11 +214,15 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               grid-gap: var(--gap);
             }
             .options {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              background: rgba(0, 0, 0, 0.05);
-              margin-bottom: var(--gap);
-              margin-left: -3px;
+              // display: grid;
+              // grid-template-columns: 1fr 1fr;
+              // background: rgba(0, 0, 0, 0.05);
+              background-color: var(--color-bgr-main);
+              // margin-bottom: var(--gap);
+              // margin-left: -3px;
+              // margin-right: 30px;
+              display: flex;
+              justify-content: space-between;
             }
             #accuracy,
             #language {
@@ -188,14 +239,15 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               justify-content: end;
             }
             .ocr-text-footer {
-              width: 100%;
-              height: 50px;
-              background-color: var(--color-bgr-secondary);
+              // width: 100%;
+              height: 32px;
+              padding: 10px 20px;
+              // background-color: var(--color-bgr-secondary);
               border-bottom-left-radius: 5px;
               border-bottom-right-radius: 5px;
               display: flex;
               align-items: flex-start;
-              justify-content: space-evenly;
+              justify-content: space-between;
               gap: 12px;
             }
             .ocr-text-footer-save {
@@ -215,10 +267,10 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
           </style>
 
           <div id="body">
-                     <div style="display: flex; justify-content: center;">
-              <img id="img">
-            </div>
+                <div style="display: flex; justify-content: center;">
+                </div>
             <div class="options">
+            <img src="./../src/icons/tooltip-logo.png" alt="logo" style="width: 25px; height: 25px; ">
               <select id="language">
                 <optgroup>
                   <option value="detect">Auto Detect (beta)</option>
@@ -329,26 +381,29 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
                   <option value="yid">Yiddish</option>
                 </optgroup>
               </select>
-              <select id="accuracy">
+              <select id="accuracy" style="display: none;">
                 <option value='3.02'>Low Accuracy</option>
                 <option value='4.0.0_fast'>Moderate Accuracy</option>
                 <option value='4.0.0'>Better Accuracy</option>
                 <option value='4.0.0_best'>Best Accuracy</option>
               </select>
+              
+              <input type="button" value="x" id="close" title="${this.locales.close}">
             </div>
-            <div class="grid">
-              <span>Downloading</span>
+           
+
+            <div id="result" data-msg="Please wait..."   ></div>
+
+            <div style="display: flex; margin: 0px 20px;" >
               <progress id="lang" value="0" max="1"></progress>
-              <span>Recognizing</span>
               <progress id="recognize" value="0" max="1"></progress>
             </div>
 
-            <div id="result" data-msg="Please wait..."></div>
-            <div id="tools">
+            <div id="tools" style="display: none;">
               <input type="button" value="Expand" id="expand">
               <input type="button" value="Post Result" id="post" disabled title="${this.locales.post}">
               <input type="button" value="Copy Text" id="copy" disabled>
-              <input type="button" value="Close" id="close" title="${this.locales.close}">
+              <input type="button" value="Close" id="" title="${this.locales.close}">
             </div>
             <div class="ocr-text-footer">
               <button class="ocr-text-footer-save" id="ocr-text-footer-heading">Heading</button>

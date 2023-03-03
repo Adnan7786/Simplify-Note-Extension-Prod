@@ -535,6 +535,9 @@ function captureSnipOcr() {
           // document.body.removeChild(ocrContainer)
         }
       )
+      // sliderContainer.style.visibility = 'visible'
+      containAllSnips.style.visibility = 'visible'
+      screenSnipContainer.style.visibility = 'visible'
     }
   })
 }
