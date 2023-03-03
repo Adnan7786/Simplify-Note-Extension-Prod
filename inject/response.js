@@ -1,34 +1,4 @@
 'use strict'
-const protocol = 'https://'
-const domain = 'simplifynote.app'
-
-function apiCall(pathSuffix, method, payload) {
-  const endpoint = `${protocol}${domain}${pathSuffix}`
-  const reqObj = {}
-  if (method !== 'GET') {
-    reqObj.method = method
-    reqObj.headers = {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }
-    reqObj.body = JSON.stringify(payload)
-  }
-  return new Promise((resolve, reject) => {
-    fetch(endpoint, reqObj)
-      .then(async (res) => {
-        if (!res.ok) {
-          throw new Error(`Something went wrong. Please try again later.`)
-        }
-        return res.json()
-      })
-      .then((data) => {
-        resolve(data)
-      })
-      .catch((error) => {
-        reject(error)
-      })
-  })
-}
 
 {
   // container
@@ -137,9 +107,9 @@ function apiCall(pathSuffix, method, payload) {
             const e = r.lang.startsWith(ln)
               ? r.lang
               : em.dataset.languages
-                .split(', ')
-                .filter((s) => s.startsWith(ln))
-                .shift()
+                  .split(', ')
+                  .filter((s) => s.startsWith(ln))
+                  .shift()
 
             if (e) {
               if (a.some((o) => o.lang === e)) {
@@ -233,16 +203,48 @@ function apiCall(pathSuffix, method, payload) {
     }
   })
 
+  // ocr-text-footer-heading-clicked
   em.addEventListener('ocr-text-footer-heading-clicked', async (e) => {
     console.log(e.detail, 'e.detail')
     // const { message, style, text } = e.detail
-    chrome.runtime.sendMessage(
-      {
-        message: 'insert_text',
-        style: 'heading',
-        text: e.detail.result,
-      }
-    )
+    chrome.runtime.sendMessage({
+      message: 'insert_text',
+      style: 'heading',
+      text: e.detail.result,
+    })
+  })
+
+  // ocr-text-footer-list-clicked
+  em.addEventListener('ocr-text-footer-list-clicked', async (e) => {
+    console.log(e.detail, 'e.detail')
+    // const { message, style, text } = e.detail
+    chrome.runtime.sendMessage({
+      message: 'insert_text',
+      style: 'bullet',
+      text: e.detail.result,
+    })
+  })
+
+  // ocr-text-footer-paragraph-clicked
+  em.addEventListener('ocr-text-footer-paragraph-clicked', async (e) => {
+    console.log(e.detail, 'e.detail')
+    // const { message, style, text } = e.detail
+    chrome.runtime.sendMessage({
+      message: 'insert_text',
+      style: 'paragraph',
+      text: e.detail.result,
+    })
+  })
+
+  // ocr-text-footer-quote-clicked
+  em.addEventListener('ocr-text-footer-quote-clicked', async (e) => {
+    console.log(e.detail, 'e.detail')
+    // const { message, style, text } = e.detail
+    chrome.runtime.sendMessage({
+      message: 'insert_text',
+      style: 'subheading',
+      text: e.detail.result,
+    })
   })
 
   em.addEventListener('language-changed', () => run())

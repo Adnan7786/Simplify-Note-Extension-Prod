@@ -352,10 +352,9 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
             </div>
             <div class="ocr-text-footer">
               <button class="ocr-text-footer-save" id="ocr-text-footer-heading">Heading</button>
-              <button class="ocr-text-footer-save" id="ocr-text-footer-quote">Subheading</button>          
+              <button class="ocr-text-footer-save" id="ocr-text-footer-quote">Subheading</button>
               <button class="ocr-text-footer-save" id="ocr-text-footer-list">Bullet</button>
               <button class="ocr-text-footer-save" id="ocr-text-footer-paragraph">Paragraph</button>
-            
             </div>     
           </div>
         `
@@ -593,6 +592,7 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
             this.dataset.mode === 'expand' ? 'Collapse' : 'Expand'
         }
 
+        // ocr-text-footer-heading
         this.shadowRoot.getElementById('ocr-text-footer-heading').onclick = (
           e
         ) => {
@@ -601,22 +601,64 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
           // send data to responce.js
           this.dispatchEvent(
             new CustomEvent('ocr-text-footer-heading-clicked', {
-
-
-              // this.dispatchEvent(
-              //   new CustomEvent('insert_text', {
-              //     detail: {
-              //       message: 'insert_text',
-              //       style: 'heading',
-              //       text: this.result,
-              //     },
-              //   })
-              // )
-
               detail: {
                 result: this.result,
                 language: 'insert_text',
                 accuracy: 'heading',
+              },
+            })
+          )
+        }
+
+        // ocr-text-footer-list
+        this.shadowRoot.getElementById('ocr-text-footer-list').onclick = (
+          e
+        ) => {
+          console.log('ocrTextFooterList -====================')
+
+          // send data to responce.js
+          this.dispatchEvent(
+            new CustomEvent('ocr-text-footer-list-clicked', {
+              detail: {
+                result: this.result,
+                language: 'insert_text',
+                accuracy: 'bullet',
+              },
+            })
+          )
+        }
+
+        // ocr-text-footer-paragraph
+        this.shadowRoot.getElementById('ocr-text-footer-paragraph').onclick = (
+          e
+        ) => {
+          console.log('ocrTextFooterParagraph -====================')
+
+          // send data to responce.js
+          this.dispatchEvent(
+            new CustomEvent('ocr-text-footer-paragraph-clicked', {
+              detail: {
+                result: this.result,
+                language: 'insert_text',
+                accuracy: 'paragraph',
+              },
+            })
+          )
+        }
+
+        // ocr-text-footer-quote
+        this.shadowRoot.getElementById('ocr-text-footer-quote').onclick = (
+          e
+        ) => {
+          console.log('ocrTextFooterQuote -====================')
+
+          // send data to responce.js
+          this.dispatchEvent(
+            new CustomEvent('ocr-text-footer-quote-clicked', {
+              detail: {
+                result: this.result,
+                language: 'insert_text',
+                accuracy: 'subheading',
               },
             })
           )
