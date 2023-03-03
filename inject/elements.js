@@ -159,7 +159,7 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               content: '*';
             }
             progress {
-              color: var(--accent);
+              color: red;
               background-color: white;
               border: none;
               width: 100%;
@@ -186,6 +186,7 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               opacity: 0.5;
             }
             #result {
+              border-radius: 5px 5px 0 0;
               min-height: 40px;
               background-color: var(--bg-result);
               margin: 10px 20px 0 20px;
