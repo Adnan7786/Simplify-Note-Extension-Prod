@@ -4,15 +4,26 @@ function isPDF(url) {
   return url.split('.').pop() === 'pdf'
 }
 
-// if url is pdf, open pdf using pdf viewer present in src folder
-if (isPDF(window.location.href)) {
-  if (!window.location.href.startsWith(`chrome-extension://${extensionId}`)) {
-    window.location.href =
-      chrome.runtime.getURL('src/pdfjs/web/viewer.html') +
-      '?file=' +
-      window.location.href
+function openPDFinSN(url) {
+  if (url.startsWith(`chrome-extension://${extensionId}`)) {
+    return;
   }
+  chrome.runtime.sendMessage({ message: 'checkFileUrlAccess' })
+    .then((isAllowedFileAccess) => {
+      if (url.startsWith('file://') && !isAllowedFileAccess) {
+        const confirmed = window.confirm('To start using Simplify Notes in local PDF\'s, please allow access to file URLs and then refresh tab to continue');
+        if (confirmed) chrome.runtime.sendMessage({ message: 'openAccessPage' });
+      } else {
+        window.location.href =
+          chrome.runtime.getURL('src/pdfjs/web/viewer.html') +
+          '?file=' +
+          url
+      }
+    })
 }
+
+// if url is pdf, open pdf using pdf viewer present in src folder
+if (isPDF(window.location.href)) openPDFinSN(window.location.href)
 
 function getTooltipUnchecked() {
   try {
@@ -41,6 +52,7 @@ function getTooltipDisabled() {
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  console.log(request);
   if (request.message === 'toggleTooltip') {
     alert(request.status);
     sendResponse({
@@ -1480,7 +1492,10 @@ function getCurrentTheme() {
 let errorCount = 0
 function sendNotification(status, message) {
   if (status === 'failure' && message === 'Extension context invalidated.') {
-    if (errorCount > 0) return;
+    if (errorCount % 2 === 0) {
+      errorCount += 1;
+      return;
+    }
     errorCount += 1;
     message = 'Please reload tab to continue'
   }

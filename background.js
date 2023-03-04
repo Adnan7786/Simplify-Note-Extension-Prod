@@ -1,3 +1,4 @@
+const extensionId = chrome.runtime.id;
 const protocol = 'https://'
 const domain = 'simplifynote.app'
 
@@ -26,20 +27,21 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     });
   }
   if (details.reason == 'install' || details.reason == 'update') {
-    chrome.windows.getAll({ populate: true }, function (windows) {
-      windows.forEach(function (window) {
-        window.tabs.forEach((tab) => {
-          chrome.tabs.reload(tab.id);
-        })
-      })
-    })
+    // auto reload all tabs and windows on install and update
+    // chrome.windows.getAll({ populate: true }, function (windows) {
+    //   windows.forEach(function (window) {
+    //     window.tabs.forEach((tab) => {
+    //       chrome.tabs.reload(tab.id);
+    //     })
+    //   })
+    // })
   }
   const tooltipUnchecked = await getTooltipUnchecked()
   const tooltipDisabled = await getTooltipDisabled()
   if (tooltipUnchecked || tooltipDisabled) {
-    turnBadgeOff()
+    await turnBadgeOff()
   } else {
-    turnBadgeOn()
+    await turnBadgeOn()
   }
 })
 
@@ -47,9 +49,9 @@ chrome.runtime.onStartup.addListener(async () => {
   const tooltipUnchecked = await getTooltipUnchecked()
   const tooltipDisabled = await getTooltipDisabled()
   if (tooltipUnchecked || tooltipDisabled) {
-    turnBadgeOff()
+    await turnBadgeOff()
   } else {
-    turnBadgeOn()
+    await turnBadgeOn()
   }
 })
 
@@ -139,25 +141,40 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         dim: request.dim,
       })
     })
+  } else if (request.message === 'checkFileUrlAccess') {
+    chrome.extension.isAllowedFileSchemeAccess()
+      .then((isAllowedAccess) => {
+        sendResponse(isAllowedAccess);
+      })
+  } else if (request.message === 'openAccessPage') {
+    chrome.tabs.create({ url: `chrome://extensions/?id=${extensionId}` })
   }
   return true;
 })
 
 chrome.storage.onChanged.addListener(async function (changes, namespace) {
   for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+
+    // console.log('change from strorage');
     if (key === 'tooltipUnchecked') {
+      // console.log('change from strorage tooltipUnchecked');
       const tooltipDisabled = await getTooltipDisabled()
       if (!newValue && !tooltipDisabled) {
-        turnBadgeOn()
+        // console.log('change from strorage tooltipUnchecked turn badge on');
+        await turnBadgeOn()
       } else {
-        turnBadgeOff()
+        // console.log('change from strorage tooltipUnchecked turn badge off');
+        await turnBadgeOff()
       }
     } else if (key === 'tooltipDisabled') {
+      // console.log('change from strorage tooltipDisabled');
       const tooltipUnchecked = await getTooltipUnchecked()
       if (!newValue && !tooltipUnchecked) {
-        turnBadgeOn()
+        // console.log('change from strorage tooltipDisabled turn badge on');
+        await turnBadgeOn()
       } else {
-        turnBadgeOff()
+        // console.log('change from strorage tooltipDisabled turn badge off');
+        await turnBadgeOff()
       }
     }
   }
@@ -225,17 +242,19 @@ function storeTooltipDisabled(value) {
   })
 }
 
-function turnBadgeOn() {
+async function turnBadgeOn() {
   try {
-    chrome.action.setIcon({ path: "images/logo.png" })
+    const res = await chrome.action.setIcon({ path: "images/logo.png" })
+    console.log('turnBadgeOn function');
   } catch (error) {
     console.log(error);
   }
 }
 
-function turnBadgeOff() {
+async function turnBadgeOff() {
   try {
-    chrome.action.setIcon({ path: "images/logo-offline.png" });
+    const res = await chrome.action.setIcon({ path: "images/logo-offline.png" })
+    // console.log('turnBadgeOff function');
   } catch (error) {
     console.log(error);
   }
@@ -245,13 +264,19 @@ chrome.cookies.onChanged.addListener(async (changeInfo) => {
   const cookie = changeInfo.cookie;
   if (cookie.domain === 'simplifynote.app' && cookie.name === 'token') {
     if (changeInfo.removed) {
-      turnBadgeOff()
+      // console.log('change from cookie removed turn off');
+      await turnBadgeOff()
     } else {
       const tooltipUnchecked = await getTooltipUnchecked()
       if (tooltipUnchecked) {
-        turnBadgeOff()
+        // console.log('change from cookie created turn off becuase tooltip switch unchecked');
+        await turnBadgeOff()
       } else {
-        turnBadgeOn()
+        // console.log('change from cookie created turn on becuase switch tooltip checked');
+        //hack to wait for turnbadgeOff from cookie removed to be completed
+        setTimeout(async () => {
+          await turnBadgeOn()
+        }, 2500);
       }
     }
   }
