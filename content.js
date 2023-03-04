@@ -11,7 +11,7 @@ function openPDFinSN(url) {
   chrome.runtime.sendMessage({ message: 'checkFileUrlAccess' })
     .then((isAllowedFileAccess) => {
       if (url.startsWith('file://') && !isAllowedFileAccess) {
-        const confirmed = window.confirm('To start using Simplify Notes in local PDF\'s, please allow access to file URLs and then refresh tab to continue');
+        const confirmed = window.confirm('To start using Simplify Notes in local PDF\'s, please allow access to file URLs in extension settings and then refresh pdf tab to continue');
         if (confirmed) chrome.runtime.sendMessage({ message: 'openAccessPage' });
       } else {
         window.location.href =

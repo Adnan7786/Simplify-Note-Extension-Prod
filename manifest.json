@@ -1,7 +1,7 @@
 {
   "name": "SimplifyNote - Your note taking assistant",
   "description": "Add text, images, and quotes to Google Docs with just one click!",
-  "version": "1.4.3.1",
+  "version": "1.4.3.2",
   "manifest_version": 3,
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAudV692YaJVdiTSBPTkrgKUHcrdDG6uC+DF/MrzcMNvzBZfVsOl7uuFUJfOHpTQ11ys6Rwk844+2p4BBkRtcS+KZTzXBuoZzdls1kL6ePy5dXTs3kBIvy7b/i/Joa234eaj8WUap5Q2hzmDPZVOz4aWLfmmi3YMnjeOxZvFeCqj7jPqRdgzqgjJ4nhCYisqiERKKB4VkY8gJiF9EyEQaZiXE0IVCh88w0yKbNmwWF7nyE5939t1vmjXwQH6bIV48zefeDz/ZkjcWoZqcNImtYFxrAzG8d6nB2ElQVgzNhiUGnWVJyhfT/WzcyCgKJHJNQ/bfWicTLefP94ltJkfM0vwIDAQAB",
   "content_scripts": [
