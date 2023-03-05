@@ -7,7 +7,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>", "file://*/*.pdf"],
-      "js": ["tesseract.min.js", "content.js"],
+      "js": ["content.js"],
       "run_at": "document_end"
     }
   ],
@@ -33,7 +33,6 @@
   ],
   "host_permissions": [
     "<all_urls>",
-    "chrome-extension://*",
     "https://tessdata.projectnaptha.com/*.gz",
     "https://github.com/naptha/tessdata/blob/gh-pages/*.gz?raw=true"
   ],

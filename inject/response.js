@@ -9,9 +9,13 @@
     document.body.append(container)
   }
 
-  const em = document.createElement('ocr-result')
+  const em =
+    document.querySelector('ocr-result') || document.createElement('ocr-result')
+  if (em.isConnected === false) {
+    container.append(em)
+  }
+
   em.dataset.page = chrome.runtime.getManifest().homepage_url + '#faq8'
-  container.append(em)
 
   const command = (em.command = (name, ...args) =>
     em.dispatchEvent(
@@ -212,6 +216,7 @@
       style: 'heading',
       text: e.detail.result,
     })
+    container.remove()
   })
 
   // ocr-text-footer-list-clicked
@@ -223,6 +228,7 @@
       style: 'bullet',
       text: e.detail.result,
     })
+    container.remove()
   })
 
   // ocr-text-footer-paragraph-clicked
@@ -234,6 +240,7 @@
       style: 'paragraph',
       text: e.detail.result,
     })
+    container.remove()
   })
 
   // ocr-text-footer-quote-clicked
@@ -245,6 +252,7 @@
       style: 'subheading',
       text: e.detail.result,
     })
+    container.remove()
   })
 
   em.addEventListener('language-changed', () => run())

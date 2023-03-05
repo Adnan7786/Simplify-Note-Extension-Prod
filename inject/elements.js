@@ -97,8 +97,8 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
           <style>
             :host {
               --fg: #444;
-              --bg: #0ed095;
-              --bg-result: #fff9ed;
+              --bg: #f3f6fd;
+              --bg-result: #fff;
               --accent: #7af049;
               --width: 600px;
               --height: 400px;
@@ -120,7 +120,7 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               height: var(--height);
               width: min(var(--width), calc(100vw, 2rem));
               color: var(--fg);
-              background-color: var(--bg);
+              background-color: var(--color-bgr-secondary);
               color-scheme: light;
               accent-color: var(--accent);
               border-radius: 5px;
@@ -159,7 +159,7 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               content: '*';
             }
             progress {
-              color: red;
+              color: red !important;
               background-color: white;
               border: none;
               width: 100%;
@@ -188,7 +188,7 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
             #result {
               border-radius: 5px 5px 0 0;
               min-height: 40px;
-              background-color: var(--bg-result);
+              background-color: var(--color-bgr-main);
               margin: 10px 20px 0 20px;
               overflow: auto;
               flex: 1;
@@ -224,6 +224,8 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               // margin-right: 30px;
               display: flex;
               justify-content: space-between;
+              align-items: center;
+              padding: 0 10px;
             }
             #accuracy,
             #language {
@@ -262,6 +264,19 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               border-radius: 3px;
               transition: color 350ms ease-in-out;
             }
+            #header{
+              display: flex;
+              align-items: center;
+            }
+            #header img{
+              width: 50px;
+              height: 50px;
+            }
+            #header span{
+              font-size: 16px;
+              font-weight: 600;
+              color: var(--color-primary);
+            }
             .ocr-text-footer-save:hover {
               color: var(--color-primary);  
             }
@@ -271,11 +286,15 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
                 <div style="display: flex; justify-content: center;">
                 </div>
             <div class="options">
-            <img src="./../src/icons/tooltip-logo.png" alt="logo" style="width: 25px; height: 25px; ">
+            <div id="header" >
+              <img src="chrome-extension://mjhigpcgpfiaadanipnacbalgaaleclc/src/icons/tooltip-logo.png" alt="logo" ">
+              <span>OCR Text</span>
+            </div>
+            <div>
               <select id="language">
-                <optgroup>
-                  <option value="detect">Auto Detect (beta)</option>
-                </optgroup>
+                // <optgroup>
+                //   <option value="detect">Auto Detect (beta)</option>
+                // </optgroup>
                 <optgroup id="frequently-used"></optgroup>
                 <optgroup>
                   <option value="afr">Afrikaans</option>
@@ -389,7 +408,8 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
                 <option value='4.0.0_best'>Best Accuracy</option>
               </select>
               
-              <input type="button" value="x" id="close" title="${this.locales.close}">
+              <input type="button" value="x" id="close" title="Close">
+              </div>
             </div>
            
 

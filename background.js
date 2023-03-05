@@ -7,13 +7,13 @@ chrome.runtime.onInstalled.addListener(async (details) => {
       url: `${protocol}${domain}/onboarding`,
     })
   } else if (details.reason == 'update') {
-    chrome.windows.getAll({ populate: true }, function (windows) {
-      windows.forEach(function (window) {
-        window.tabs.forEach((tab) => {
-          chrome.tabs.reload(tab.id)
-        })
-      })
-    })
+    // chrome.windows.getAll({ populate: true }, function (windows) {
+    //   windows.forEach(function (window) {
+    //     window.tabs.forEach((tab) => {
+    //       chrome.tabs.reload(tab.id)
+    //     })
+    //   })
+    // })
     chrome.tabs.create({
       url: `${protocol}${domain}/onboarding`,
     })
