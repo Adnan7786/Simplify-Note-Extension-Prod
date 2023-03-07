@@ -111,9 +111,9 @@
             const e = r.lang.startsWith(ln)
               ? r.lang
               : em.dataset.languages
-                  .split(', ')
-                  .filter((s) => s.startsWith(ln))
-                  .shift()
+                .split(', ')
+                .filter((s) => s.startsWith(ln))
+                .shift()
 
             if (e) {
               if (a.some((o) => o.lang === e)) {

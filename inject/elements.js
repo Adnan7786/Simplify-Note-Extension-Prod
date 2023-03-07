@@ -1,6 +1,9 @@
 // tests
 // https://www.youtube.com/
 // https://www.google.com/search?q=english+text&tbm=isch
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 {
   const HTMLElement = HTMLDivElement.__proto__
@@ -60,8 +63,6 @@
           'post-href': '',
           'post-body': '',
           lang: 'eng',
-          'frequently-used': ['eng', 'fra', 'deu', 'rus', 'ara'],
-
           example: 'NA',
           href: 'NA',
         }
@@ -166,6 +167,29 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               height: 7px;
               margin: 0 0 10px 0;
               border-radius: 0;
+              overflow: hidden;
+            }
+            progress::-webkit-progress-bar {
+              background-color: #aaa;
+              width: 100%;
+            }
+            progress#lang::-webkit-progress-bar {
+              border-bottom-left-radius: 7px;
+            }
+            progress#recognize::-webkit-progress-bar {
+              border-bottom-right-radius: 7px;
+            }
+            progress::-webkit-progress-value {
+              background-color: var(--color-primary) !important;
+              border-top-right-radius: 3.5px;
+              border-bottom-right-radius: 3.5px;
+            }
+            progress#lang::-webkit-progress-value {
+              border-bottom-left-radius: 7px;
+            }
+            progress[value="1"]#recognize::-webkit-progress-value {
+              border-top-right-radius: 0px;
+              border-bottom-right-radius: 7px;
             }
             // img {
             //   display: none;
@@ -186,6 +210,7 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               opacity: 0.5;
             }
             #result {
+              position: relative;
               border-radius: 5px 5px 0 0;
               min-height: 40px;
               background-color: var(--color-bgr-main);
@@ -197,6 +222,16 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
             #result:empty::before {
               content: attr(data-msg);
             }
+            #result:not(:empty)::before {
+              content: '';
+              position: fixed;
+              width: calc(min(var(--width), calc(100vw, 2rem)) - 20px - 20px);
+              height: var(--gap);
+              background: var(--color-bgr-main);
+              opacity: 0.8;
+              transform: translate(calc(-1 * var(--gap)),calc(-1 * var(--gap)));
+              border-radius: inherit;
+            }
             #result .ocr_par:first-child {
               margin-top: 0;
             }
@@ -204,7 +239,19 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               margin-bottom: 0;
             }
             .ocr_line {
-              display: block;
+              display: inline;
+            }
+            #progress-bar{
+              position: relative;
+            }
+            #progress-bar::before{
+              content: "";
+              position: absolute;
+              height: var(--gap);
+              width: 100%;
+              bottom: 100%;
+              opacity: 0.8;
+              background: var(--color-bgr-main);
             }
             .grid {
               display: grid;
@@ -229,11 +276,12 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
             }
             #accuracy,
             #language {
-              border: none;
+              border: 1px solid var(--color-primary);
+              border-radius: 5px;
               text-overflow: ellipsis;
               background-color: transparent;
               outline: none;
-              padding: 5px;
+              padding: 5px 0px 5px 3px;
             }
             #tools {
               display: grid;
@@ -292,113 +340,107 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
             </div>
             <div>
               <select id="language">
-                // <optgroup>
-                //   <option value="detect">Auto Detect (beta)</option>
-                // </optgroup>
-                <optgroup id="frequently-used"></optgroup>
-                <optgroup>
-                  <option value="afr">Afrikaans</option>
-                  <option value="amh">Amharic</option>
-                  <option value="ara">Arabic</option>
-                  <option value="asm">Assamese</option>
-                  <option value="aze">Azerbaijani</option>
-                  <option value="aze_cyrl">Azerbaijani - Cyrillic</option>
-                  <option value="bel">Belarusian</option>
-                  <option value="ben">Bengali</option>
-                  <option value="bod">Tibetan</option>
-                  <option value="bos">Bosnian</option>
-                  <option value="bul">Bulgarian</option>
-                  <option value="cat">Catalan; Valencian</option>
-                  <option value="ceb">Cebuano</option>
-                  <option value="ces">Czech</option>
-                  <option value="chi_sim">Chinese - Simplified</option>
-                  <option value="chi_tra">Chinese - Traditional</option>
-                  <option value="chr">Cherokee</option>
-                  <option value="cym">Welsh</option>
-                  <option value="dan">Danish</option>
-                  <option value="deu">German</option>
-                  <option value="dzo">Dzongkha</option>
-                  <option value="ell">Greek, Modern (1453-)</option>
-                  <option value="enm">English, Middle (1100-1500)</option>
+                <optgroup id="frequently-used">
                   <option value="eng">English</option>
-                  <option value="epo">Esperanto</option>
-                  <option value="est">Estonian</option>
-                  <option value="eus">Basque</option>
-                  <option value="fas">Persian</option>
-                  <option value="fra">French</option>
-                  <option value="fin">Finnish</option>
-                  <option value="frk">German Fraktur</option>
-                  <option value="frm">French, Middle (ca. 1400-1600)</option>
-                  <option value="gle">Irish</option>
-                  <option value="glg">Galician</option>
-                  <option value="grc">Greek, Ancient (-1453)</option>
-                  <option value="guj">Gujarati</option>
-                  <option value="hat">Haitian; Haitian Creole</option>
-                  <option value="heb">Hebrew</option>
                   <option value="hin">Hindi</option>
-                  <option value="hrv">Croatian</option>
-                  <option value="hun">Hungarian</option>
-                  <option value="iku">Inuktitut</option>
-                  <option value="ind">Indonesian</option>
-                  <option value="isl">Icelandic</option>
-                  <option value="ita">Italian</option>
-                  <option value="ita_old">Italian - Old</option>
-                  <option value="jav">Javanese</option>
-                  <option value="jpn">Japanese</option>
-                  <option value="kan">Kannada</option>
-                  <option value="kat">Georgian</option>
-                  <option value="kat_old">Georgian - Old</option>
-                  <option value="kaz">Kazakh</option>
-                  <option value="khm">Central Khmer</option>
-                  <option value="kir">Kirghiz; Kyrgyz</option>
-                  <option value="kor">Korean</option>
-                  <option value="kur">Kurdish</option>
-                  <option value="lao">Lao</option>
-                  <option value="lat">Latin</option>
-                  <option value="lav">Latvian</option>
-                  <option value="lit">Lithuanian</option>
-                  <option value="mal">Malayalam</option>
-                  <option value="mar">Marathi</option>
-                  <option value="mkd">Macedonian</option>
-                  <option value="mlt">Maltese</option>
-                  <option value="msa">Malay</option>
-                  <option value="mya">Burmese</option>
-                  <option value="nep">Nepali</option>
-                  <option value="nld">Dutch; Flemish</option>
-                  <option value="nor">Norwegian</option>
-                  <option value="ori">Oriya</option>
-                  <option value="pan">Panjabi; Punjabi</option>
-                  <option value="pol">Polish</option>
-                  <option value="por">Portuguese</option>
-                  <option value="pus">Pushto; Pashto</option>
-                  <option value="ron">Romanian; Moldavian; Moldovan</option>
-                  <option value="rus">Russian</option>
-                  <option value="san">Sanskrit</option>
-                  <option value="sin">Sinhala; Sinhalese</option>
-                  <option value="slk">Slovak</option>
-                  <option value="slv">Slovenian</option>
-                  <option value="spa">Spanish; Castilian</option>
-                  <option value="spa_old">Spanish; Castilian - Old</option>
-                  <option value="sqi">Albanian</option>
-                  <option value="srp">Serbian</option>
-                  <option value="srp">latn  Serbian - Latin</option>
-                  <option value="swa">Swahili</option>
-                  <option value="swe">Swedish</option>
-                  <option value="syr">Syriac</option>
+                  <option value="urd">Urdu</option>
+                  <option value="ara">Arabic</option>
                   <option value="tam">Tamil</option>
                   <option value="tel">Telugu</option>
-                  <option value="tgk">Tajik</option>
-                  <option value="tgl">Tagalog</option>
-                  <option value="tha">Thai</option>
-                  <option value="tir">Tigrinya</option>
-                  <option value="tur">Turkish</option>
-                  <option value="uig">Uighur; Uyghur</option>
-                  <option value="ukr">Ukrainian</option>
-                  <option value="urd">Urdu</option>
-                  <option value="uzb">Uzbek</option>
-                  <option value="uzb_cyrl">Uzbek - Cyrillic</option>
-                  <option value="vie">Vietnamese</option>
-                  <option value="yid">Yiddish</option>
+                </optgroup>
+                <optgroup>
+                <option value="afr">Afrikaans</option>
+                <option value="sqi">Albanian</option>
+                <option value="amh">Amharic</option>
+                <option value="ara">Arabic</option>
+                <option value="asm">Assamese</option>
+                <option value="aze">Azerbaijani</option>
+                <option value="eus">Basque</option>
+                <option value="bel">Belarusian</option>
+                <option value="ben">Bengali</option>
+                <option value="bos">Bosnian</option>
+                <option value="bul">Bulgarian</option>
+                <option value="mya">Burmese</option>
+                <option value="cat">Catalan</option>
+                <option value="ceb">Cebuano</option>
+                <option value="chr">Cherokee</option>
+                <option value="chi_sim">Chinese(Simp)</option>
+                <option value="chi_tra">Chinese(Trad)</option>
+                <option value="hrv">Croatian</option>
+                <option value="ces">Czech</option>
+                <option value="dan">Danish</option>
+                <option value="nld">Dutch</option>
+                <option value="dzo">Dzongkha</option>
+                <option value="eng">English</option>
+                <option value="epo">Esperanto</option>
+                <option value="est">Estonian</option>
+                <option value="fin">Finnish</option>
+                <option value="fra">French</option>
+                <option value="glg">Galician</option>
+                <option value="kat">Georgian</option>
+                <option value="deu">German</option>
+                <option value="grc">Greek</option>
+                <option value="guj">Gujarati</option>
+                <option value="hat">Haitian</option>
+                <option value="heb">Hebrew</option>
+                <option value="hin">Hindi</option>
+                <option value="hun">Hungarian</option>
+                <option value="isl">Icelandic</option>
+                <option value="ind">Indonesian</option>
+                <option value="iku">Inuktitut</option>
+                <option value="gle">Irish</option>
+                <option value="ita">Italian</option>
+                <option value="jpn">Japanese</option>
+                <option value="jav">Javanese</option>
+                <option value="kan">Kannada</option>
+                <option value="kaz">Kazakh</option>
+                <option value="khm">Khmer</option>
+                <option value="kir">Kirghiz</option>
+                <option value="kor">Korean</option>
+                <option value="kur">Kurdish</option>
+                <option value="lao">Lao</option>
+                <option value="lat">Latin</option>
+                <option value="lav">Latvian</option>
+                <option value="lit">Lithuanian</option>
+                <option value="mkd">Macedonian</option>
+                <option value="msa">Malay</option>
+                <option value="mal">Malayalam</option>
+                <option value="mlt">Maltese</option>
+                <option value="mar">Marathi</option>
+                <option value="nep">Nepali</option>
+                <option value="nor">Norwegian</option>
+                <option value="ori">Oriya</option>
+                <option value="pus">Pashto</option>
+                <option value="fas">Persian</option>
+                <option value="pol">Polish</option>
+                <option value="por">Portuguese</option>
+                <option value="pan">Punjabi</option>
+                <option value="ron">Romanian</option>
+                <option value="rus">Russian</option>
+                <option value="san">Sanskrit</option>
+                <option value="srp">Serbian</option>
+                <option value="sin">Sinhala</option>
+                <option value="slk">Slovak</option>
+                <option value="slv">Slovenian</option>
+                <option value="spa">Spanish</option>
+                <option value="swa">Swahili</option>
+                <option value="swe">Swedish</option>
+                <option value="syr">Syriac</option>
+                <option value="tgl">Tagalog</option>
+                <option value="tgk">Tajik</option>
+                <option value="tam">Tamil</option>
+                <option value="tel">Telugu</option>
+                <option value="tha">Thai</option>
+                <option value="bod">Tibetan</option>
+                <option value="tir">Tigrinya</option>
+                <option value="tur">Turkish</option>
+                <option value="uig">Uighur</option>
+                <option value="ukr">Ukrainian</option>
+                <option value="urd">Urdu</option>
+                <option value="uzb">Uzbek</option>
+                <option value="vie">Vietnamese</option>
+                <option value="cym">Welsh</option>
+                <option value="yid">Yiddish</option>
                 </optgroup>
               </select>
               <select id="accuracy" style="display: none;">
@@ -415,7 +457,7 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
 
             <div id="result" data-msg="Please wait..."   ></div>
 
-            <div style="display: flex; margin: 0px 20px;" >
+            <div id="progress-bar" style="display: flex; margin: 0px 20px;" >
               <progress id="lang" value="0" max="1"></progress>
               <progress id="recognize" value="0" max="1"></progress>
             </div>
@@ -451,12 +493,12 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
       /* methods */
       prepare() {
         // frequently used
-        for (const lang of this.prefs['frequently-used']) {
-          const e = this.shadowRoot
-            .querySelector(`option[value="${lang}"]`)
-            .cloneNode(true)
-          this.shadowRoot.getElementById('frequently-used').appendChild(e)
-        }
+        // for (const lang of this.prefs['frequently-used']) {
+        //   const e = this.shadowRoot
+        //     .querySelector(`option[value="${lang}"]`)
+        //     .cloneNode(true)
+        //   this.shadowRoot.getElementById('frequently-used').appendChild(e)
+        // }
         // language
         this.language(this.prefs.lang)
         // accuracy
@@ -472,7 +514,7 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
         }
       }
       message(value) {
-        this.shadowRoot.getElementById('result').dataset.msg = value
+        this.shadowRoot.getElementById('result').dataset.msg = capitalizeFirstLetter(value)
       }
       progress(value, type = 'recognize') {
         this.shadowRoot.getElementById(type).value = value
@@ -631,12 +673,12 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
           this.language(e.target.value)
           const prefs = {
             lang: e.target.value,
-            'frequently-used': this.prefs['frequently-used'],
+            // 'frequently-used': this.prefs['frequently-used'],
           }
-          prefs['frequently-used'].unshift(prefs.lang)
-          prefs['frequently-used'] = prefs['frequently-used']
-            .filter((s, i, l) => s && l.indexOf(s) === i)
-            .slice(0, 10)
+          // prefs['frequently-used'].unshift(prefs.lang)
+          // prefs['frequently-used'] = prefs['frequently-used']
+          //   .filter((s, i, l) => s && l.indexOf(s) === i)
+          //   .slice(0, 10)
           this.configure(prefs, true)
           this.dispatchEvent(new Event('language-changed'))
         }
@@ -672,9 +714,7 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
         this.shadowRoot.getElementById('ocr-text-footer-heading').onclick = (
           e
         ) => {
-          console.log('ocrTextFooterHeading -====================')
-
-          // send data to responce.js
+          // send data to response.js
           this.dispatchEvent(
             new CustomEvent('ocr-text-footer-heading-clicked', {
               detail: {
@@ -690,9 +730,7 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
         this.shadowRoot.getElementById('ocr-text-footer-list').onclick = (
           e
         ) => {
-          console.log('ocrTextFooterList -====================')
-
-          // send data to responce.js
+          // send data to response.js
           this.dispatchEvent(
             new CustomEvent('ocr-text-footer-list-clicked', {
               detail: {
@@ -708,8 +746,6 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
         this.shadowRoot.getElementById('ocr-text-footer-paragraph').onclick = (
           e
         ) => {
-          console.log('ocrTextFooterParagraph -====================')
-
           // send data to responce.js
           this.dispatchEvent(
             new CustomEvent('ocr-text-footer-paragraph-clicked', {
@@ -726,8 +762,6 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
         this.shadowRoot.getElementById('ocr-text-footer-quote').onclick = (
           e
         ) => {
-          console.log('ocrTextFooterQuote -====================')
-
           // send data to responce.js
           this.dispatchEvent(
             new CustomEvent('ocr-text-footer-quote-clicked', {

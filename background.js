@@ -14,9 +14,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     //     })
     //   })
     // })
-    chrome.tabs.create({
-      url: `${protocol}${domain}/onboarding`,
-    })
   }
   const tooltipUnchecked = await getTooltipUnchecked()
   const tooltipDisabled = await getTooltipDisabled()
