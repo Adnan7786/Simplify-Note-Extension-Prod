@@ -107,15 +107,12 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               --color-primary: #0ed095;
               --color-bgr-main : #f3f6fd;
               --color-bgr-secondary: #fff;
-              -color-font:rgb(69 69 69);
-            }
-            :host([data-mode='expand']) {
-              --height: 70vh;
+              --color-font:rgb(69 69 69);
+              --icon-size: 16px;
             }
             #body {
               font-size: 13px;
               font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-              // padding: 10px 25px;
               display: flex;
               flex-direction: column;
               height: var(--height);
@@ -126,38 +123,53 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               accent-color: var(--accent);
               border-radius: 5px;
               box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 75%);
+              transition: width 400ms ease-in-out, height 400ms ease-in-out;
+            }
+            #left-container{
+              display: flex;
+              align-items: center;
+              gap: 13px;
+            }
+            #icon-minimize{
+              display: none;
+              cursor: pointer;
+              fill: var(--fg);
+              opacity: 0.6;
+              width: var(--icon-size);
+              height: var(--icon-size);
+            }
+            #icon-minimize:hover{
+              opacity: 1.0;
+              fill: #0094ff;
+            }
+            #icon-expand{
+              display: none;
+              cursor: pointer;
+              fill: var(--fg);
+              opacity: 0.6;
+              width: var(--icon-size);
+              height: var(--icon-size);
+            }
+            #icon-expand:hover{
+              opacity: 1.0;
+              fill: #0094ff;
+            }
+            #size-button[title="Minimize"] #icon-minimize{
+              display:block;
+            }
+            #size-button[title="Expand"] #icon-expand{
+              display:block;
             }
             #close {
-              position: relative;
-             
-              padding: 5px 5px;
-              font-size: 1.2rem;
-              margin: 5px 5px;
               cursor: pointer;
-              font-weight: bold;
-              color: var(--fg);
-              text-shadow: 0 1px 0 #fff;
+              fill: var(--fg);
               opacity: 0.6;
-              width: 2.0rem;
-              height: 2.0rem;
-              text-align: center;
-              background-color: transparent;
-              border: none;
+              width: calc(var(--icon-size) + 5px);
+              height: calc(var(--icon-size) + 5px)
             }
             #close:hover {
-              opacity: 0.9;
-              color: red;
-            }
-            #close:focus {
-              outline: none;
-
-            }
-            #close:active {
-              opacity: 1;
-              color: red;
-            }
-            #close::before {
-              content: '*';
+              opacity: 1.0;
+              fill: red;
             }
             progress {
               color: red !important;
@@ -191,21 +203,6 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               border-top-right-radius: 0px;
               border-bottom-right-radius: 7px;
             }
-            // img {
-            //   display: none;
-            // }
-            // button,
-            // input[type=submit],
-            // input[type=button] {
-            //   padding: calc(var(--gap) / 2) var(--gap);
-            //   color: var(--fg);
-            //   background-image: linear-gradient(rgb(237, 237, 237), rgb(237, 237, 237) 38%, rgb(222, 222, 222));
-            //   box-shadow: rgba(0, 0, 0, 0.08) 0 1px 0, rgba(255, 255, 255, 0.75) 0 1px 2px inset;
-            //   text-shadow: rgb(240, 240, 240) 0 1px 0;
-            //   border: solid 1px rgba(0, 0, 0, 0.25);
-            //   cursor: pointer;
-            //   font-size: inherit;
-            // }
             input[type=button]:disabled {
               opacity: 0.5;
             }
@@ -331,14 +328,12 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
           </style>
 
           <div id="body">
-                <div style="display: flex; justify-content: center;">
-                </div>
             <div class="options">
             <div id="header" >
               <img src="chrome-extension://mjhigpcgpfiaadanipnacbalgaaleclc/src/icons/tooltip-logo.png" alt="logo" ">
               <span>OCR Text</span>
             </div>
-            <div>
+            <div id="left-container">
               <select id="language">
                 <optgroup id="frequently-used">
                   <option value="eng">English</option>
@@ -449,8 +444,19 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
                 <option value='4.0.0'>Better Accuracy</option>
                 <option value='4.0.0_best'>Best Accuracy</option>
               </select>
-              
-              <input type="button" value="x" id="close" title="Close">
+              <span id="size-button" title="Minimize">
+                <svg id="icon-minimize" viewBox="0 0 512 512">
+                  <path d="M439 7c9.4-9.4 24.6-9.4 33.9 0l32 32c9.4 9.4 9.4 24.6 0 33.9l-87 87 39 39c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H296c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2l39 39L439 7zM72 272H216c13.3 0 24 10.7 24 24V440c0 9.7-5.8 18.5-14.8 22.2s-19.3 1.7-26.2-5.2l-39-39L73 505c-9.4 9.4-24.6 9.4-33.9 0L7 473c-9.4-9.4-9.4-24.6 0-33.9l87-87L55 313c-6.9-6.9-8.9-17.2-5.2-26.2s12.5-14.8 22.2-14.8z"/>
+                </svg>
+                <svg id="icon-expand" viewBox="0 0 512 512">
+                  <path d="M344 0H488c13.3 0 24 10.7 24 24V168c0 9.7-5.8 18.5-14.8 22.2s-19.3 1.7-26.2-5.2l-39-39-87 87c-9.4 9.4-24.6 9.4-33.9 0l-32-32c-9.4-9.4-9.4-24.6 0-33.9l87-87L327 41c-6.9-6.9-8.9-17.2-5.2-26.2S334.3 0 344 0zM168 512H24c-13.3 0-24-10.7-24-24V344c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2l39 39 87-87c9.4-9.4 24.6-9.4 33.9 0l32 32c9.4 9.4 9.4 24.6 0 33.9l-87 87 39 39c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8z"/>
+                </svg>
+              </span>
+              <span title="Close">
+                <svg id="close" viewBox="0 0 512 512">
+                  <path d="M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z"/>
+                </svg>
+              </span>
               </div>
             </div>
            
@@ -492,13 +498,6 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
       }
       /* methods */
       prepare() {
-        // frequently used
-        // for (const lang of this.prefs['frequently-used']) {
-        //   const e = this.shadowRoot
-        //     .querySelector(`option[value="${lang}"]`)
-        //     .cloneNode(true)
-        //   this.shadowRoot.getElementById('frequently-used').appendChild(e)
-        // }
         // language
         this.language(this.prefs.lang)
         // accuracy
@@ -672,13 +671,8 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
         this.shadowRoot.getElementById('language').onchange = (e) => {
           this.language(e.target.value)
           const prefs = {
-            lang: e.target.value,
-            // 'frequently-used': this.prefs['frequently-used'],
+            lang: e.target.value
           }
-          // prefs['frequently-used'].unshift(prefs.lang)
-          // prefs['frequently-used'] = prefs['frequently-used']
-          //   .filter((s, i, l) => s && l.indexOf(s) === i)
-          //   .slice(0, 10)
           this.configure(prefs, true)
           this.dispatchEvent(new Event('language-changed'))
         }
@@ -703,11 +697,16 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
           )
         }
         // expand
-        this.shadowRoot.getElementById('expand').onclick = (e) => {
-          this.dataset.mode =
-            this.dataset.mode === 'expand' ? 'collapse' : 'expand'
-          e.target.value =
-            this.dataset.mode === 'expand' ? 'Collapse' : 'Expand'
+        this.shadowRoot.getElementById('size-button').onclick = (e) => {
+          if (e.currentTarget.title === 'Minimize') {
+            e.currentTarget.title = 'Expand';
+            this.style.setProperty('--width', '350px');
+            this.style.setProperty('--height', '300px');
+          } else {
+            e.currentTarget.title = 'Minimize';
+            this.style.setProperty('--width', '600px');
+            this.style.setProperty('--height', '400px');
+          }
         }
 
         // ocr-text-footer-heading
@@ -789,8 +788,6 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
           .join(', ')
       }
     }
-
-    // customElements.define('ocr-result', OCRResult);
     define('ocr-result', OCRResult)
   }
 }

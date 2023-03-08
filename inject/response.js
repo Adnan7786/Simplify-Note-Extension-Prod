@@ -162,7 +162,7 @@
       if (o.text.trim() === '') {
         command(
           'build',
-          '<span style="color: red">No text was detected! Edit the image and drop it here to retry!</span>'
+          '<span style="color: red">No text was detected! Please try again!</span>'
         )
       } else {
         command('build', o.hocr)
