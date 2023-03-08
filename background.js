@@ -54,8 +54,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           message: `${toTitleCase(request.style)} inserted successfully`,
         })
       })
-      .catch((errMsg) => {
-        sendResponse({ status: 'failure', message: errMsg })
+      .catch((error) => {
+        sendResponse({ status: 'failure', message: error.message })
       })
   } else if (request.message === 'insert_image') {
     const imageData = request.imageData
@@ -70,8 +70,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           message: 'Image inserted successfully',
         })
       })
-      .catch((errMsg) => {
-        sendResponse({ status: 'failure', message: errMsg })
+      .catch((error) => {
+        sendResponse({ status: 'failure', message: error.message })
       })
   } else if (request.message === 'screenshot') {
     chrome.tabs.captureVisibleTab(null, { format: 'png' }, async (dataUrl) => {
@@ -86,8 +86,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             message: 'Image inserted successfully',
           })
         })
-        .catch((errMsg) => {
-          sendResponse({ status: 'failure', message: errMsg })
+        .catch((error) => {
+          sendResponse({ status: 'failure', message: error.message })
         })
       chrome.tabs.sendMessage(sender.tab.id, {
         message: 'screenshot',
@@ -114,8 +114,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           message: 'Image inserted successfully',
         })
       })
-      .catch((errMsg) => {
-        sendResponse({ status: 'failure', message: errMsg })
+      .catch((error) => {
+        sendResponse({ status: 'failure', message: error.message })
       })
   } else if (request.message === 'ocr') {
     chrome.tabs.captureVisibleTab(
@@ -176,8 +176,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 ],
               })
           )
-        } catch (e) {
-          console.error('Error================', e)
+        } catch (error) {
+          sendResponse({ status: 'failure', message: error.message })
         }
       }
     )

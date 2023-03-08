@@ -30,7 +30,7 @@ function capitalizeFirstLetter(string) {
               bottom: 10px;
               right: 30px;
               // padding: 5px;
-              z-index: 10000000000;
+              z-index: 10000;
               box-shadow: 0 0 2px #ccc;
               display: flex;
               gap: 5px;

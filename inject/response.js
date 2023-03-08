@@ -215,6 +215,9 @@
       message: 'insert_text',
       style: 'heading',
       text: e.detail.result,
+    }).then(res => {
+      console.log(res);
+      sendNotification(res.status, res.message);
     })
     container.remove()
   })
@@ -227,6 +230,9 @@
       message: 'insert_text',
       style: 'bullet',
       text: e.detail.result,
+    }).then(res => {
+      console.log(res);
+      sendNotification(res.status, res.message);
     })
     container.remove()
   })
@@ -239,6 +245,9 @@
       message: 'insert_text',
       style: 'paragraph',
       text: e.detail.result,
+    }).then(res => {
+      console.log(res);
+      sendNotification(res.status, res.message);
     })
     container.remove()
   })
@@ -251,6 +260,9 @@
       message: 'insert_text',
       style: 'subheading',
       text: e.detail.result,
+    }).then(res => {
+      console.log(res);
+      sendNotification(res.status, res.message);
     })
     container.remove()
   })

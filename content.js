@@ -298,9 +298,9 @@ sliderContainer.appendChild(screenshotButton)
 sliderContainer.appendChild(snipButton)
 
 website_link = window.location.href
-// if (!website_link.includes('.pdf')) {
-sliderContainer.appendChild(ocrButton)
-// }
+if (!website_link.includes('.pdf')) {
+  sliderContainer.appendChild(ocrButton)
+}
 
 containAllSnips.addEventListener('pointerenter', () => {
   sliderContainer.style.visibility = 'visible'
@@ -917,6 +917,7 @@ var root = host.attachShadow({ mode: 'open' })
 
 const tooltipContainer = document.createElement('div')
 tooltipContainer.id = 'tooltipContainer'
+tooltipContainer.style.zIndex = '-2'
 tooltipContainer.className = 'tooltipContainer'
 tooltipContainer.innerHTML = `<style>
 
@@ -1133,6 +1134,7 @@ const notificationContainer = document.createElement('div')
 notificationContainer.id = 'notificationContainer'
 notificationContainer.className = 'notificationContainer'
 notificationContainer.style.visibility = 'hidden'
+notificationContainer.style.zIndex = '50001'
 notificationContainer.innerHTML = `<style>
 
 .notification {
