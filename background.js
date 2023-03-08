@@ -26,16 +26,6 @@ chrome.runtime.onInstalled.addListener(async (details) => {
       url: onbLink
     });
   }
-  if (details.reason == 'install' || details.reason == 'update') {
-    // auto reload all tabs and windows on install and update
-    // chrome.windows.getAll({ populate: true }, function (windows) {
-    //   windows.forEach(function (window) {
-    //     window.tabs.forEach((tab) => {
-    //       chrome.tabs.reload(tab.id);
-    //     })
-    //   })
-    // })
-  }
   const tooltipUnchecked = await getTooltipUnchecked()
   const tooltipDisabled = await getTooltipDisabled()
   if (tooltipUnchecked || tooltipDisabled) {
@@ -57,53 +47,48 @@ chrome.runtime.onStartup.addListener(async () => {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.message === 'insert_text') {
-    apiCall(`/api/v1/insert/${request.style}`,
-      'POST',
-      { text: request.text }
-    ).then((res) => {
-      sendResponse({
-        status: 'success',
-        message: `${toTitleCase(request.style)} inserted successfully`
-      })
-    }).catch((error) => {
-      sendResponse({ status: 'failure', message: error.message });
-    })
-  }
-  else if (request.message === 'insert_image') {
-    const imageData = request.imageData
-    apiCall(`/api/v1/insert/image`,
-      'POST',
-      {
-        image: imageData.url,
-        height: imageData.height,
-        width: imageData.width,
-      }
-    ).then((res) => {
-      sendResponse({
-        status: 'success',
-        message: 'Image inserted successfully'
-      })
-    }).catch((error) => {
-      sendResponse({ status: 'failure', message: error.message });
-    })
-  }
-  else if (request.message === 'screenshot') {
-    chrome.tabs.captureVisibleTab(null, { format: 'png' }, async (dataUrl) => {
-      apiCall(`/api/v1/insert/image`,
-        'POST',
-        {
-          image: dataUrl,
-          height: request.height,
-          width: request.width,
-        }
-      ).then((res) => {
+    apiCall(`/api/v1/insert/${request.style}`, 'POST', { text: request.text })
+      .then((res) => {
         sendResponse({
           status: 'success',
-          message: 'Image inserted successfully'
+          message: `${toTitleCase(request.style)} inserted successfully`,
         })
-      }).catch((error) => {
-        sendResponse({ status: 'failure', message: error.message });
       })
+      .catch((errMsg) => {
+        sendResponse({ status: 'failure', message: errMsg })
+      })
+  } else if (request.message === 'insert_image') {
+    const imageData = request.imageData
+    apiCall(`/api/v1/insert/image`, 'POST', {
+      image: imageData.url,
+      height: imageData.height,
+      width: imageData.width,
+    })
+      .then((res) => {
+        sendResponse({
+          status: 'success',
+          message: 'Image inserted successfully',
+        })
+      })
+      .catch((errMsg) => {
+        sendResponse({ status: 'failure', message: errMsg })
+      })
+  } else if (request.message === 'screenshot') {
+    chrome.tabs.captureVisibleTab(null, { format: 'png' }, async (dataUrl) => {
+      apiCall(`/api/v1/insert/image`, 'POST', {
+        image: dataUrl,
+        height: request.height,
+        width: request.width,
+      })
+        .then((res) => {
+          sendResponse({
+            status: 'success',
+            message: 'Image inserted successfully',
+          })
+        })
+        .catch((errMsg) => {
+          sendResponse({ status: 'failure', message: errMsg })
+        })
       chrome.tabs.sendMessage(sender.tab.id, {
         message: 'screenshot',
         dataUrl: dataUrl,
@@ -118,29 +103,84 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       })
     })
   } else if (request.message === 'saveImage') {
-    apiCall(`/api/v1/insert/image`,
-      'POST',
-      {
-        image: request.dataUrl,
-        height: request.height,
-        width: request.width,
-      }
-    ).then((res) => {
-      sendResponse({
-        status: 'success',
-        message: 'Image inserted successfully'
-      })
-    }).catch((error) => {
-      sendResponse({ status: 'failure', message: error.message });
+    apiCall(`/api/v1/insert/image`, 'POST', {
+      image: request.dataUrl,
+      height: request.height,
+      width: request.width,
     })
+      .then((res) => {
+        sendResponse({
+          status: 'success',
+          message: 'Image inserted successfully',
+        })
+      })
+      .catch((errMsg) => {
+        sendResponse({ status: 'failure', message: errMsg })
+      })
   } else if (request.message === 'ocr') {
-    chrome.tabs.captureVisibleTab(null, { format: 'png' }, (dataUrl) => {
-      chrome.tabs.sendMessage(sender.tab.id, {
-        message: 'ocr',
-        dataUrl: dataUrl,
-        dim: request.dim,
-      })
-    })
+    chrome.tabs.captureVisibleTab(
+      sender.tab.windowId,
+      { format: 'png' },
+      async (href) => {
+        try {
+          console.log('akjkbkajsb===============>', request.dim)
+          const target = {
+            tabId: sender.tab.id,
+          }
+          await chrome.scripting.executeScript({
+            target,
+            files: ['/inject/elements.js'],
+            world: 'MAIN',
+          })
+          await chrome.scripting.executeScript({
+            target,
+            files: ['/engine/helper.js'],
+          })
+          await chrome.scripting.executeScript({
+            target,
+            files: ['/inject/response.js'],
+          })
+          // start
+          chrome.storage.local.get(
+            {
+              'post-method': 'POST',
+              'post-href': '',
+              'post-body': '',
+              lang: 'eng',
+              'frequently-used': ['eng', 'fra', 'deu', 'rus', 'ara'],
+              accuracy: '4.0.0',
+            },
+            (prefs) =>
+              chrome.scripting.executeScript({
+                target,
+                func: (prefs, href, box) => {
+                  const em = document.querySelector('ocr-result:last-of-type')
+
+                  em.command('configure', prefs)
+                  em.command('prepare')
+
+                  em.href = href
+                  em.box = box
+
+                  em.run()
+                },
+                args: [
+                  prefs,
+                  href,
+                  {
+                    width: request.dim.width * request.dim.devicePixelRatio,
+                    height: request.dim.height * request.dim.devicePixelRatio,
+                    top: request.dim.top * request.dim.devicePixelRatio,
+                    left: request.dim.left * request.dim.devicePixelRatio,
+                  },
+                ],
+              })
+          )
+        } catch (e) {
+          console.error('Error================', e)
+        }
+      }
+    )
   } else if (request.message === 'checkFileUrlAccess') {
     chrome.extension.isAllowedFileSchemeAccess()
       .then((isAllowedAccess) => {
@@ -149,7 +189,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (request.message === 'openAccessPage') {
     chrome.tabs.create({ url: `chrome://extensions/?id=${extensionId}` })
   }
-  return true;
+  return true
 })
 
 chrome.storage.onChanged.addListener(async function (changes, namespace) {
@@ -181,15 +221,15 @@ chrome.storage.onChanged.addListener(async function (changes, namespace) {
 })
 
 function apiCall(pathSuffix, method, payload) {
-  const endpoint = `${protocol}${domain}${pathSuffix}`;
-  const reqObj = {};
+  const endpoint = `${protocol}${domain}${pathSuffix}`
+  const reqObj = {}
   if (method !== 'GET') {
-    reqObj.method = method;
+    reqObj.method = method
     reqObj.headers = {
-      "Accept": "application/json",
-      "Content-Type": "application/json",
-    };
-    reqObj.body = JSON.stringify(payload);
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    }
+    reqObj.body = JSON.stringify(payload)
   }
   return new Promise((resolve, reject) => {
     fetch(endpoint, reqObj)
@@ -199,9 +239,13 @@ function apiCall(pathSuffix, method, payload) {
         };
         return res.json();
       })
-      .then((data) => { resolve(data) })
-      .catch((error) => { reject(error) });
-  });
+      .then((data) => {
+        resolve(data)
+      })
+      .catch((error) => {
+        reject(error)
+      })
+  })
 }
 
 function toTitleCase(txt) {
@@ -244,24 +288,22 @@ function storeTooltipDisabled(value) {
 
 async function turnBadgeOn() {
   try {
-    const res = await chrome.action.setIcon({ path: "images/logo.png" })
-    console.log('turnBadgeOn function');
+    chrome.action.setIcon({ path: 'images/logo.png' })
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
 }
 
 async function turnBadgeOff() {
   try {
-    const res = await chrome.action.setIcon({ path: "images/logo-offline.png" })
-    // console.log('turnBadgeOff function');
+    chrome.action.setIcon({ path: 'images/logo-offline.png' })
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
 }
 
 chrome.cookies.onChanged.addListener(async (changeInfo) => {
-  const cookie = changeInfo.cookie;
+  const cookie = changeInfo.cookie
   if (cookie.domain === 'simplifynote.app' && cookie.name === 'token') {
     if (changeInfo.removed) {
       // console.log('change from cookie removed turn off');

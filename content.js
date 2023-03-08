@@ -1,4 +1,4 @@
-const extensionId = chrome.runtime.id;
+const extensionId = chrome.runtime.id
 
 function isPDF(url) {
   return url.split('.').pop() === 'pdf'
@@ -28,33 +28,31 @@ if (isPDF(window.location.href)) openPDFinSN(window.location.href)
 function getTooltipUnchecked() {
   try {
     return new Promise((resolve, reject) => {
-      chrome.storage.sync.get(['tooltipUnchecked'])
-        .then((result) => {
-          result.tooltipUnchecked
-            ? resolve(result.tooltipUnchecked)
-            : resolve(false)
-        })
+      chrome.storage.sync.get(['tooltipUnchecked']).then((result) => {
+        result.tooltipUnchecked
+          ? resolve(result.tooltipUnchecked)
+          : resolve(false)
+      })
     })
-  } catch (error) {
-  }
+  } catch (error) { }
 }
 
 function getTooltipDisabled() {
   try {
     return new Promise((resolve, reject) => {
-      chrome.storage.sync.get(['tooltipDisabled'])
-        .then((result) => {
-          result.tooltipDisabled ? resolve(result.tooltipDisabled) : resolve(false)
-        })
+      chrome.storage.sync.get(['tooltipDisabled']).then((result) => {
+        result.tooltipDisabled
+          ? resolve(result.tooltipDisabled)
+          : resolve(false)
+      })
     })
-  } catch (error) {
-  }
+  } catch (error) { }
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   console.log(request);
   if (request.message === 'toggleTooltip') {
-    alert(request.status);
+    alert(request.status)
     sendResponse({
       message: 'successful',
     })
@@ -63,7 +61,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 // function to handle response
 function handleResponse(res) {
-  sendNotification(res.status, res.message);
+  sendNotification(res.status, res.message)
 }
 
 // Create a container with the three buttons (screenshot, snip, and ocr) at the bottom left of the screen
@@ -300,9 +298,9 @@ sliderContainer.appendChild(screenshotButton)
 sliderContainer.appendChild(snipButton)
 
 website_link = window.location.href
-if (!website_link.includes('.pdf')) {
-  sliderContainer.appendChild(ocrButton)
-}
+// if (!website_link.includes('.pdf')) {
+sliderContainer.appendChild(ocrButton)
+// }
 
 containAllSnips.addEventListener('pointerenter', () => {
   sliderContainer.style.visibility = 'visible'
@@ -444,8 +442,7 @@ function captureSnip() {
             height: snipContainer.style.height,
           },
         },
-        function (response) {
-        }
+        function (response) { }
       )
     }
   })
@@ -535,10 +532,11 @@ function captureSnipOcr() {
         {
           message: 'ocr',
           dim: {
+            devicePixelRatio: window.devicePixelRatio,
             top: parseInt(ocrContainer.style.top) - window.scrollY,
             left: parseInt(ocrContainer.style.left) - window.scrollX,
-            width: ocrContainer.style.width,
-            height: ocrContainer.style.height,
+            width: parseInt(ocrContainer.style.width),
+            height: parseInt(ocrContainer.style.height),
           },
         },
         function (response) {
@@ -547,6 +545,9 @@ function captureSnipOcr() {
           // document.body.removeChild(ocrContainer)
         }
       )
+      // sliderContainer.style.visibility = 'visible'
+      containAllSnips.style.visibility = 'visible'
+      screenSnipContainer.style.visibility = 'visible'
     }
   })
 }
@@ -690,7 +691,7 @@ ocrTextContainer.innerHTML = `<style>
    
   </div>        
 `
-document.body.appendChild(ocrTextContainer);
+document.body.appendChild(ocrTextContainer)
 
 chrome.runtime.onMessage.addListener(async function (
   request,
@@ -761,7 +762,7 @@ chrome.runtime.onMessage.addListener(async function (
             url: dataUrl,
             width: parseInt(request.dim.width) * dpr,
             height: parseInt(request.dim.height) * dpr,
-          }
+          },
         },
         handleResponse
       )
@@ -825,7 +826,7 @@ chrome.runtime.onMessage.addListener(async function (
           },
           handleResponse
         )
-        ocrTextContainer.style.visibility = 'hidden';
+        ocrTextContainer.style.visibility = 'hidden'
       })
 
       // onpress ocrTextFooterParagraph send text to background.js
@@ -839,7 +840,7 @@ chrome.runtime.onMessage.addListener(async function (
           },
           handleResponse
         )
-        ocrTextContainer.style.visibility = 'hidden';
+        ocrTextContainer.style.visibility = 'hidden'
       })
 
       // onpress ocrTextFooterList send text to background.js
@@ -871,11 +872,11 @@ chrome.runtime.onMessage.addListener(async function (
       })
 
       ocrTextHeaderClose.addEventListener('click', () => {
-        ocrTextContainer.style.visibility = 'hidden';
+        ocrTextContainer.style.visibility = 'hidden'
       })
-      ocrTextBodyTextarea.innerHTML = '';
-      ocrTextBodyTextarea.placeholder = 'Recognizing text...';
-      ocrTextContainer.style.visibility = 'visible';
+      ocrTextBodyTextarea.innerHTML = ''
+      ocrTextBodyTextarea.placeholder = 'Recognizing text...'
+      ocrTextContainer.style.visibility = 'visible'
       // OCR using tesseract
       try {
         let isOcrDone = false
@@ -1172,7 +1173,7 @@ notificationContainer.innerHTML = `<style>
 </style>
 <div id="notification" class="notification">`
 
-root.appendChild(notificationContainer);
+root.appendChild(notificationContainer)
 root.appendChild(containAllSnips)
 
 const cssThemeVariables = {
@@ -1453,8 +1454,7 @@ async function render() {
   try {
     const theme = await getCurrentTheme()
     setTheme(theme)
-  } catch (error) {
-  }
+  } catch (error) { }
 }
 
 function setTheme(theme) {
@@ -1470,15 +1470,15 @@ function setTheme(theme) {
     )
   }
 
-  const clrPrimary = '#0ed095';
-  const clrBgrMain = (theme === 'light') ? '#f3f6fd' : '#1e1e1e';
-  const clrBgrSec = (theme === 'light') ? '#fff' : '#000';
-  const clrFont = (theme === 'light') ? 'rgb(69 69 69)' : 'rgb(165 165 165)';
+  const clrPrimary = '#0ed095'
+  const clrBgrMain = theme === 'light' ? '#f3f6fd' : '#1e1e1e'
+  const clrBgrSec = theme === 'light' ? '#fff' : '#000'
+  const clrFont = theme === 'light' ? 'rgb(69 69 69)' : 'rgb(165 165 165)'
 
-  ocrTextContainer.style.setProperty('--color-primary', clrPrimary);
-  ocrTextContainer.style.setProperty('--color-bgr-main', clrBgrMain);
-  ocrTextContainer.style.setProperty('--color-bgr-secondary', clrBgrSec);
-  ocrTextContainer.style.setProperty('--color-font', clrFont);
+  ocrTextContainer.style.setProperty('--color-primary', clrPrimary)
+  ocrTextContainer.style.setProperty('--color-bgr-main', clrBgrMain)
+  ocrTextContainer.style.setProperty('--color-bgr-secondary', clrBgrSec)
+  ocrTextContainer.style.setProperty('--color-font', clrFont)
 }
 
 function getCurrentTheme() {
@@ -1499,20 +1499,26 @@ function sendNotification(status, message) {
     errorCount += 1;
     message = 'Please reload tab to continue'
   }
-  notificationDiv.dataset.status = status;
-  notificationDiv.innerText = message;
-  const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-  const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-  notificationDiv.style.left = vw + 7 + 'px';
-  notificationDiv.style.top = vh - 30 - 20 + 'px';
+  notificationDiv.dataset.status = status
+  notificationDiv.innerText = message
+  const vw = Math.max(
+    document.documentElement.clientWidth || 0,
+    window.innerWidth || 0
+  )
+  const vh = Math.max(
+    document.documentElement.clientHeight || 0,
+    window.innerHeight || 0
+  )
+  notificationDiv.style.left = vw + 7 + 'px'
+  notificationDiv.style.top = vh - 30 - 20 + 'px'
   setTimeout(() => {
-    notificationContainer.style.visibility = 'visible';
-    notificationDiv.style.left = vw - 240 + 'px';
+    notificationContainer.style.visibility = 'visible'
+    notificationDiv.style.left = vw - 240 + 'px'
   }, 360)
   setTimeout(() => {
-    notificationDiv.style.left = vw + 7 + 'px';
+    notificationDiv.style.left = vw + 7 + 'px'
     setTimeout(() => {
-      notificationContainer.style.visibility = 'hidden';
+      notificationContainer.style.visibility = 'hidden'
     }, 360)
   }, 4000)
 }
