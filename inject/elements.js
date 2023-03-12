@@ -228,6 +228,7 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
               opacity: 0.8;
               transform: translate(calc(-1 * var(--gap)),calc(-1 * var(--gap)));
               border-radius: inherit;
+              transition: width 400ms ease-in-out, height 400ms ease-in-out;
             }
             #result .ocr_par:first-child {
               margin-top: 0;
