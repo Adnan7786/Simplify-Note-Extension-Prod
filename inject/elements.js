@@ -61,6 +61,8 @@ function capitalizeFirstLetter(string) {
       constructor() {
         super()
 
+        const shadow = this.attachShadow({mode: 'open'})
+
         this.prefs = {
           'post-method': 'POST',
           'post-href': '',
@@ -97,78 +99,10 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
         }
 
         this.events = {}
-      }
 
-      /* io */
-      configure(prefs, report = false) {
-        Object.assign(this.prefs, prefs)
-        if (report) {
-          this.dispatchEvent(
-            new CustomEvent('save-preference', {
-              detail: prefs,
-            })
-          )
-        }
-      }
-      /* methods */
-      prepare() {
-        // language
-        this.language(this.prefs.lang)
-        // accuracy
-        this.accuracy(this.prefs.accuracy)
-      }
-      build(html) {
-        const parser = new DOMParser()
-        const doc = parser.parseFromString(html, 'text/html')
-        this.clear()
-
-        for (const child of [...doc.body.childNodes]) {
-          this.shadowRoot.getElementById('result').append(child)
-        }
-      }
-      message(value) {
-        this.shadowRoot.getElementById('result').dataset.msg = capitalizeFirstLetter(value)
-      }
-      progress(value, type = 'recognize') {
-        this.shadowRoot.getElementById(type).value = value
-      }
-      rename(value) {
-        this.shadowRoot.querySelector('option[value=detect]').textContent =
-          value
-      }
-      clear() {
-        this.shadowRoot
-          .getElementById('result')
-          .removeAttribute('contenteditable')
-        this.shadowRoot.getElementById('result').textContent = ''
-      }
-      enable() {
-        this.shadowRoot.getElementById('copy').disabled = false
-        this.shadowRoot.getElementById('post').disabled = false
-        this.shadowRoot
-          .getElementById('result')
-          .setAttribute('contenteditable', true)
-      }
-      get result() {
-        return this.shadowRoot.getElementById('result').innerText
-      }
-      language(value) {
-        this.dataset.language = value
-        this.shadowRoot.getElementById('language').value = value
-      }
-      accuracy(value) {
-        this.dataset.accuracy = value
-        this.shadowRoot.getElementById('accuracy').value = value
-      }
-      toast(name, messages, timeout = 2000) {
-        this.shadowRoot.getElementById(name).value = messages.new
-        clearTimeout(this[name + 'ID'])
-        this[name + 'ID'] = setTimeout(() => {
-          this.shadowRoot.getElementById(name).value = messages.old
-        }, timeout)
       }
       connectedCallback() {
-        const shadow = this.attachShadow({mode: 'open'})
+        const shadow = this.shadowRoot;
         shadow.innerHTML = `
           <style>
             :host {
@@ -581,16 +515,16 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
         this.shadowRoot.getElementById('post').onclick = (e) => {
           if (this.prefs['post-href'] === '' || e.shiftKey) {
             const message = this.locales.tutorial.replace(
-              '&page;',
-              this.dataset.page
+                '&page;',
+                this.dataset.page
             )
             const m = prompt(
-              message,
-              [
-                this.prefs['post-method'],
-                this.prefs['post-href'],
-                this.prefs['post-body'],
-              ].join('|')
+                message,
+                [
+                  this.prefs['post-method'],
+                  this.prefs['post-href'],
+                  this.prefs['post-body'],
+                ].join('|')
             )
             const [method, href, body] = (m || '').split('|')
 
@@ -609,20 +543,20 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
           }
           if (this.prefs['post-body'] && this.prefs['post-method'] !== 'GET') {
             options.body = this.prefs['post-body']
-              .replaceAll('&content;', value)
-              .replaceAll('&href;', location.href)
+                .replaceAll('&content;', value)
+                .replaceAll('&href;', location.href)
             // If this is a JSON, try builder
             if (
-              this.prefs['post-body'].startsWith('{') &&
-              this.prefs['post-body'].endsWith('}')
+                this.prefs['post-body'].startsWith('{') &&
+                this.prefs['post-body'].endsWith('}')
             ) {
               try {
                 const o = JSON.parse(this.prefs['post-body'])
                 for (const [key, holder] of Object.entries(o)) {
                   if (typeof holder === 'string') {
                     o[key] = holder
-                      .replaceAll('&content;', value)
-                      .replaceAll('&href;', location.href)
+                        .replaceAll('&content;', value)
+                        .replaceAll('&href;', location.href)
                   }
                 }
                 options.body = JSON.stringify(o)
@@ -633,14 +567,14 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
           }
 
           const t = (msg, timeout = 3000) =>
-            this.toast(
-              'post',
-              {
-                new: msg,
-                old: 'Post Result',
-              },
-              timeout
-            )
+              this.toast(
+                  'post',
+                  {
+                    new: msg,
+                    old: 'Post Result',
+                  },
+                  timeout
+              )
 
           if (this.prefs['post-href'] === '') {
             return t('Empty Server')
@@ -649,25 +583,25 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
           t('...', 1000000)
 
           const href = this.prefs['post-href']
-            .replaceAll('&content;', encodeURIComponent(value))
-            .replaceAll('&href;', encodeURIComponent(location.href))
+              .replaceAll('&content;', encodeURIComponent(value))
+              .replaceAll('&href;', encodeURIComponent(location.href))
 
           if (options.method === 'OPEN') {
             this.dispatchEvent(
-              new CustomEvent('open-link', {
-                detail: href,
-              })
+                new CustomEvent('open-link', {
+                  detail: href,
+                })
             )
 
             t('Done')
           } else {
             this.dispatchEvent(
-              new CustomEvent('fetch-resource', {
-                detail: {
-                  href,
-                  options,
-                },
-              })
+                new CustomEvent('fetch-resource', {
+                  detail: {
+                    href,
+                    options,
+                  },
+                })
             )
           }
         }
@@ -693,11 +627,11 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
         this.shadowRoot.getElementById('close').onclick = (e) => {
           this.remove()
           this.dispatchEvent(
-            new MouseEvent('closed', {
-              shiftKey: e.shiftKey,
-              ctrlKey: e.ctrlKey,
-              metaKey: e.metaKey,
-            })
+              new MouseEvent('closed', {
+                shiftKey: e.shiftKey,
+                ctrlKey: e.ctrlKey,
+                metaKey: e.metaKey,
+              })
           )
         }
         // expand
@@ -715,65 +649,65 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
 
         // ocr-text-footer-heading
         this.shadowRoot.getElementById('ocr-text-footer-heading').onclick = (
-          e
+            e
         ) => {
           // send data to response.js
           this.dispatchEvent(
-            new CustomEvent('ocr-text-footer-heading-clicked', {
-              detail: {
-                result: this.result,
-                language: 'insert_text',
-                accuracy: 'heading',
-              },
-            })
+              new CustomEvent('ocr-text-footer-heading-clicked', {
+                detail: {
+                  result: this.result,
+                  language: 'insert_text',
+                  accuracy: 'heading',
+                },
+              })
           )
         }
 
         // ocr-text-footer-list
         this.shadowRoot.getElementById('ocr-text-footer-list').onclick = (
-          e
+            e
         ) => {
           // send data to response.js
           this.dispatchEvent(
-            new CustomEvent('ocr-text-footer-list-clicked', {
-              detail: {
-                result: this.result,
-                language: 'insert_text',
-                accuracy: 'bullet',
-              },
-            })
+              new CustomEvent('ocr-text-footer-list-clicked', {
+                detail: {
+                  result: this.result,
+                  language: 'insert_text',
+                  accuracy: 'bullet',
+                },
+              })
           )
         }
 
         // ocr-text-footer-paragraph
         this.shadowRoot.getElementById('ocr-text-footer-paragraph').onclick = (
-          e
+            e
         ) => {
           // send data to responce.js
           this.dispatchEvent(
-            new CustomEvent('ocr-text-footer-paragraph-clicked', {
-              detail: {
-                result: this.result,
-                language: 'insert_text',
-                accuracy: 'paragraph',
-              },
-            })
+              new CustomEvent('ocr-text-footer-paragraph-clicked', {
+                detail: {
+                  result: this.result,
+                  language: 'insert_text',
+                  accuracy: 'paragraph',
+                },
+              })
           )
         }
 
         // ocr-text-footer-quote
         this.shadowRoot.getElementById('ocr-text-footer-quote').onclick = (
-          e
+            e
         ) => {
           // send data to responce.js
           this.dispatchEvent(
-            new CustomEvent('ocr-text-footer-quote-clicked', {
-              detail: {
-                result: this.result,
-                language: 'insert_text',
-                accuracy: 'subheading',
-              },
-            })
+              new CustomEvent('ocr-text-footer-quote-clicked', {
+                detail: {
+                  result: this.result,
+                  language: 'insert_text',
+                  accuracy: 'subheading',
+                },
+              })
           )
         }
 
@@ -787,10 +721,79 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
         this.dataset.languages = [
           ...this.shadowRoot.querySelectorAll('#language option'),
         ]
-          .map((e) => e.value)
-          .filter((s) => s !== 'detect')
-          .join(', ')
+            .map((e) => e.value)
+            .filter((s) => s !== 'detect')
+            .join(', ')
       }
+      /* io */
+      configure(prefs, report = false) {
+        Object.assign(this.prefs, prefs)
+        if (report) {
+          this.dispatchEvent(
+            new CustomEvent('save-preference', {
+              detail: prefs,
+            })
+          )
+        }
+      }
+      /* methods */
+      prepare() {
+        // language
+        this.language(this.prefs.lang)
+        // accuracy
+        this.accuracy(this.prefs.accuracy)
+      }
+      build(html) {
+        const parser = new DOMParser()
+        const doc = parser.parseFromString(html, 'text/html')
+        this.clear()
+
+        for (const child of [...doc.body.childNodes]) {
+          this.shadowRoot.getElementById('result').append(child)
+        }
+      }
+      message(value) {
+        this.shadowRoot.getElementById('result').dataset.msg = capitalizeFirstLetter(value)
+      }
+      progress(value, type = 'recognize') {
+        this.shadowRoot.getElementById(type).value = value
+      }
+      rename(value) {
+        this.shadowRoot.querySelector('option[value=detect]').textContent =
+          value
+      }
+      clear() {
+        this.shadowRoot
+          .getElementById('result')
+          .removeAttribute('contenteditable')
+        this.shadowRoot.getElementById('result').textContent = ''
+      }
+      enable() {
+        this.shadowRoot.getElementById('copy').disabled = false
+        this.shadowRoot.getElementById('post').disabled = false
+        this.shadowRoot
+          .getElementById('result')
+          .setAttribute('contenteditable', true)
+      }
+      get result() {
+        return this.shadowRoot.getElementById('result').innerText
+      }
+      language(value) {
+        this.dataset.language = value
+        this.shadowRoot.getElementById('language').value = value
+      }
+      accuracy(value) {
+        this.dataset.accuracy = value
+        this.shadowRoot.getElementById('accuracy').value = value
+      }
+      toast(name, messages, timeout = 2000) {
+        this.shadowRoot.getElementById(name).value = messages.new
+        clearTimeout(this[name + 'ID'])
+        this[name + 'ID'] = setTimeout(() => {
+          this.shadowRoot.getElementById(name).value = messages.old
+        }, timeout)
+      }
+
     }
     define('ocr-result', OCRResult)
   }
