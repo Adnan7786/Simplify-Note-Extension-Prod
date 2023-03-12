@@ -22,7 +22,10 @@ function capitalizeFirstLetter(string) {
       constructor() {
         super()
 
-        const shadow = this.attachShadow({ mode: 'open' })
+        const shadow = this.attachShadow({mode: 'open'})
+      }
+      connectedCallback() {
+        const shadow = this.shadowRoot;
         shadow.innerHTML = `
           <style>
             #body {
