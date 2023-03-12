@@ -355,6 +355,16 @@ ocrButton.addEventListener('click', () => {
   captureSnipOcr()
 })
 
+// Add a shortcut for OCR
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.altKey && e.key === 'o') {
+        sliderContainer.style.visibility = 'hidden'
+        containAllSnips.style.visibility = 'hidden'
+        screenSnipContainer.style.visibility = 'hidden'
+        captureSnipOcr()
+    }
+})
+
 // Function to capture the snip
 function captureSnip() {
   const snipContainer = document.createElement('div')

@@ -123,7 +123,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       { format: 'png' },
       async (href) => {
         try {
-          console.log('akjkbkajsb===============>', request.dim)
+          console.log('Request Dimension', request.dim)
           const target = {
             tabId: sender.tab.id,
           }
