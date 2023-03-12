@@ -96,7 +96,79 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
   OPEN|http://127.0.0.1:8080?data=&content;|`,
         }
 
-        const shadow = this.attachShadow({ mode: 'open' })
+        this.events = {}
+      }
+
+      /* io */
+      configure(prefs, report = false) {
+        Object.assign(this.prefs, prefs)
+        if (report) {
+          this.dispatchEvent(
+            new CustomEvent('save-preference', {
+              detail: prefs,
+            })
+          )
+        }
+      }
+      /* methods */
+      prepare() {
+        // language
+        this.language(this.prefs.lang)
+        // accuracy
+        this.accuracy(this.prefs.accuracy)
+      }
+      build(html) {
+        const parser = new DOMParser()
+        const doc = parser.parseFromString(html, 'text/html')
+        this.clear()
+
+        for (const child of [...doc.body.childNodes]) {
+          this.shadowRoot.getElementById('result').append(child)
+        }
+      }
+      message(value) {
+        this.shadowRoot.getElementById('result').dataset.msg = capitalizeFirstLetter(value)
+      }
+      progress(value, type = 'recognize') {
+        this.shadowRoot.getElementById(type).value = value
+      }
+      rename(value) {
+        this.shadowRoot.querySelector('option[value=detect]').textContent =
+          value
+      }
+      clear() {
+        this.shadowRoot
+          .getElementById('result')
+          .removeAttribute('contenteditable')
+        this.shadowRoot.getElementById('result').textContent = ''
+      }
+      enable() {
+        this.shadowRoot.getElementById('copy').disabled = false
+        this.shadowRoot.getElementById('post').disabled = false
+        this.shadowRoot
+          .getElementById('result')
+          .setAttribute('contenteditable', true)
+      }
+      get result() {
+        return this.shadowRoot.getElementById('result').innerText
+      }
+      language(value) {
+        this.dataset.language = value
+        this.shadowRoot.getElementById('language').value = value
+      }
+      accuracy(value) {
+        this.dataset.accuracy = value
+        this.shadowRoot.getElementById('accuracy').value = value
+      }
+      toast(name, messages, timeout = 2000) {
+        this.shadowRoot.getElementById(name).value = messages.new
+        clearTimeout(this[name + 'ID'])
+        this[name + 'ID'] = setTimeout(() => {
+          this.shadowRoot.getElementById(name).value = messages.old
+        }, timeout)
+      }
+      connectedCallback() {
+        const shadow = this.attachShadow({mode: 'open'})
         shadow.innerHTML = `
           <style>
             :host {
@@ -486,78 +558,6 @@ Use Ctrl + Click or Command + Click to remove local language training data`,
             </div>     
           </div>
         `
-        this.events = {}
-      }
-
-      /* io */
-      configure(prefs, report = false) {
-        Object.assign(this.prefs, prefs)
-        if (report) {
-          this.dispatchEvent(
-            new CustomEvent('save-preference', {
-              detail: prefs,
-            })
-          )
-        }
-      }
-      /* methods */
-      prepare() {
-        // language
-        this.language(this.prefs.lang)
-        // accuracy
-        this.accuracy(this.prefs.accuracy)
-      }
-      build(html) {
-        const parser = new DOMParser()
-        const doc = parser.parseFromString(html, 'text/html')
-        this.clear()
-
-        for (const child of [...doc.body.childNodes]) {
-          this.shadowRoot.getElementById('result').append(child)
-        }
-      }
-      message(value) {
-        this.shadowRoot.getElementById('result').dataset.msg = capitalizeFirstLetter(value)
-      }
-      progress(value, type = 'recognize') {
-        this.shadowRoot.getElementById(type).value = value
-      }
-      rename(value) {
-        this.shadowRoot.querySelector('option[value=detect]').textContent =
-          value
-      }
-      clear() {
-        this.shadowRoot
-          .getElementById('result')
-          .removeAttribute('contenteditable')
-        this.shadowRoot.getElementById('result').textContent = ''
-      }
-      enable() {
-        this.shadowRoot.getElementById('copy').disabled = false
-        this.shadowRoot.getElementById('post').disabled = false
-        this.shadowRoot
-          .getElementById('result')
-          .setAttribute('contenteditable', true)
-      }
-      get result() {
-        return this.shadowRoot.getElementById('result').innerText
-      }
-      language(value) {
-        this.dataset.language = value
-        this.shadowRoot.getElementById('language').value = value
-      }
-      accuracy(value) {
-        this.dataset.accuracy = value
-        this.shadowRoot.getElementById('accuracy').value = value
-      }
-      toast(name, messages, timeout = 2000) {
-        this.shadowRoot.getElementById(name).value = messages.new
-        clearTimeout(this[name + 'ID'])
-        this[name + 'ID'] = setTimeout(() => {
-          this.shadowRoot.getElementById(name).value = messages.old
-        }, timeout)
-      }
-      connectedCallback() {
         // copy
         this.shadowRoot.getElementById('copy').onclick = async () => {
           try {
