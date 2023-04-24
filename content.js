@@ -1,4 +1,15 @@
 const extensionId = chrome.runtime.id
+const today = new Date().toJSON()
+let exp
+
+(async () => {
+  try {
+      exp = (await chrome.storage.local.get("exp")).exp;
+  } catch (error) {
+      exp = today;
+  }
+})()
+
 
 function isPDF(url) {
   return url.split('.').pop() === 'pdf'
@@ -50,7 +61,7 @@ function getTooltipDisabled() {
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  console.log(request);
+  // console.log(request);
   if (request.message === 'toggleTooltip') {
     alert(request.status)
     sendResponse({
@@ -207,7 +218,20 @@ screenshotButton.innerHTML = `
   background-repeat: no-repeat;
   background-position: center;
 }
+#screenshotButton svg {
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  top: 70%;
+  left: 80%;
+  transform: translate(-50%, -50%);
+  display: none;
+}
+
 </style>
+<svg width="16" height="16" fill="#ffd700" class="bi bi-lock-fill" viewBox="0 0 16 16">
+<path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+</svg>
 `
 
 // Create a snip button
@@ -232,7 +256,20 @@ snipButton.innerHTML = `
   background-repeat: no-repeat;
   background-position: center;
 }
+#snipButton svg {
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  top: 70%;
+  left: 80%;
+  transform: translate(-50%, -50%);
+  display: none;
+}
+
 </style>
+<svg width="16" height="16" fill="#ffd700" class="bi bi-lock-fill" viewBox="0 0 16 16">
+<path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+</svg>
 `
 // Create a ocr button
 const ocrButton = document.createElement('button')
@@ -254,39 +291,71 @@ ocrButton.innerHTML = `
   background-size: 24px 24px !important;
   padding: 5px;
   background-repeat: no-repeat;
-  background-position: center;}
-</style>
+  background-position: center;
+  }
+  #ocrButton svg {
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    top: 70%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+    display: none;
+  }
+  </style>
+  <svg width="16" height="16" fill="#ffd700" class="bi bi-lock-fill" viewBox="0 0 16 16">
+  <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+  </svg>
 `
+
+const snipButtonSvg = snipButton.querySelector('svg');
+const screenshotButtonSvg = screenshotButton.querySelector('svg');
+const ocrButtonSvg = ocrButton.querySelector('svg');
 
 // show some animation on hover of snip button
 snipButton.addEventListener('pointerenter', () => {
+  if(today>exp)
+  {
+    snipButtonSvg.style.display = 'block';
+  }
   snipButton.style.transform = 'scale(1.2)'
   snipButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
 
 snipButton.addEventListener('pointerleave', () => {
+  snipButtonSvg.style.display = 'none';
   snipButton.style.transform = 'scale(1.0)'
   snipButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
 
 // show some animation on hover of screenshot button
 screenshotButton.addEventListener('pointerenter', () => {
+  if(today>exp)
+  {
+    screenshotButtonSvg.style.display = 'block';
+  }
   screenshotButton.style.transform = 'scale(1.2)'
   screenshotButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
 
 screenshotButton.addEventListener('pointerleave', () => {
+  screenshotButtonSvg.style.display = 'none';
   screenshotButton.style.transform = 'scale(1.0)'
   screenshotButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
 
 // show some animation on hover of snip button
 ocrButton.addEventListener('pointerenter', () => {
+  if(today>exp)
+  {
+    ocrButtonSvg.style.display = 'block';
+  }
   ocrButton.style.transform = 'scale(1.2)'
   ocrButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
 
 ocrButton.addEventListener('pointerleave', () => {
+  ocrButtonSvg.style.display = 'none';
   ocrButton.style.transform = 'scale(1.0)'
   ocrButton.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)'
 })
@@ -323,36 +392,57 @@ containAllSnips.addEventListener('pointerleave', () => {
 
 // Add event listeners to the buttons
 screenshotButton.addEventListener('click', () => {
-  containAllSnips.style.display = 'none'
-  screenSnipContainer.style.display = 'none'
-  setTimeout(() => {
-    chrome.runtime.sendMessage(
-      {
-        message: 'screenshot',
-        height: window.innerHeight,
-        width: window.innerWidth,
-      },
-      handleResponse
-    )
-  }, 300)
-  setTimeout(() => {
-    containAllSnips.style.display = 'block'
-    screenSnipContainer.style.display = 'block'
-  }, 1000)
+  if(today>exp)
+  {
+    window.open("https://www.simplifynote.com/pricing", "_blank");
+  }
+  else
+  {
+    containAllSnips.style.display = 'none'
+    screenSnipContainer.style.display = 'none'
+    setTimeout(() => {
+      chrome.runtime.sendMessage(
+        {
+          message: 'screenshot',
+          height: window.innerHeight,
+          width: window.innerWidth,
+        },
+        handleResponse
+      )
+    }, 300)
+    setTimeout(() => {
+      containAllSnips.style.display = 'block'
+      screenSnipContainer.style.display = 'block'
+    }, 1000)
+  }
 })
 
 snipButton.addEventListener('click', (e) => {
-  sliderContainer.style.visibility = 'hidden'
-  containAllSnips.style.visibility = 'hidden'
-  screenSnipContainer.style.visibility = 'hidden'
-  captureSnip()
+  if(today>exp)
+  {
+    window.open("https://www.simplifynote.com/pricing", "_blank");
+  }
+  else
+  {
+    sliderContainer.style.visibility = 'hidden'
+    containAllSnips.style.visibility = 'hidden'
+    screenSnipContainer.style.visibility = 'hidden'
+    captureSnip()
+  }
 })
 
 ocrButton.addEventListener('click', () => {
-  sliderContainer.style.visibility = 'hidden'
-  containAllSnips.style.visibility = 'hidden'
-  screenSnipContainer.style.visibility = 'hidden'
-  captureSnipOcr()
+  if(today>exp)
+  {
+    window.open("https://www.simplifynote.com/pricing", "_blank");
+  }
+  else
+  {
+    sliderContainer.style.visibility = 'hidden'
+    containAllSnips.style.visibility = 'hidden'
+    screenSnipContainer.style.visibility = 'hidden'
+    captureSnipOcr()
+  }
 })
 
 // Function to capture the snip
@@ -1125,6 +1215,9 @@ tooltipContainer.innerHTML = `<style>
       <svg id="iconPlus" class="iconPlus" viewBox="0 0 16 16">
           <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z" />
       </svg>
+      <svg id="iconPlusLock" width="14" height="14" fill="#ffd700" viewBox="0 0 16 16" style="position: absolute; bottom: -5; right: -5; display: none;">
+    <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+      </svg>
   </span>
 </div>`
 
@@ -1211,6 +1304,7 @@ const iconSubheading = shadowElem.querySelector('#iconSubheading')
 const iconBullet = shadowElem.querySelector('#iconBullet')
 const iconParagraph = shadowElem.querySelector('#iconParagraph')
 const iconPlus = shadowElem.querySelector('#iconPlus')
+const iconPlusLock = shadowElem.querySelector('#iconPlusLock')
 const textTooltipWidth = 40 / 2 + 155
 const textTooltipHeight = 40
 const notificationDiv = shadowElem.querySelector('#notification')
@@ -1270,19 +1364,39 @@ iconParagraph.addEventListener('click', function () {
   )
 })
 
-iconPlus.addEventListener('click', function () {
-  if (
-    !payloadImage ||
-    !payloadImage.url ||
-    payloadImage.height <= 0 ||
-    payloadImage.width <= 0
-  ) {
-    return
+iconPlus.addEventListener('pointerenter', () => {
+  if(today>exp)
+  {
+    iconPlusLock.style.display = 'block';
   }
-  chrome.runtime.sendMessage(
-    { message: 'insert_image', imageData: payloadImage },
-    handleResponse
-  )
+})
+
+
+iconPlus.addEventListener('pointerleave', () => {
+  iconPlusLock.style.display = 'none';
+})
+
+
+iconPlus.addEventListener('click', function () {
+  if(today>exp)
+  {
+    window.open("https://www.simplifynote.com/pricing", "_blank");
+  }
+  else
+  {
+    if (
+      !payloadImage ||
+      !payloadImage.url ||
+      payloadImage.height <= 0 ||
+      payloadImage.width <= 0
+    ) {
+      return
+    }
+    chrome.runtime.sendMessage(
+      { message: 'insert_image', imageData: payloadImage },
+      handleResponse
+    )
+  }
 })
 
 

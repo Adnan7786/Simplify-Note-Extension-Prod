@@ -463,6 +463,7 @@ async function render() {
         tab.classList.remove('blocked');
       })
       user = await apiCall('/api/v1/users/showMe', 'GET', {});
+      chrome.storage.local.set({ "exp": user.subscription.expiry_date });
       folderTree = await apiCall('/api/v1/dashboard/folder-tree', 'GET', {});
       userStyle = await apiCall('/api/v1/style', 'GET', {});
       if (!user.googleRefreshToken || user.googleRefreshToken === '') {
