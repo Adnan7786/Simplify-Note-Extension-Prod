@@ -1,12 +1,13 @@
+const wix_domain = "https://simplifynote.com";
 const extensionId = chrome.runtime.id
 const today = new Date().toJSON()
 let exp
 
 (async () => {
   try {
-      exp = (await chrome.storage.local.get("exp")).exp;
+    exp = (await chrome.storage.local.get("exp")).exp;
   } catch (error) {
-      exp = today;
+    exp = today;
   }
 })()
 
@@ -314,8 +315,7 @@ const ocrButtonSvg = ocrButton.querySelector('svg');
 
 // show some animation on hover of snip button
 snipButton.addEventListener('pointerenter', () => {
-  if(today>exp)
-  {
+  if (today > exp) {
     snipButtonSvg.style.display = 'block';
   }
   snipButton.style.transform = 'scale(1.2)'
@@ -330,8 +330,7 @@ snipButton.addEventListener('pointerleave', () => {
 
 // show some animation on hover of screenshot button
 screenshotButton.addEventListener('pointerenter', () => {
-  if(today>exp)
-  {
+  if (today > exp) {
     screenshotButtonSvg.style.display = 'block';
   }
   screenshotButton.style.transform = 'scale(1.2)'
@@ -346,8 +345,7 @@ screenshotButton.addEventListener('pointerleave', () => {
 
 // show some animation on hover of snip button
 ocrButton.addEventListener('pointerenter', () => {
-  if(today>exp)
-  {
+  if (today > exp) {
     ocrButtonSvg.style.display = 'block';
   }
   ocrButton.style.transform = 'scale(1.2)'
@@ -392,12 +390,10 @@ containAllSnips.addEventListener('pointerleave', () => {
 
 // Add event listeners to the buttons
 screenshotButton.addEventListener('click', () => {
-  if(today>exp)
-  {
-    window.open("https://www.simplifynote.com/pricing", "_blank");
+  if (today > exp) {
+    window.open(`${wix_domain}/pricing`, "_blank");
   }
-  else
-  {
+  else {
     containAllSnips.style.display = 'none'
     screenSnipContainer.style.display = 'none'
     setTimeout(() => {
@@ -418,12 +414,10 @@ screenshotButton.addEventListener('click', () => {
 })
 
 snipButton.addEventListener('click', (e) => {
-  if(today>exp)
-  {
-    window.open("https://www.simplifynote.com/pricing", "_blank");
+  if (today > exp) {
+    window.open(`${wix_domain}/pricing`, "_blank");
   }
-  else
-  {
+  else {
     sliderContainer.style.visibility = 'hidden'
     containAllSnips.style.visibility = 'hidden'
     screenSnipContainer.style.visibility = 'hidden'
@@ -432,12 +426,10 @@ snipButton.addEventListener('click', (e) => {
 })
 
 ocrButton.addEventListener('click', () => {
-  if(today>exp)
-  {
-    window.open("https://www.simplifynote.com/pricing", "_blank");
+  if (today > exp) {
+    window.open(`${wix_domain}/pricing`, "_blank");
   }
-  else
-  {
+  else {
     sliderContainer.style.visibility = 'hidden'
     containAllSnips.style.visibility = 'hidden'
     screenSnipContainer.style.visibility = 'hidden'
@@ -1365,8 +1357,7 @@ iconParagraph.addEventListener('click', function () {
 })
 
 iconPlus.addEventListener('pointerenter', () => {
-  if(today>exp)
-  {
+  if (today > exp) {
     iconPlusLock.style.display = 'block';
   }
 })
@@ -1378,12 +1369,10 @@ iconPlus.addEventListener('pointerleave', () => {
 
 
 iconPlus.addEventListener('click', function () {
-  if(today>exp)
-  {
-    window.open("https://www.simplifynote.com/pricing", "_blank");
+  if (today > exp) {
+    window.open(`${wix_domain}/pricing`, "_blank");
   }
-  else
-  {
+  else {
     if (
       !payloadImage ||
       !payloadImage.url ||

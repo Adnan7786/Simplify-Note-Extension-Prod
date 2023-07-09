@@ -69,19 +69,10 @@
     </div>
     <div id="signed-in" class="signed-in">
       <div class="navbar">
-        <span id="workspace" class="navbar-tab">
-          Workspace
-          <!-- <span class="icon-lock"></span> -->
-        </span>
-        <span id="notes" class="navbar-tab" tabindex=0>
-          Notes
-        </span>
-        <span id="styles" class="navbar-tab" tabindex=0>
-          Styles
-        </span>
-        <span id="profile" class="navbar-tab" tabindex=0>
-          Profile
-        </span>
+        <span id="workspace" class="navbar-tab">Workspace</span>
+        <span id="notes" class="navbar-tab" tabindex=0>Notes</span>
+        <span id="styles" class="navbar-tab" tabindex=0>Styles</span>
+        <span id="account" class="navbar-tab" tabindex=0>Account</span>
       </div>
       <div class="tabs-content-container">
         <div class="tab-content workspace">
@@ -276,19 +267,10 @@
             </div>
             <span class="styles-divider"></span>
             <div class="styles-content">
-              <span class="icon-container" title="Edit">
-                <svg id="iconEdit" class="icon" viewBox="0 0 16 16">
-                  <path
-                    d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-                </svg>
-                <svg id="iconClose" class="icon" viewBox="0 0 16 16">
-                  <path
-                    d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
-                </svg>
-              </span>
               <form id="stylesForm" class="styles-form heading active">
-                <fieldset disabled="disabled">
-                  <label>Font Style:
+                <!-- <fieldset disabled="disabled"> -->
+                <fieldset>
+                  <label>Font Style
                     <select id="fontStyles" name="fontStyles">
                       <option value="Comic Sans MS">Comic Sans</option>
                       <option value="Georgia">Georgia</option>
@@ -296,34 +278,48 @@
                       <option value="Times New Roman">Times New</option>
                     </select>
                   </label>
-                  <label>Font Color:
+                  <!-- <label>Font Color
                     <input type="radio" name="color" value="#000000" style="background-color: #000000;">
                     <input type="radio" name="color" value="#4fdbf7" style="background-color: #4fdbf7;">
                     <input type="radio" name="color" value="#f5954c" style="background-color: #f5954c">
                     <input type="radio" name="color" value="#55ed6c" style="background-color: #55ed6c;">
                     <input type="radio" name="color" value="#8697f7" style="background-color: #8697f7;">
-                  </label>
-                  <label>Highlighter:
+                  </label> -->
+                  <!-- <label>Highlighter
                     <input type="radio" name="highlighter" value="#ffffff" style="background-color: #ffffff;">
                     <input type="radio" name="highlighter" value="#d1f7ff" style="background-color: #d1f7ff;">
                     <input type="radio" name="highlighter" value="#fad8bb" style="background-color: #fad8bb;">
                     <input type="radio" name="highlighter" value="#c3f7cb" style="background-color: #c3f7cb;">
                     <input type="radio" name="highlighter" value="#c3cbf7" style="background-color: #c3cbf7;">
+                  </label> -->
+                  <label>Font Color
+                    <input type="radio" name="color" value="#000000" style="background-color: #000000;">
+                    <input type="radio" name="color" value="#b03a2e" style="background-color: #b03a2e;">
+                    <input type="radio" name="color" value="#0a3d62" style="background-color: #0a3d62;">
+                    <input type="radio" name="color" value="#1e8449" style="background-color: #1e8449">
+                    <input type="radio" name="color" value="#7b241c" style="background-color: #7b241c;">
+                  </label>
+                  <label>Highlighter
+                    <input type="radio" name="highlighter" value="#ffffff" style="background-color: #ffffff;">
+                    <input type="radio" name="highlighter" value="#00ffff" style="background-color: #00ffff;">
+                    <input type="radio" name="highlighter" value="#ffff00" style="background-color: #ffff00;">
+                    <input type="radio" name="highlighter" value="#00ff00" style="background-color: #00ff00;">
+                    <input type="radio" name="highlighter" value="#f79951" style="background-color: #f79951;">
                   </label>
                   <span>
                     <input type="checkbox" id="bold" name="bold" data-value="B">
                     <input type="checkbox" id="italic" name="italic" data-value="I">
                     <input type="checkbox" id="underline" name="underline" data-value="U">
                   </span>
-                  <span>
-                    <button type="submit" id="reset">Reset</button>
-                    <button type="submit" id="submit">Submit</button>
-                  </span>
                 </fieldset>
+                <span class="buttons">
+                  <button type="submit" class="reset">Reset</button>
+                  <button type="submit" class="update">Update</button>
+                </span>
               </form>
               <form id="stylesForm" class="styles-form subheading">
-                <fieldset disabled="disabled">
-                  <label>Font Style:
+                <fieldset>
+                  <label>Font Style
                     <select id="fontStyles" name="fontStyles">
                       <option value="Comic Sans MS">Comic Sans</option>
                       <option value="Georgia">Georgia</option>
@@ -331,77 +327,78 @@
                       <option value="Times New Roman">Times New</option>
                     </select>
                   </label>
-                  <label>Font Color:
-                    <input type="radio" name="color" value="#000000" style="background-color: #000000;">
-                    <input type="radio" name="color" value="#4fdbf7" style="background-color: #4fdbf7;">
-                    <input type="radio" name="color" value="#f5954c" style="background-color: #f5954c">
-                    <input type="radio" name="color" value="#55ed6c" style="background-color: #55ed6c;">
-                    <input type="radio" name="color" value="#8697f7" style="background-color: #8697f7;">
+                  <label>Font Color
+                    <input type="radio" name="color" value="#6c7a89" style="background-color: #6c7a89;">
+                    <input type="radio" name="color" value="#154360" style="background-color: #154360;">
+                    <input type="radio" name="color" value="#7d6608" style="background-color: #7d6608">
+                    <input type="radio" name="color" value="#4a235a" style="background-color: #4a235a;">
+                    <input type="radio" name="color" value="#641e16" style="background-color: #641e16;">
                   </label>
-                  <label>Highlighter:
+                  <label>Highlighter
                     <input type="radio" name="highlighter" value="#ffffff" style="background-color: #ffffff;">
-                    <input type="radio" name="highlighter" value="#d1f7ff" style="background-color: #d1f7ff;">
-                    <input type="radio" name="highlighter" value="#fad8bb" style="background-color: #fad8bb;">
-                    <input type="radio" name="highlighter" value="#c3f7cb" style="background-color: #c3f7cb;">
-                    <input type="radio" name="highlighter" value="#c3cbf7" style="background-color: #c3cbf7;">
+                    <input type="radio" name="highlighter" value="#f9e797" style="background-color: #f9e797;">
+                    <input type="radio" name="highlighter" value="#85c1e9" style="background-color: #85c1e9;">
+                    <input type="radio" name="highlighter" value="#a9df9c" style="background-color: #a9df9c;">
+                    <input type="radio" name="highlighter" value="#f1948a" style="background-color: #f1948a;">
                   </label>
                   <span>
                     <input type="checkbox" id="bold" name="bold" data-value="B">
                     <input type="checkbox" id="italic" name="italic" data-value="I">
                     <input type="checkbox" id="underline" name="underline" data-value="U">
                   </span>
-                  <span>
-                    <button type="submit" id="reset">Reset</button>
-                    <button type="submit" id="submit">Submit</button>
-                  </span>
                 </fieldset>
+                <span class="buttons">
+                  <button type="submit" class="reset">Reset</button>
+                  <button type="submit" class="update">Update</button>
+                </span>
               </form>
               <form id="stylesForm" class="styles-form bullet">
-                <fieldset disabled="disabled">
-                  <label>Font Style:
+                <fieldset>
+                  <label>Font Style
                     <select id="fontStyles" name="fontStyles">
                       <option value="Comic Sans MS">Comic Sans</option>
                       <option value="Georgia">Georgia</option>
                       <option value="Roboto">Roboto</option>
                       <option value="Times New Roman">Times New</option>
                     </select>
+                    <label>
+                      <select id="bulletStyles" name="bulletStyles">
+                        <option value="BULLET_DISC_CIRCLE_SQUARE">&#x25cf;</option>
+                        <option value="BULLET_DIAMOND_CIRCLE_SQUARE">&#x25c6;</option>
+                        <option value="BULLET_STAR_CIRCLE_SQUARE">&#x2605;</option>
+                        <option value="BULLET_DIAMONDX_ARROW3D_SQUARE">&#x2756;</option>
+                        <option value="BULLET_ARROW3D_CIRCLE_SQUARE">&#x27a2;</option>
+                      </select>
+                    </label>
                   </label>
-                  <label>Bullet Style:
-                    <select id="bulletStyles" name="bulletStyles">
-                      <option value="BULLET_DISC_CIRCLE_SQUARE">Disc</option>
-                      <option value="BULLET_LEFTTRIANGLE_DIAMOND_DISC">Triangle</option>
-                      <option value="NUMBERED_DECIMAL_NESTED">Number</option>
-                      <option value="NUMBERED_UPPERROMAN_UPPERALPHA_DECIMAL">Roman</option>
-                    </select>
-                  </label>
-                  <label>Font Color:
+                  <label>Font Color
                     <input type="radio" name="color" value="#000000" style="background-color: #000000;">
-                    <input type="radio" name="color" value="#4fdbf7" style="background-color: #4fdbf7;">
-                    <input type="radio" name="color" value="#f5954c" style="background-color: #f5954c">
-                    <input type="radio" name="color" value="#55ed6c" style="background-color: #55ed6c;">
-                    <input type="radio" name="color" value="#8697f7" style="background-color: #8697f7;">
+                    <input type="radio" name="color" value="#b03a2e" style="background-color: #b03a2e;">
+                    <input type="radio" name="color" value="#0a3d62" style="background-color: #0a3d62;">
+                    <input type="radio" name="color" value="#1e8449" style="background-color: #1e8449">
+                    <input type="radio" name="color" value="#7b241c" style="background-color: #7b241c;">
                   </label>
-                  <label>Highlighter:
+                  <label>Highlighter
                     <input type="radio" name="highlighter" value="#ffffff" style="background-color: #ffffff;">
-                    <input type="radio" name="highlighter" value="#d1f7ff" style="background-color: #d1f7ff;">
-                    <input type="radio" name="highlighter" value="#fad8bb" style="background-color: #fad8bb;">
-                    <input type="radio" name="highlighter" value="#c3f7cb" style="background-color: #c3f7cb;">
-                    <input type="radio" name="highlighter" value="#c3cbf7" style="background-color: #c3cbf7;">
+                    <input type="radio" name="highlighter" value="#f9e797" style="background-color: #f9e797;">
+                    <input type="radio" name="highlighter" value="#85c1e9" style="background-color: #85c1e9;">
+                    <input type="radio" name="highlighter" value="#a9df9c" style="background-color: #a9df9c;">
+                    <input type="radio" name="highlighter" value="#f1948a" style="background-color: #f1948a;">
                   </label>
                   <span>
                     <input type="checkbox" id="bold" name="bold" data-value="B">
                     <input type="checkbox" id="italic" name="italic" data-value="I">
                     <input type="checkbox" id="underline" name="underline" data-value="U">
                   </span>
-                  <span>
-                    <button type="submit" id="reset">Reset</button>
-                    <button type="submit" id="submit">Submit</button>
-                  </span>
                 </fieldset>
+                <span class="buttons">
+                  <button type="submit" class="reset">Reset</button>
+                  <button type="submit" class="update">Update</button>
+                </span>
               </form>
               <form id="stylesForm" class="styles-form paragraph">
-                <fieldset disabled="disabled">
-                  <label>Font Style:
+                <fieldset>
+                  <label>Font Style
                     <select id="fontStyles" name="fontStyles">
                       <option value="Comic Sans MS">Comic Sans</option>
                       <option value="Georgia">Georgia</option>
@@ -409,47 +406,37 @@
                       <option value="Times New Roman">Times New</option>
                     </select>
                   </label>
-                  <label>Font Color:
+                  <label>Font Color
                     <input type="radio" name="color" value="#000000" style="background-color: #000000;">
-                    <input type="radio" name="color" value="#4fdbf7" style="background-color: #4fdbf7;">
-                    <input type="radio" name="color" value="#f5954c" style="background-color: #f5954c">
-                    <input type="radio" name="color" value="#55ed6c" style="background-color: #55ed6c;">
-                    <input type="radio" name="color" value="#8697f7" style="background-color: #8697f7;">
+                    <input type="radio" name="color" value="#b03a2e" style="background-color: #b03a2e;">
+                    <input type="radio" name="color" value="#0a3d62" style="background-color: #0a3d62;">
+                    <input type="radio" name="color" value="#1e8449" style="background-color: #1e8449">
+                    <input type="radio" name="color" value="#7b241c" style="background-color: #7b241c;">
                   </label>
-                  <label>Highlighter:
+                  <label>Highlighter
                     <input type="radio" name="highlighter" value="#ffffff" style="background-color: #ffffff;">
-                    <input type="radio" name="highlighter" value="#d1f7ff" style="background-color: #d1f7ff;">
-                    <input type="radio" name="highlighter" value="#fad8bb" style="background-color: #fad8bb;">
-                    <input type="radio" name="highlighter" value="#c3f7cb" style="background-color: #c3f7cb;">
-                    <input type="radio" name="highlighter" value="#c3cbf7" style="background-color: #c3cbf7;">
+                    <input type="radio" name="highlighter" value="#f9e797" style="background-color: #f9e797;">
+                    <input type="radio" name="highlighter" value="#85c1e9" style="background-color: #85c1e9;">
+                    <input type="radio" name="highlighter" value="#a9df9c" style="background-color: #a9df9c;">
+                    <input type="radio" name="highlighter" value="#f1948a" style="background-color: #f1948a;">
                   </label>
                   <span>
                     <input type="checkbox" id="bold" name="bold" data-value="B">
                     <input type="checkbox" id="italic" name="italic" data-value="I">
                     <input type="checkbox" id="underline" name="underline" data-value="U">
                   </span>
-                  <span>
-                    <button type="submit" id="reset">Reset</button>
-                    <button type="submit" id="submit">Submit</button>
-                  </span>
                 </fieldset>
+                <span class="buttons">
+                  <button type="submit" class="reset">Reset</button>
+                  <button type="submit" class="update">Update</button>
+                </span>
               </form>
             </div>
           </div>
         </div>
-        <div class="tab-content profile">
-          <div class="profile-avatar">
-            <img id="avatar" class="avatar" src="">
-            <!-- <span id="logout" class="logout" title="Logout">
-              <svg class="iconLogout" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                  d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z" />
-                <path fill-rule="evenodd"
-                  d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
-              </svg>
-            </span> -->
-          </div>
-          <div class="user-details">
+        <div class="tab-content account">
+          <div class="my-account">
+            <span class="title">My Account</span>
             <div class="user-name">
               <span class="label">Name:</span>
               <span id='name' class="value"></span>
@@ -458,10 +445,6 @@
               <span class="label">Email:</span>
               <span id='email' class="value"></span>
             </div>
-            <!-- <div class="user-notes-created">
-              <span class="label">Notes created:</span>
-              <span class="value">88</span>
-            </div> -->
             <div class="user-subscription">
               <span class="label">Subscription:</span>
               <span id='subscription' class="value"></span>
@@ -473,26 +456,52 @@
           </div>
           <div class="account-settings">
             <span class="title">Account Settings</span>
-            <div id="googleDriveAccess" class="google-drive-access">
+            <div id="googleDriveAccess">
               <img class="icon-google" src="./images/drive-logo.png">
-              <!-- <svg viewBox="0 0 16 16">
-                  <path
-                    d="M15.545 6.558a9.42 9.42 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.689 7.689 0 0 1 5.352 2.082l-2.284 2.284A4.347 4.347 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.792 4.792 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.702 3.702 0 0 0 1.599-2.431H8v-3.08h7.545z" />
-                </svg> -->
-              </span>
               <span class="label">Allow Google Drive Access</span>
             </div>
-
-            <!-- <div id="allWebpageAccess" class="all-webpage-access">
-              <span class="label">Allow Webpage Access</span>
-            </div> -->
-            <div id="signOut" class="sign-out">
+            <div id="watchDemo">
+              <span class="icon-demo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                  <path fill="#FF3D00"
+                    d="M43.2,33.9c-0.4,2.1-2.1,3.7-4.2,4c-3.3,0.5-8.8,1.1-15,1.1c-6.1,0-11.6-0.6-15-1.1c-2.1-0.3-3.8-1.9-4.2-4C4.4,31.6,4,28.2,4,24c0-4.2,0.4-7.6,0.8-9.9c0.4-2.1,2.1-3.7,4.2-4C12.3,9.6,17.8,9,24,9c6.2,0,11.6,0.6,15,1.1c2.1,0.3,3.8,1.9,4.2,4c0.4,2.3,0.9,5.7,0.9,9.9C44,28.2,43.6,31.6,43.2,33.9z" />
+                  <path fill="#FFF" d="M20 31L20 17 32 24z" />
+                </svg>
+              </span>
+              <span class="label">Watch Demo</span>
+            </div>
+            <div id="chatWithUs">
+              <span class="icon-chat">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill-rule="evenodd" clip-rule="evenodd">
+                  <path fill="#fff"
+                    d="M4.868,43.303l2.694-9.835C5.9,30.59,5.026,27.324,5.027,23.979C5.032,13.514,13.548,5,24.014,5c5.079,0.002,9.845,1.979,13.43,5.566c3.584,3.588,5.558,8.356,5.556,13.428c-0.004,10.465-8.522,18.98-18.986,18.98c-0.001,0,0,0,0,0h-0.008c-3.177-0.001-6.3-0.798-9.073-2.311L4.868,43.303z" />
+                  <path fill="#fff"
+                    d="M4.868,43.803c-0.132,0-0.26-0.052-0.355-0.148c-0.125-0.127-0.174-0.312-0.127-0.483l2.639-9.636c-1.636-2.906-2.499-6.206-2.497-9.556C4.532,13.238,13.273,4.5,24.014,4.5c5.21,0.002,10.105,2.031,13.784,5.713c3.679,3.683,5.704,8.577,5.702,13.781c-0.004,10.741-8.746,19.48-19.486,19.48c-3.189-0.001-6.344-0.788-9.144-2.277l-9.875,2.589C4.953,43.798,4.911,43.803,4.868,43.803z" />
+                  <path fill="#cfd8dc"
+                    d="M24.014,5c5.079,0.002,9.845,1.979,13.43,5.566c3.584,3.588,5.558,8.356,5.556,13.428c-0.004,10.465-8.522,18.98-18.986,18.98h-0.008c-3.177-0.001-6.3-0.798-9.073-2.311L4.868,43.303l2.694-9.835C5.9,30.59,5.026,27.324,5.027,23.979C5.032,13.514,13.548,5,24.014,5 M24.014,42.974C24.014,42.974,24.014,42.974,24.014,42.974C24.014,42.974,24.014,42.974,24.014,42.974 M24.014,42.974C24.014,42.974,24.014,42.974,24.014,42.974C24.014,42.974,24.014,42.974,24.014,42.974 M24.014,4C24.014,4,24.014,4,24.014,4C12.998,4,4.032,12.962,4.027,23.979c-0.001,3.367,0.849,6.685,2.461,9.622l-2.585,9.439c-0.094,0.345,0.002,0.713,0.254,0.967c0.19,0.192,0.447,0.297,0.711,0.297c0.085,0,0.17-0.011,0.254-0.033l9.687-2.54c2.828,1.468,5.998,2.243,9.197,2.244c11.024,0,19.99-8.963,19.995-19.98c0.002-5.339-2.075-10.359-5.848-14.135C34.378,6.083,29.357,4.002,24.014,4L24.014,4z" />
+                  <path fill="#40c351"
+                    d="M35.176,12.832c-2.98-2.982-6.941-4.625-11.157-4.626c-8.704,0-15.783,7.076-15.787,15.774c-0.001,2.981,0.833,5.883,2.413,8.396l0.376,0.597l-1.595,5.821l5.973-1.566l0.577,0.342c2.422,1.438,5.2,2.198,8.032,2.199h0.006c8.698,0,15.777-7.077,15.78-15.776C39.795,19.778,38.156,15.814,35.176,12.832z" />
+                  <path fill="#fff" fill-rule="evenodd"
+                    d="M19.268,16.045c-0.355-0.79-0.729-0.806-1.068-0.82c-0.277-0.012-0.593-0.011-0.909-0.011c-0.316,0-0.83,0.119-1.265,0.594c-0.435,0.475-1.661,1.622-1.661,3.956c0,2.334,1.7,4.59,1.937,4.906c0.237,0.316,3.282,5.259,8.104,7.161c4.007,1.58,4.823,1.266,5.693,1.187c0.87-0.079,2.807-1.147,3.202-2.255c0.395-1.108,0.395-2.057,0.277-2.255c-0.119-0.198-0.435-0.316-0.909-0.554s-2.807-1.385-3.242-1.543c-0.435-0.158-0.751-0.237-1.068,0.238c-0.316,0.474-1.225,1.543-1.502,1.859c-0.277,0.317-0.554,0.357-1.028,0.119c-0.474-0.238-2.002-0.738-3.815-2.354c-1.41-1.257-2.362-2.81-2.639-3.285c-0.277-0.474-0.03-0.731,0.208-0.968c0.213-0.213,0.474-0.554,0.712-0.831c0.237-0.277,0.316-0.475,0.474-0.791c0.158-0.317,0.079-0.594-0.04-0.831C20.612,19.329,19.69,16.983,19.268,16.045z"
+                    clip-rule="evenodd" />
+                </svg>
+              </span>
+              <span class="label">Chat with us</span>
+            </div>
+            <div id="signOut">
               <span class="icon-sign-out">
-                <svg viewBox="0 0 16 16">
-                  <path fill-rule="evenodd"
-                    d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z" />
-                  <path fill-rule="evenodd"
-                    d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z" />
+                <svg viewBox="0 0 490.3 490.3" xml:space="preserve">
+                  <g>
+                    <g>
+                      <path d="M0,121.05v248.2c0,34.2,27.9,62.1,62.1,62.1h200.6c34.2,0,62.1-27.9,62.1-62.1v-40.2c0-6.8-5.5-12.3-12.3-12.3
+                        s-12.3,5.5-12.3,12.3v40.2c0,20.7-16.9,37.6-37.6,37.6H62.1c-20.7,0-37.6-16.9-37.6-37.6v-248.2c0-20.7,16.9-37.6,37.6-37.6h200.6
+                        c20.7,0,37.6,16.9,37.6,37.6v40.2c0,6.8,5.5,12.3,12.3,12.3s12.3-5.5,12.3-12.3v-40.2c0-34.2-27.9-62.1-62.1-62.1H62.1
+                        C27.9,58.95,0,86.75,0,121.05z" />
+                      <path d="M385.4,337.65c2.4,2.4,5.5,3.6,8.7,3.6s6.3-1.2,8.7-3.6l83.9-83.9c4.8-4.8,4.8-12.5,0-17.3l-83.9-83.9
+                        c-4.8-4.8-12.5-4.8-17.3,0s-4.8,12.5,0,17.3l63,63H218.6c-6.8,0-12.3,5.5-12.3,12.3c0,6.8,5.5,12.3,12.3,12.3h229.8l-63,63
+                        C380.6,325.15,380.6,332.95,385.4,337.65z" />
+                    </g>
+                  </g>
                 </svg>
               </span>
               <span class="label">Sign Out</span>

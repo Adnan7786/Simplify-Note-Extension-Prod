@@ -1,4 +1,5 @@
-const domain = "https://simplifynote.app";
+// const domain = "https://simplifynote.app";
+const domain = "https://sn-test-server.el.r.appspot.com";
 
 const cssThemeVariables = {
   '--color-secondary': {
@@ -69,6 +70,7 @@ let blockedTabList = [];
 const textStyles = ['heading', 'subheading', 'bullet', 'paragraph'];
 const fontColors = [];
 const highlightColors = [];
+const wix_domain = "https://simplifynote.com";
 
 const documentRoot = document.querySelector(':root');
 const computedStyle = getComputedStyle(documentRoot);
@@ -120,9 +122,9 @@ addNoteForm.addEventListener("submit", async function (event) {
       { text: inputValue }
     );
     responseMessage.dataset.status = 'success';
-  } catch (error) {
+  } catch (errMsg) {
     responseMessage.dataset.status = 'failure';
-    sendNotification('failure', 'Doc might be deleted from drive');
+    sendNotification('failure', errMsg);
   }
   loadingMessage.classList.remove('show');
   responseMessage.classList.add('show');
@@ -318,9 +320,9 @@ for (let index = 0; index < stylesListItems.length; index++) {
   stylesListItems[index].addEventListener('click', () => {
     stylesListItems[activeStyle].classList.remove('active');
     styleForms[activeStyle].classList.remove('active');
-    if (getComputedStyle(styleCloseIcon, null).display !== 'none') {
-      styleIconContainer.click();
-    }
+    // if (getComputedStyle(styleCloseIcon, null).display !== 'none') {
+    //   styleIconContainer.click();
+    // }
     activeStyle = index;
     stylesListItems[activeStyle].classList.add('active');
     styleForms[activeStyle].classList.add('active');
@@ -346,42 +348,42 @@ tabContents[1].querySelectorAll('.dialog-box .buttons .cancel').forEach((button)
 });
 
 
-styleIconContainer.addEventListener('click', () => {
-  if (getComputedStyle(styleEditIcon, null).display !== 'none') {
-    styleEditIcon.style.display = 'none';
-    styleCloseIcon.style.display = 'block';
-    styleForms[activeStyle].querySelector('fieldset').disabled = false;
-  } else {
-    const style = textStyles[activeStyle];
-    styleForms[activeStyle].querySelector('#fontStyles').value = userStyle[style]["fontFamily"];
-    let { red: cR, green: cG, blue: cB } = userStyle[style]["foregroundColor"];
-    const color_hex = rgbToHex(cR, cG, cB);
-    const selcolorElem = styleForms[activeStyle].querySelector(`input[name="color"][value="${color_hex}"]`);
-    if (selcolorElem) selcolorElem.checked = true;
-    let { red: hR, green: hG, blue: hB } = userStyle[style]["backgroundColor"];
-    const highlighter_hex = rgbToHex(hR, hG, hB);
-    const selHighlighterElem = styleForms[activeStyle].querySelector(`input[name="highlighter"][value="${highlighter_hex}"]`);
-    if (selHighlighterElem) selHighlighterElem.checked = true;
-    styleForms[activeStyle].querySelector('#bold').checked = userStyle[style]["bold"];
-    styleForms[activeStyle].querySelector('#italic').checked = userStyle[style]["italic"];
-    styleForms[activeStyle].querySelector('#underline').checked = userStyle[style]["underline"];
-    if (style === 'bullet') {
-      styleForms[activeStyle].querySelector('#bulletStyles').value = userStyle["bulletPreset"]
-    };
-    styleCloseIcon.style.display = 'none';
-    styleEditIcon.style.display = 'block';
-    styleForms[activeStyle].querySelector('fieldset').disabled = true;
-  }
-})
+// styleIconContainer.addEventListener('click', () => {
+//   if (getComputedStyle(styleEditIcon, null).display !== 'none') {
+//     styleEditIcon.style.display = 'none';
+//     styleCloseIcon.style.display = 'block';
+//     styleForms[activeStyle].querySelector('fieldset').disabled = false;
+//   } else {
+//     const style = textStyles[activeStyle];
+//     styleForms[activeStyle].querySelector('#fontStyles').value = userStyle[style]["fontFamily"];
+//     let { red: cR, green: cG, blue: cB } = userStyle[style]["foregroundColor"];
+//     const color_hex = rgbToHex(cR, cG, cB);
+//     const selcolorElem = styleForms[activeStyle].querySelector(`input[name="color"][value="${color_hex}"]`);
+//     if (selcolorElem) selcolorElem.checked = true;
+//     let { red: hR, green: hG, blue: hB } = userStyle[style]["backgroundColor"];
+//     const highlighter_hex = rgbToHex(hR, hG, hB);
+//     const selHighlighterElem = styleForms[activeStyle].querySelector(`input[name="highlighter"][value="${highlighter_hex}"]`);
+//     if (selHighlighterElem) selHighlighterElem.checked = true;
+//     styleForms[activeStyle].querySelector('#bold').checked = userStyle[style]["bold"];
+//     styleForms[activeStyle].querySelector('#italic').checked = userStyle[style]["italic"];
+//     styleForms[activeStyle].querySelector('#underline').checked = userStyle[style]["underline"];
+//     if (style === 'bullet') {
+//       styleForms[activeStyle].querySelector('#bulletStyles').value = userStyle["bulletPreset"]
+//     };
+//     styleCloseIcon.style.display = 'none';
+//     styleEditIcon.style.display = 'block';
+//     styleForms[activeStyle].querySelector('fieldset').disabled = true;
+//   }
+// })
 
 styleForms.forEach(form => {
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
-    const buttonId = document.activeElement.id;
+    const buttonType = document.activeElement.className;
     pageLoad.style.visibility = 'visible';
     try {
       switchToTab = 2
-      if (buttonId === 'submit') {
+      if (buttonType === 'update') {
         const style = textStyles[activeStyle]
         const payload = {}
         payload["fontFamily"] = styleForms[activeStyle].querySelector('#fontStyles').value;
@@ -502,7 +504,7 @@ async function render() {
     }
     pageLoad.style.visibility = 'hidden';
   } catch (error) {
-    sendNotification('failure', error);
+    sendNotification('failure', error.message);
   }
 }
 
@@ -560,7 +562,7 @@ function getTooltipDisabled() {
 
 function sendNotification(status, message) {
   notificationDiv.dataset.status = status;
-  notificationDiv.innerText = message;
+  notificationDiv.innerHTML = message;
   notificationDiv.classList.add('show');
   setTimeout(() => {
     notificationDiv.classList.remove('show');
@@ -656,13 +658,20 @@ function apiCall(pathSuffix, method, payload) {
   return new Promise((resolve, reject) => {
     fetch(endpoint, reqObj)
       .then(async (res) => {
+        const body = await res.json();
         if (!res.ok) {
-          throw new Error(`Something went wrong. Please try again later.`)
-        };
-        return res.json();
+          const errorLog = `path=${pathSuffix}\nmethod=${method}\npayload=` + JSON.stringify(payload) + `\nstatus=${res.status}\nresponse=` + JSON.stringify(body);
+          const errorLogHash = btoa(errorLog);
+          const emailBody = `Hi Team,%0D%0A%0D%0AI am facing an issue with the Simplify Note extension functionality.%0D%0APlease help me resolve this as soon as possible.%0D%0A%0D%0A%0D%0APlease do not delete the below error logs:%0D%0A=================================================%0D%0A${errorLogHash}%0D%0A%0D%0AThanks %26 Regards,%0D%0A${user.name}`
+          const href = `https://mail.google.com/mail/?authuser=${user.email}&view=cm&fs=1&to=developer.simplifynote@gmail.com&su=Bug Report&body=${emailBody}`
+          const aTag = `<a style="all:unset;cursor:pointer;text-decoration:underline;color:red" target="_blank" rel="noopener noreferrer" href='${href}'>Report Bug</a>`
+          const message = `Something went wrong.&nbsp${aTag}`
+          return reject(message)
+        } else {
+          return resolve(body);
+        }
       })
-      .then((data) => { resolve(data) })
-      .catch((error) => { reject(error) });
+      .catch((error) => { console.log(error); reject('Something went wrong. Please try again') }); // catch for error in reading json response
   });
 }
 
@@ -804,6 +813,10 @@ function updateStylesTab() {
       if (style === 'bullet') {
         styleForms[index].querySelector('#bulletStyles').value = userStyle["bulletPreset"]
       };
+      styleForms[index].querySelector('.buttons .update').disabled = true;
+      styleForms[index].addEventListener('change', function () {
+        this.querySelector('.buttons .update').disabled = false;
+      });
     }
   }
 }
@@ -812,14 +825,27 @@ function updateStylesTab() {
 function updateProfileTab() {
   const profileTab = tabContents[3];
   const dateStr = getFormattedDate(user.subscription.expiry_date);
-  profileTab.querySelector('#avatar').src = user.image;
-  profileTab.querySelector('.user-details #name').innerHTML = user.name;
-  profileTab.querySelector('.user-details #email').innerHTML = user.email;
-  profileTab.querySelector('.user-details #subscription').innerHTML = toTitleCase(user.subscription.plan);
-  profileTab.querySelector('.user-details #subscriptionEnds').innerHTML = dateStr;
+  const curr_date = new Date()
+  const expiry_date = new Date(user.subscription.expiry_date)
+  let expired = false
+  console.log(expiry_date, curr_date)
+  if (curr_date > expiry_date) {
+    expired = true
+  }
+  const sub_html = `<a id='subscribe' href='${wix_domain}/pricing?email=${user.email}' target='_blank'>Subscribe</a>`
+  profileTab.querySelector('.my-account #name').innerHTML = user.name;
+  profileTab.querySelector('.my-account #email').innerHTML = user.email;
+  profileTab.querySelector('.my-account #subscription').innerHTML = (expired) ? sub_html : toTitleCase(user.subscription.plan);
+  profileTab.querySelector('.my-account #subscriptionEnds').innerHTML = (expired) ? 'Expired' : dateStr;
 
   profileTab.querySelector('.account-settings #googleDriveAccess').addEventListener('click', () => {
     window.open(`${domain}/api/v1/google-auth/`, '_blank');
+  })
+  profileTab.querySelector('.account-settings #watchDemo').addEventListener('click', () => {
+    window.open(`https://www.youtube.com/watch?v=xESFnJCcM-U`, '_blank');
+  })
+  profileTab.querySelector('.account-settings #chatWithUs').addEventListener('click', () => {
+    window.open(`https://chat.whatsapp.com/F64Ec5umXxeFuYrJ3QJRJ2`, '_blank');
   })
 
   profileTab.querySelector('.account-settings #signOut').addEventListener('click', async () => {

@@ -1,27 +1,11 @@
 const extensionId = chrome.runtime.id;
-const protocol = 'https://'
-const domain = 'simplifynote.app'
+const protocol = 'https://';
+// const domain = 'simplifynote.app';
+const domain = 'sn-test-server.el.r.appspot.com';
 
 chrome.runtime.onInstalled.addListener(async (details) => {
   if (details.reason == 'install') {
     let onbLink = `${protocol}${domain}/onboarding`;
-    chrome.tabs.query({
-      url: 'https://chrome.google.com/webstore/detail/simplifynote-your-note-ta/mjhigpcgpfiaadanipnacbalgaaleclc?*'
-    }).then((result) => {
-      const qKey = 'ref_code';
-      let qValue = null;
-      const url = result[0]?.url;
-      if (!url || url === '') return;
-      const queryParams = (url.split('?')[1]).split('&');
-      for (query of queryParams) {
-        const [key, value] = query.split('=');
-        if (key === qKey) {
-          qValue = value;
-          break;
-        }
-      }
-      if (qValue) onbLink += `?${qKey}=${qValue}`;
-    }).catch((error) => console.log(error))
     chrome.tabs.create({
       url: onbLink
     });
@@ -34,6 +18,8 @@ chrome.runtime.onInstalled.addListener(async (details) => {
     await turnBadgeOn()
   }
 })
+
+chrome.runtime.setUninstallURL("https://forms.gle/J3qcvqCFmMx8DYXq8")
 
 chrome.runtime.onStartup.addListener(async () => {
   const tooltipUnchecked = await getTooltipUnchecked()
