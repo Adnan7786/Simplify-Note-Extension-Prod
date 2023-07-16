@@ -845,7 +845,7 @@ function updateProfileTab() {
     window.open(`https://www.youtube.com/watch?v=xESFnJCcM-U`, '_blank');
   })
   profileTab.querySelector('.account-settings #chatWithUs').addEventListener('click', () => {
-    window.open(`https://chat.whatsapp.com/F64Ec5umXxeFuYrJ3QJRJ2`, '_blank');
+    window.open(`https://chat.whatsapp.com/BlTYB1i01FD79FC10arLHY`, '_blank');
   })
 
   profileTab.querySelector('.account-settings #signOut').addEventListener('click', async () => {
